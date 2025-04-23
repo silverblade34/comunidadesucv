@@ -29,6 +29,7 @@ class Profile {
   String? codigo;
   String? carrera;
   String? filial;
+  String? preferredName;
   String imageUrl;
   String imageUrlOrg;
   String bannerUrl;
@@ -65,6 +66,7 @@ class Profile {
     this.codigo,
     this.carrera,
     this.filial,
+    this.preferredName,
     required this.imageUrl,
     required this.imageUrlOrg,
     required this.bannerUrl,
@@ -102,6 +104,7 @@ class Profile {
         codigo: json["codigo"],
         carrera: json["carrera"],
         filial: json["filial"],
+        preferredName: json["preferred_name"],
         imageUrl: json["image_url"],
         imageUrlOrg: json["image_url_org"],
         bannerUrl: json["banner_url"],
@@ -139,6 +142,7 @@ class Profile {
         "codigo": codigo,
         "carrera": carrera,
         "filial": filial,
+        "preferred_name": preferredName,
         "image_url": imageUrl,
         "image_url_org": imageUrlOrg,
         "banner_url": bannerUrl,

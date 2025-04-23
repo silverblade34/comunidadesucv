@@ -15,90 +15,84 @@ class CommunitiesPage extends GetView<CommunitiesController> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
-      body: InkWell(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        hoverColor: Theme.of(context).scaffoldBackgroundColor,
-        child: Stack(
-          children: [
-            CustomScrollView(
-              clipBehavior: Clip.hardEdge,
-              slivers: [
-                SliverToBoxAdapter(
-                  child: SafeArea(
-                    bottom: false,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      margin: const EdgeInsets.only(top: 10, bottom: 0),
-                      child: Column(
-                        children: [
-                          _buildAppBar(),
-                          const SizedBox(height: 20),
-                          _buildAnimatedSearchBar(),
-                        ],
-                      ),
+      body: Stack(
+        children: [
+          CustomScrollView(
+            clipBehavior: Clip.hardEdge,
+            slivers: [
+              SliverToBoxAdapter(
+                child: SafeArea(
+                  bottom: false,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    margin: const EdgeInsets.only(top: 10, bottom: 0),
+                    child: Column(
+                      children: [
+                        _buildAppBar(),
+                        const SizedBox(height: 20),
+                        _buildAnimatedSearchBar(),
+                      ],
                     ),
                   ),
                 ),
-                Obx(
-                  () => SliverToBoxAdapter(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (controller.recommendedCommunities.isNotEmpty) ...[
-                            const SizedBox(height: 20),
-                            _buildSectionHeader(
-                              icon: Icons.star,
-                              iconColor: Colors.amber,
-                              title: 'Recomendados',
-                            ),
-                            const SizedBox(height: 16),
-                            _buildRecommendedList(),
-                            const SizedBox(height: 24),
-                          ],
-                          const SizedBox(height: 10),
+              ),
+              Obx(
+                () => SliverToBoxAdapter(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (controller.recommendedCommunities.isNotEmpty) ...[
+                          const SizedBox(height: 20),
                           _buildSectionHeader(
-                            icon: Icons.people,
-                            iconColor: Colors.cyan,
-                            title: 'Explora y únete',
+                            icon: Icons.star,
+                            iconColor: Colors.amber,
+                            title: 'Recomendados',
                           ),
                           const SizedBox(height: 16),
+                          _buildRecommendedList(),
+                          const SizedBox(height: 24),
                         ],
-                      ),
+                        const SizedBox(height: 10),
+                        _buildSectionHeader(
+                          icon: Icons.people,
+                          iconColor: Colors.cyan,
+                          title: 'Explora y únete',
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  sliver: Obx(() {
-                    return SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 0.85,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final community = controller.dataCommunities[index];
-                          return _buildCommunityCard(community);
-                        },
-                        childCount: controller.dataCommunities.length,
-                      ),
-                    );
-                  }),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 80),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                sliver: Obx(() {
+                  return SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.85,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final community = controller.dataCommunities[index];
+                        return _buildCommunityCard(community);
+                      },
+                      childCount: controller.dataCommunities.length,
+                    ),
+                  );
+                }),
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: 80),
+              ),
+            ],
+          ),
+        ],
       ),
       extendBody: true,
       bottomNavigationBar: _buildBottomNavigationBar(context),

@@ -21,7 +21,7 @@ class _Intro1State extends State<Intro1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: const Color.fromARGB(255, 21, 17, 61),
       body: Stack(
         children: [
           Positioned.fill(

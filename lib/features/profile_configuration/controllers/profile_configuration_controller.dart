@@ -1,6 +1,7 @@
 import 'package:comunidadesucv/core/models/account.dart';
 import 'package:comunidadesucv/features/profile_configuration/data/repository/profile_configuration_repository.dart';
 import 'package:comunidadesucv/core/models/user_detail.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -9,6 +10,8 @@ class ProfileConfigurationController extends GetxController {
   ProfileConfigurationRepository profileConfigurationRepository =
       ProfileConfigurationRepository();
   final RxList<Map<String, dynamic>> tags = <Map<String, dynamic>>[].obs;
+  var isLoading = false.obs;
+  TextEditingController preferenceName = TextEditingController(text: "");
 
   final RxString selectedTag = ''.obs;
 
@@ -76,6 +79,7 @@ class ProfileConfigurationController extends GetxController {
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
+      preferenceName.text = "${user.value.profile!.preferredName}";
       _updateSelectedTags(user.value.account?.tags ?? []);
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");
@@ -92,11 +96,10 @@ class ProfileConfigurationController extends GetxController {
     }
   }
 
-  void loadCommunitiesScreen() async {
+  loadCommunitiesScreen() async {
     List<String> selectedTags = getSelectedTags();
     UserDetail userUpdate = await profileConfigurationRepository.updateTagsUser(
-        user.value.id, selectedTags);
+        user.value.id, selectedTags, preferenceName.text);
     box.write("user", userUpdate);
-    Get.offAllNamed("/communities");
   }
 }

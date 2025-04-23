@@ -10,6 +10,7 @@ class MyTextField extends StatefulWidget {
   final TextInputType keyboardtype;
   final bool hideTextfild;
   final Color bgcolor;
+  final bool enabled; // New parameter for enabling/disabling the field
 
   MyTextField({
     super.key,
@@ -17,6 +18,7 @@ class MyTextField extends StatefulWidget {
     this.keyboardtype = TextInputType.text,
     this.hideTextfild = false,
     Color? bgcolor,
+    this.enabled = true, // Enabled by default
   }) : bgcolor = bgcolor ?? _getBgColor();
 
   static Color _getBgColor() {
@@ -37,11 +39,16 @@ class _MyTextFieldState extends State<MyTextField> {
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(17),
-        color: widget.bgcolor,
+        color: widget.enabled
+            ? widget.bgcolor
+            : (AppTheme.isLightTheme
+                ? widget.bgcolor.withOpacity(0.8)
+                : widget.bgcolor.withOpacity(0.6)),
       ),
       child: TextFormField(
         keyboardType: widget.keyboardtype,
         cursorColor: Theme.of(context).primaryColor,
+        enabled: widget.enabled,
         style: TextStyle(
           fontSize: 13,
           color:
@@ -50,6 +57,7 @@ class _MyTextFieldState extends State<MyTextField> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: TextStyle(
+            fontWeight: FontWeight.w600,
               color: AppTheme.isLightTheme
                   ? HexColor("#1A1167")
                   : HexColor('#E5E3FC')),

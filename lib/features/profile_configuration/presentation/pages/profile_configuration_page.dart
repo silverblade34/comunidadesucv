@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
-import 'package:comunidadesucv/core/widgets/buttons.dart';
 import 'package:comunidadesucv/core/widgets/text_fields.dart';
 import 'package:comunidadesucv/features/profile_configuration/controllers/profile_configuration_controller.dart';
 import 'package:comunidadesucv/features/profile_configuration/presentation/widgets/interest_tag.dart';
@@ -14,23 +15,68 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.zero,
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.27,
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 220,
-                    height: 220,
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.bottomLeft,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).padding.top + 80,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color.fromARGB(255, 141, 109, 182),
+                        const Color.fromARGB(255, 87, 47, 139),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Positioned.fill(
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.white.withOpacity(0.1),
+                        child: CustomPaint(
+                          painter: GlassEffectPainter(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withOpacity(0.05),
+                          Colors.white.withOpacity(0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Profile image
+                Positioned(
+                  left: 24,
+                  bottom: -40,
+                  child: Container(
+                    width: 90,
+                    height: 90,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: const Color.fromARGB(255, 148, 98, 212),
+                      border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -40,14 +86,21 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                       ],
                     ),
                     child: ClipOval(
-                      child: Image.network(
-                        "${controller.user.value.profile!.imageUrl}",
-                        fit: BoxFit.cover,
-                      ),
+                      child: Obx(() => Image.network(
+                            controller.user.value.profile!.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.white),
+                          )),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 30,
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
@@ -57,10 +110,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                   SizedBox(height: 20),
                   Text(
                     'Nombre',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Obx(
@@ -70,15 +120,13 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                       bgcolor: AppTheme.isLightTheme
                           ? HexColor('#FFFFFF')
                           : HexColor('#0E0847'),
+                      enabled: false,
                     ),
                   ),
                   SizedBox(height: 10),
                   Text(
                     'Carrera',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Obx(
@@ -87,15 +135,13 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                       bgcolor: AppTheme.isLightTheme
                           ? HexColor('#FFFFFF')
                           : HexColor('#0E0847'),
+                      enabled: false,
                     ),
                   ),
                   SizedBox(height: 10),
                   Text(
                     'Campus',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Obx(
@@ -104,6 +150,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                       bgcolor: AppTheme.isLightTheme
                           ? HexColor('#FFFFFF')
                           : HexColor('#0E0847'),
+                      enabled: false,
                     ),
                   ),
                   SizedBox(
@@ -111,10 +158,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                   ),
                   Text(
                     'Ciclo',
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   MyTextField(
@@ -122,48 +166,163 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                     bgcolor: AppTheme.isLightTheme
                         ? HexColor('#FFFFFF')
                         : HexColor('#0E0847'),
+                    enabled: false,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Nombre de usuario',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    alignment: Alignment.center,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(17),
+                      color: AppTheme.isLightTheme
+                          // ignore: deprecated_member_use
+                          ? HexColor('#FFFFFF').withOpacity(0.8)
+                          // ignore: deprecated_member_use
+                          : HexColor('#0E0847').withOpacity(0.6),
+                    ),
+                    child: TextFormField(
+                      cursorColor: Theme.of(context).primaryColor,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppTheme.isLightTheme
+                            ? HexColor("#1A1167")
+                            : HexColor('#E5E3FC'),
+                      ),
+                      controller: controller.preferenceName,
+                      decoration: InputDecoration(
+                        hintText: "Ingresa un nombre de preferencia",
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.isLightTheme
+                                ? HexColor("#1A1167")
+                                : HexColor('#E5E3FC')),
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
                   SizedBox(height: 20),
                   Text(
                     "Antes de empezar, selecciona tus intereses:",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Container(
-                    height: 150,
                     margin: const EdgeInsets.only(top: 10.0),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Obx(() => Wrap(
-                                spacing: 10,
-                                runSpacing: 15,
-                                children: controller.tags.map((tagData) {
-                                  return InterestTag(
-                                    tag: tagData['tag'],
-                                    isSelected: tagData['isSelected'],
-                                    onPress: controller.handleTagPress,
-                                  );
-                                }).toList(),
-                              )),
-                        ),
-                      ],
-                    ),
+                    child: Obx(() => Wrap(
+                          spacing: 10,
+                          runSpacing: 15,
+                          children: controller.tags.map((tagData) {
+                            return InterestTag(
+                              tag: tagData['tag'],
+                              isSelected: tagData['isSelected'],
+                              onPress: controller.handleTagPress,
+                            );
+                          }).toList(),
+                        )),
                   ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Obx(() => Expanded(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: ElevatedButton(
+                                onPressed: controller.isLoading.value
+                                    ? null
+                                    : () async {
+                                        controller.isLoading.value = true;
+                                        try {
+                                          await controller
+                                              .loadCommunitiesScreen();
+                                          Get.offAllNamed("/communities");
+                                        } finally {
+                                          controller.isLoading.value = false;
+                                        }
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  backgroundColor: HexColor('#FF5D7E'),
+                                  disabledBackgroundColor:
+                                      // ignore: deprecated_member_use
+                                      HexColor('#FF5D7E').withOpacity(0.6),
+                                ),
+                                child: controller.isLoading.value
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Aceptar",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Text(
+                                        "Aceptar",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: MyIcon(
-        click: () {
-          controller.loadCommunitiesScreen();
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
+}
+
+class GlassEffectPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.05)
+      ..style = PaintingStyle.fill;
+
+    final path = Path()
+      ..moveTo(0, size.height * 0.2)
+      ..quadraticBezierTo(size.width * 0.3, size.height * 0.3, size.width * 0.6,
+          size.height * 0.25)
+      ..quadraticBezierTo(
+          size.width * 0.8, size.height * 0.2, size.width, size.height * 0.3)
+      ..lineTo(size.width, 0)
+      ..lineTo(0, 0)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

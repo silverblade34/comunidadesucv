@@ -5,9 +5,9 @@ class ProfileConfigurationRepository {
   ProfileConfigurationProvider profileConfigurationProvider =
       ProfileConfigurationProvider();
 
-  Future<UserDetail> updateTagsUser(int idUser, List<String> tag) async {
+  Future<UserDetail> updateTagsUser(int idUser, List<String> tag, String preferenceName) async {
     final response =
-        await profileConfigurationProvider.updateTagsUser(idUser, tag);
+        await profileConfigurationProvider.updateTagsUser(idUser, tag, preferenceName);
 
     if (response.data == null) {
       throw Exception("No se recibieron datos en la respuesta");

@@ -5,7 +5,8 @@ final baseUrl = dotenv.env['LINK_API'];
 final staticToken = dotenv.env['TOKEN'];
 
 class ProfileConfigurationProvider {
-  Future<Response> updateTagsUser(int idUser, List<String> tags) async {
+  Future<Response> updateTagsUser(
+      int idUser, List<String> tags, String preferenceName) async {
     try {
       Dio dioClient = Dio();
       dioClient.options.headers["Authorization"] = "Bearer $staticToken";
@@ -14,6 +15,7 @@ class ProfileConfigurationProvider {
         "account": {
           "tagsField": tags,
         },
+        "profile": {"preferred_name": preferenceName}
       };
 
       final response = await dioClient.put(

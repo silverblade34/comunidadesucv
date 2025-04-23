@@ -1,4 +1,3 @@
-import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/constants/constance.dart';
 import 'package:comunidadesucv/features/splash/controllers/splash_controller.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ class SplashPage extends GetView<SplashController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: const Color.fromARGB(255, 21, 17, 61),
       body: AnimatedBuilder(
         animation: controller.animationController,
         builder: (context, child) {
