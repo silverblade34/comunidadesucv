@@ -1,4 +1,3 @@
-import 'package:comunidadesucv/features/communities/data/dto/spaces_response.dart';
 import 'package:comunidadesucv/core/models/user_detail.dart';
 import 'package:comunidadesucv/features/splash/data/provider/splash_provider.dart';
 
@@ -46,8 +45,8 @@ class SplashRepository {
     return List<String>.from(response.data);
   }
 
-  Future<SpacesResponse> findSpaces() async {
-    final response = await splashProvider.findSpaces();
+  Future<String> loginAdmin() async {
+    final response = await splashProvider.loginAdmin();
 
     if (response.data == null) {
       throw Exception("No se recibieron datos en la respuesta");
@@ -57,6 +56,30 @@ class SplashRepository {
       throw Exception(response.data);
     }
 
-    return SpacesResponse.fromJson(response.data);
+    final authToken = response.data['auth_token'];
+    if (authToken == null) {
+      throw Exception("Token de autenticación no encontrado");
+    }
+
+    return authToken;
+  }
+
+  Future<String> authImpersonate(int userId) async {
+    final response = await splashProvider.authImpersonate(userId);
+
+    if (response.data == null) {
+      throw Exception("No se recibieron datos en la respuesta");
+    } else if (response.statusCode == 400) {
+      throw Exception("Error desconocido");
+    } else if (response.statusCode == 404) {
+      throw Exception(response.data);
+    }
+
+    final authToken = response.data['token'];
+    if (authToken == null) {
+      throw Exception("Token de autenticación no encontrado");
+    }
+
+    return authToken;
   }
 }

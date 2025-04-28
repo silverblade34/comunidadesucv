@@ -38,6 +38,15 @@ class CommunityDetailController extends GetxController {
 
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
 
+  @override
+  void onInit() async {
+    super.onInit();
+    Future.wait([
+      _loadUser(),
+      _loadCommunity(),
+    ]);
+  }
+
   Future<void> loadImage(int idFile, String token) async {
     if (imagesMap.containsKey(idFile)) return;
 
@@ -61,25 +70,21 @@ class CommunityDetailController extends GetxController {
     }
   }
 
-  @override
-  void onInit() async {
-    super.onInit();
-    _loadUser();
-    _loadCommunity();
-  }
-
-  void _loadUser() async {
+  Future<void> _loadUser() async {
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
-      user.value = await splashRepository.getUser(user.value.account!.username);
-      box.write("user", user.value);
+      if (user.value.account?.username != null) {
+        user.value =
+            await splashRepository.getUser(user.value.account!.username);
+        box.write("user", user.value);
+      }
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");
     }
   }
 
-  void _loadCommunity() async {
+  Future<void> _loadCommunity() async {
     final response = await communityDetailRepository.getSpace(spaceId);
     space.value = response;
     _loadLastPostContainer();

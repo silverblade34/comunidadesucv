@@ -1,14 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 
 final baseUrl = dotenv.env['LINK_API'];
-final staticToken = dotenv.env['TOKEN'];
 
 class CommunitiesProvider {
+  final box = GetStorage();
+  late String token;
+
+  CommunitiesProvider() {
+    token = box.read("tokenStudent");
+  }
+
   Future<Response> findSpaces() async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
 
       final response = await dioClient.get(
         '$baseUrl/space',

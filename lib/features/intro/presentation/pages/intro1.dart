@@ -52,7 +52,7 @@ class _Intro1State extends State<Intro1> {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'Publica contenido, participa en discusiones y mantente informado sobre lo que más te apasiona en la universidad.',
+                        'Publica ideas, participa en conversaciones y mantente al día con lo que más te apasiona en tu vida universitaria. Este espacio es tuyo.',
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           fontSize: 15,
                           color:

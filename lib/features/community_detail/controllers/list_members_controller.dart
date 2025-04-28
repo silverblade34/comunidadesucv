@@ -18,10 +18,10 @@ class ListMembersController extends GetxController {
   void _loadMemberships() async {
     final response = await listMembershipRepository.getSpaceMembers(spaceId);
 
-    memberships.value = response.results
-        .where((membership) =>
-            membership.user.guid != "72c88b0d-3589-4542-a4ca-15f998e14484")
-        .toList();
+    memberships.value = response.results;
+        // .where((membership) =>
+        //     membership.user.guid != "72c88b0d-3589-4542-a4ca-15f998e14484")
+        // .toList();
 
     final List<MembershipInfo> recommended = [];
 

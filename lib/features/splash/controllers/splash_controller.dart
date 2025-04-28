@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/core/models/user_detail.dart';
 import 'package:comunidadesucv/features/splash/data/repository/splash_repository.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -28,28 +29,49 @@ class SplashController extends GetxController
   }
 
   Future<void> _initData() async {
-    await Future.delayed(Duration(seconds: 3));
+    // Login como Admin y se guarda el token
+    final tokenAdmin = await splashRepository.loginAdmin();
+    box.write("tokenAdmin", tokenAdmin);
 
+    // Obtener tags y guardarlos
+    final tags = await splashRepository.getTags();
+    box.write("tags", tags);
+
+    // Setear valores de usuario
     code.value = "2000067902";
     username.value = "daolivac";
     name.value = "DANIELA PIERINA";
     lastName.value = "OLIVA CHANTA";
+
+    // Cargar datos de usuario
     await _loadUser();
   }
 
   Future<void> _loadUser() async {
     try {
-      var userData = await splashRepository.getUser(username.value);
-      List<String> tags = await splashRepository.getTags();
-      box.write("tags", tags);
-      box.write("user", userData);
-      Get.offAllNamed("/intro");
+      final userData = await splashRepository.getUser(username.value);
+      await _saveUserSession(userData, isNewUser: false);
     } catch (e) {
-      var userData = await splashRepository.getUserTrilce(
-          code.value, username.value, name.value, lastName.value);
-      List<String> tags = await splashRepository.getTags();
-      box.write("tags", tags);
-      box.write("user", userData);
+      final userData = await splashRepository.getUserTrilce(
+        code.value,
+        username.value,
+        name.value,
+        lastName.value,
+      );
+      await _saveUserSession(userData, isNewUser: true);
+    }
+  }
+
+  Future<void> _saveUserSession(UserDetail userData,
+      {required bool isNewUser}) async {
+    final tokenStudent = await splashRepository.authImpersonate(userData.id);
+
+    box.write("tokenStudent", tokenStudent);
+    box.write("user", userData);
+
+    if (isNewUser) {
+      Get.offAllNamed("/intro");
+    } else {
       Get.offAllNamed("/intro");
     }
   }

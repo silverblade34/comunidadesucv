@@ -1,14 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 
 final baseUrl = dotenv.env['LINK_API'];
-final staticToken = dotenv.env['TOKEN'];
 
 class CommunityDetailProvider {
+  final box = GetStorage();
+  late String token;
+  late String tokenAdmin;
+
+  CommunityDetailProvider() {
+    token = box.read("tokenStudent");
+    tokenAdmin = box.read("tokenAdmin");
+  }
+
   Future<Response> getSpace(int spaceId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.get(
         '$baseUrl/space/$spaceId',
@@ -31,7 +40,7 @@ class CommunityDetailProvider {
   Future<Response> addMembershipsSpace(int spaceId, int userId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.post(
         '$baseUrl/space/$spaceId/membership/$userId',
@@ -54,7 +63,7 @@ class CommunityDetailProvider {
   Future<Response> deleteMembershipsSpace(int spaceId, int userId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.delete(
         '$baseUrl/space/$spaceId/membership/$userId',
@@ -77,8 +86,8 @@ class CommunityDetailProvider {
   Future<Response> postContainerSpace(int containerId, int pages) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
-      print('$baseUrl/post/container/$containerId?limit=$pages');
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
+
       final response = await dioClient.get(
         '$baseUrl/post/container/$containerId?limit=$pages',
       );

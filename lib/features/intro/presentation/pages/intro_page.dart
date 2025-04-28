@@ -20,7 +20,8 @@ class IntroPage extends GetView<IntroController> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(ConstanceData.backgroundIntro, fit: BoxFit.cover),
+            child:
+                Image.asset(ConstanceData.backgroundIntro, fit: BoxFit.cover),
           ),
           Padding(
             padding: EdgeInsets.all(20),
@@ -37,7 +38,7 @@ class IntroPage extends GetView<IntroController> {
                   child: Column(
                     children: [
                       Text(
-                        'Descubre tu comunidad',
+                        'Una comunidad que vibra contigo',
                         style: TextStyle(
                           color: HexColor('#E5E3FC'),
                           fontSize: 30,
@@ -46,7 +47,7 @@ class IntroPage extends GetView<IntroController> {
                       ),
                       SizedBox(height: 5),
                       Text(
-                        'Únete a espacios donde se comparten ideas, eventos y conocimientos según tus intereses académicos y extracurriculares.',
+                        'Descubre espacios donde compartir conocimientos, experiencias y pasiones se vuelve parte de tu día a día. Aquí, tus intereses académicos y extracurriculares encuentran una comunidad que los potencia.',
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                               fontSize: 15,
                               color: AppTheme.isLightTheme

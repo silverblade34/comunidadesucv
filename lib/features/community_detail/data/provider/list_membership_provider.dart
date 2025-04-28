@@ -1,14 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 
 final baseUrl = dotenv.env['LINK_API'];
-final staticToken = dotenv.env['TOKEN'];
 
 class ListMembershipProvider {
+  final box = GetStorage();
+  late String token;
+  late String tokenAdmin;
+
+  ListMembershipProvider() {
+    token = box.read("tokenStudent");
+    tokenAdmin = box.read("tokenAdmin");
+  }
+
   Future<Response> getSpaceMembers(int spaceId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.get(
         '$baseUrl/space/$spaceId/membership',
@@ -28,10 +37,10 @@ class ListMembershipProvider {
     }
   }
 
-    Future<Response> getMemberId(String memberId) async {
+  Future<Response> getMemberId(String memberId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.get(
         '$baseUrl/user/$memberId',

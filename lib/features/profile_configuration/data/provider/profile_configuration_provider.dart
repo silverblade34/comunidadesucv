@@ -1,15 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 
 final baseUrl = dotenv.env['LINK_API'];
-final staticToken = dotenv.env['TOKEN'];
 
 class ProfileConfigurationProvider {
+  final box = GetStorage();
+
   Future<Response> updateTagsUser(
       int idUser, List<String> tags, String preferenceName) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $staticToken";
+      String tokenAdmin = box.read("tokenAdmin");
+
+      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final body = {
         "account": {
