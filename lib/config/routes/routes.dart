@@ -10,6 +10,7 @@ abstract class Routes {
   static const communityDetail = '/community_detail';
   static const detailMember = '/detail_member';
   static const communityFeed = '/community_feed';
+  static const registeredPost = '/registered_post';
   static const listMembers = '/list_members';
   static const forum = '/forum';
 }

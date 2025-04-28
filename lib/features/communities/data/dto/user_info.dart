@@ -7,6 +7,9 @@ class UserInfo {
   final String imageUrlOrg;
   final String bannerUrl;
   final String bannerUrlOrg;
+  final List<dynamic> tags;
+  final String? carrera;
+  final String? filial;
 
   UserInfo({
     required this.id,
@@ -17,6 +20,9 @@ class UserInfo {
     required this.imageUrlOrg,
     required this.bannerUrl,
     required this.bannerUrlOrg,
+    required this.tags,
+    this.carrera,
+    this.filial,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -29,6 +35,9 @@ class UserInfo {
       imageUrlOrg: json['image_url_org'],
       bannerUrl: json['banner_url'],
       bannerUrlOrg: json['banner_url_org'],
+      tags: json['tags'],
+      carrera: json['carrera'],
+      filial: json['filial'],
     );
   }
 
@@ -42,6 +51,9 @@ class UserInfo {
       'image_url_org': imageUrlOrg,
       'banner_url': bannerUrl,
       'banner_url_org': bannerUrlOrg,
+      'tags': tags,
+      'carrera': carrera,
+      'filial': filial,
     };
   }
 }

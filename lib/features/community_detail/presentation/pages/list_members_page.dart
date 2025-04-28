@@ -89,24 +89,26 @@ class ListMembersPage extends GetView<ListMembersController> {
                               bottom:
                                   MediaQuery.of(context).padding.bottom + 20),
                           children: [
-                            Text(
-                              'Intereses en común',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(
-                                    fontSize: 14,
+                            if (controller.recommendedMemberships.isNotEmpty) ...[
+                              Text(
+                                'Intereses en común',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                      fontSize: 14,
+                                    ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 15),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: _buildInterestingMembers(context),
                                   ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 15),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: _buildInterestingMembers(context),
                                 ),
                               ),
-                            ),
+                            ],
                             Padding(
                               padding: const EdgeInsets.only(top: 25),
                               child: Text(
@@ -132,7 +134,7 @@ class ListMembersPage extends GetView<ListMembersController> {
   }
 
   List<Widget> _buildInterestingMembers(BuildContext context) {
-    final interestingMembers = controller.memberships.take(7).toList();
+    final interestingMembers = controller.recommendedMemberships.toList();
 
     final widgets = <Widget>[];
 
@@ -151,17 +153,12 @@ class ListMembersPage extends GetView<ListMembersController> {
   List<Widget> _buildAllMembers(BuildContext context) {
     return controller.memberships.map((membership) {
       Color? statusColor;
-      if (membership.status == 1) {
-        statusColor = const Color(0xFF3CE3B1);
-      } else if (membership.lastVisit != null) {
-        statusColor = const Color(0xFF31C6EE);
-      }
 
       return _buildContactTile(
         context,
         id: membership.user.id,
         name: membership.user.displayName,
-        phone: 'PSICOLOGÍA',
+        phone: '${membership.user.carrera}',
         avatar: membership.user.imageUrl,
         statusColor: statusColor,
       );

@@ -94,7 +94,7 @@ class CommunityDetailController extends GetxController {
   void _loadLastPostContainer() async {
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.value.contentContainerId, 4);
+          space.value.contentContainerId, 5);
 
       final filteredPosts = response.results.where((post) {
         return post.content.files.isNotEmpty;

@@ -58,16 +58,19 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                color: const Color(0xFF8260F2),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.add_box_outlined,
-                color: Colors.white,
-                size: 28,
+            GestureDetector(
+              onTap: () => Get.toNamed("/registered_post"),
+              child: Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8260F2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.add_box_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
             ),
             GestureDetector(

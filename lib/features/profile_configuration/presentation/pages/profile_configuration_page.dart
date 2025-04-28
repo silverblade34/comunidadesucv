@@ -18,112 +18,96 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.bottomLeft,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).padding.top + 80,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        const Color.fromARGB(255, 141, 109, 182),
-                        const Color.fromARGB(255, 87, 47, 139),
-                      ],
-                    ),
-                  ),
+            Container(
+              width: double.infinity,
+              height: 150,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter, // Changed direction to match Reddit
+                  colors: [
+                    const Color(0xFF1A237E), // Darker blue at bottom
+                    const Color(0xFF3949AB), // Lighter blue at top
+                  ],
                 ),
-
-                Positioned.fill(
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        color: Colors.white.withOpacity(0.1),
-                        child: CustomPaint(
-                          painter: GlassEffectPainter(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white.withOpacity(0.05),
-                          Colors.white.withOpacity(0.0),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 0),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.topCenter,
+                children: [
+                  Obx(
+                    () => Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(
+                          top: 60, left: 16, right: 16, bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${controller.user.value.profile!.firstname} ${controller.user.value.profile!.lastname}", // Replace with actual username
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "${controller.user.value.profile!.filial}",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                ),
-
-                // Profile image
-                Positioned(
-                  left: 24,
-                  bottom: -40,
-                  child: Container(
-                    width: 90,
-                    height: 90,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color.fromARGB(255, 148, 98, 212),
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: Offset(0, 3),
+                  Positioned(
+                    top: -45,
+                    left: 30,
+                    child: Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFF7FFFD4),
+                        border: Border.all(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          width: 4,
                         ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: Obx(() => Image.network(
-                            controller.user.value.profile!.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.white),
-                          )),
+                      ),
+                      child: ClipOval(
+                        child: Obx(() =>
+                            controller.user.value.profile?.imageUrl != null
+                                ? Image.network(
+                                    controller.user.value.profile!.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: Colors.white,
+                                  )),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 30,
+                ],
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20),
-                  Text(
-                    'Nombre',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Obx(
-                    () => MyTextField(
-                      hintText:
-                          "${controller.user.value.profile!.firstname} ${controller.user.value.profile!.lastname}",
-                      bgcolor: AppTheme.isLightTheme
-                          ? HexColor('#FFFFFF')
-                          : HexColor('#0E0847'),
-                      enabled: false,
-                    ),
-                  ),
-                  SizedBox(height: 10),
                   Text(
                     'Carrera',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -132,21 +116,6 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                   Obx(
                     () => MyTextField(
                       hintText: "${controller.user.value.profile!.carrera}",
-                      bgcolor: AppTheme.isLightTheme
-                          ? HexColor('#FFFFFF')
-                          : HexColor('#0E0847'),
-                      enabled: false,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Campus',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Obx(
-                    () => MyTextField(
-                      hintText: "${controller.user.value.profile!.filial}",
                       bgcolor: AppTheme.isLightTheme
                           ? HexColor('#FFFFFF')
                           : HexColor('#0E0847'),
@@ -172,7 +141,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                     height: 10,
                   ),
                   Text(
-                    'Nombre de usuario',
+                    'Nombre visible en tu perfil',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
@@ -227,7 +196,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                           }).toList(),
                         )),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 50),
                   Row(
                     children: [
                       Obx(() => Expanded(
@@ -248,10 +217,10 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                                       },
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(vertical: 12),
-                                  backgroundColor: HexColor('#FF5D7E'),
+                                  backgroundColor: HexColor('#635FF6'),
                                   disabledBackgroundColor:
                                       // ignore: deprecated_member_use
-                                      HexColor('#FF5D7E').withOpacity(0.6),
+                                      HexColor('#635FF6').withOpacity(0.6),
                                 ),
                                 child: controller.isLoading.value
                                     ? Row(

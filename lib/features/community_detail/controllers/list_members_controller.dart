@@ -7,6 +7,7 @@ class ListMembersController extends GetxController {
   ListMembershipRepository listMembershipRepository =
       ListMembershipRepository();
   RxList<MembershipInfo> memberships = RxList([]);
+  RxList<MembershipInfo> recommendedMemberships = RxList([]);
 
   @override
   void onInit() {
@@ -16,8 +17,25 @@ class ListMembersController extends GetxController {
 
   void _loadMemberships() async {
     final response = await listMembershipRepository.getSpaceMembers(spaceId);
-    memberships.value = response.results;
-    print("==========================");
-    print(memberships);
+
+    memberships.value = response.results
+        .where((membership) =>
+            membership.user.guid != "72c88b0d-3589-4542-a4ca-15f998e14484")
+        .toList();
+
+    final List<MembershipInfo> recommended = [];
+
+    for (MembershipInfo membership in memberships) {
+      final membershipTags =
+          (membership.user.tags).map((e) => e.toLowerCase()).toSet();
+
+      final hasCommonTags = membershipTags.isNotEmpty;
+
+      if (hasCommonTags) {
+        recommended.add(membership);
+      }
+    }
+
+    recommendedMemberships.assignAll(recommended);
   }
 }

@@ -9,7 +9,9 @@ import 'package:comunidadesucv/features/community_detail/presentation/pages/deta
 import 'package:comunidadesucv/features/community_detail/presentation/pages/forum_page.dart';
 import 'package:comunidadesucv/features/community_detail/presentation/pages/list_members_page.dart';
 import 'package:comunidadesucv/features/community_feed/bindings/community_feed_binding.dart';
+import 'package:comunidadesucv/features/community_feed/bindings/registered_post_binding.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/pages/community_feed_page.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/pages/registered_post_page.dart';
 import 'package:comunidadesucv/features/intro/bindings/intro_binding.dart';
 import 'package:comunidadesucv/features/intro/presentation/pages/intro_page.dart';
 import 'package:comunidadesucv/features/perfil/bindings/perfil_binding.dart';
@@ -73,6 +75,11 @@ abstract class AppPages {
       name: Routes.forum,
       binding: ForumBinding(),
       page: () => const ForumPage(),
+    ),
+    GetPage(
+      name: Routes.registeredPost,
+      binding: RegisteredPostBinding(),
+      page: () => const RegisteredPostPage(),
     ),
   ];
 }
