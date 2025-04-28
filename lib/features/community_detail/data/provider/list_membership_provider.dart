@@ -14,13 +14,13 @@ class ListMembershipProvider {
     tokenAdmin = box.read("tokenAdmin");
   }
 
-  Future<Response> getSpaceMembers(int spaceId) async {
+  Future<Response> getSpaceMembers(int spaceId, int page, int limit) async {
     try {
       Dio dioClient = Dio();
       dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
 
       final response = await dioClient.get(
-        '$baseUrl/space/$spaceId/membership',
+        '$baseUrl/space/$spaceId/membership?page=$page&limit=$limit',
       );
 
       return response;

@@ -5,8 +5,8 @@ import 'package:comunidadesucv/features/community_detail/data/provider/list_memb
 class ListMembershipRepository {
   ListMembershipProvider listMembershipProvider = ListMembershipProvider();
 
-  Future<MembershipsSpaceDto> getSpaceMembers(int spaceId) async {
-    final response = await listMembershipProvider.getSpaceMembers(spaceId);
+  Future<MembershipsSpaceDto> getSpaceMembers(int spaceId, int page, int limit) async {
+    final response = await listMembershipProvider.getSpaceMembers(spaceId, page, limit);
 
     if (response.data == null) {
       throw Exception("No se recibieron datos en la respuesta");
@@ -21,8 +21,6 @@ class ListMembershipRepository {
 
   Future<UserDetail> getMemberId(String memberId) async {
     final response = await listMembershipProvider.getMemberId(memberId);
-    print("====================P");
-    print(response.data);
     if (response.data == null) {
       throw Exception("No se recibieron datos en la respuesta");
     } else if (response.statusCode == 400) {

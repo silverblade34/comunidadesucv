@@ -5,6 +5,7 @@ class AppColors {
   static const Color secondary = Color(0xffFFB200);
   static const Color backgroundLight = Color(0xffF5F4FF);
   static const Color backgroundDark = Color(0xff220C61);
+  static const Color backgroundDarkLigth = Color.fromARGB(128, 149, 117, 205);
   static const Color textBlackUCV = Color(0xFF0E0847);
   static const Color textLight = Color(0xff120C45);
   static const Color textDarkTitle = Color(0xffE5E3FC);
@@ -18,7 +19,7 @@ class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
     if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
+      hexColor = "FF$hexColor";
     }
     return int.parse(hexColor, radix: 16);
   }

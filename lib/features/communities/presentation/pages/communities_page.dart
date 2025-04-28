@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/constants/constance.dart';
 import 'package:comunidadesucv/features/communities/controllers/communities_controller.dart';
 import 'package:comunidadesucv/features/communities/data/dto/space_dto.dart';
@@ -13,89 +14,112 @@ class CommunitiesPage extends GetView<CommunitiesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: controller.scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      extendBodyBehindAppBar: true,
-      body: Stack(
+      extendBodyBehindAppBar: false,
+      body: Column(
         children: [
-          CustomScrollView(
-            clipBehavior: Clip.hardEdge,
-            slivers: [
-              SliverToBoxAdapter(
-                child: SafeArea(
-                  bottom: false,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    margin: const EdgeInsets.only(top: 10, bottom: 0),
-                    child: Column(
-                      children: [
-                        _buildAppBar(),
-                        const SizedBox(height: 20),
-                        _buildAnimatedSearchBar(),
-                      ],
-                    ),
-                  ),
-                ),
+          SafeArea(
+            bottom: false,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              margin: const EdgeInsets.only(top: 10, bottom: 0),
+              child: Column(
+                children: [
+                  _buildAppBar(),
+                  const SizedBox(height: 20),
+                  _buildAnimatedSearchBar(),
+                  const SizedBox(height: 10),
+                ],
               ),
-              Obx(
-                () => SliverToBoxAdapter(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (controller.recommendedCommunities.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          _buildSectionHeader(
-                            icon: Icons.star,
-                            iconColor: Colors.amber,
-                            title: 'Recomendados',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildRecommendedList(),
-                          const SizedBox(height: 24),
-                        ],
-                        const SizedBox(height: 10),
-                        _buildSectionHeader(
-                          icon: Icons.people,
-                          iconColor: Colors.cyan,
-                          title: 'Explora y únete',
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                ),
+            ),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              key: controller.refreshIndicatorKey,
+              onRefresh: controller.refreshCommunities,
+              color: Colors.white,
+              backgroundColor: AppColors.primary,
+              child: Stack(
+                children: [
+                  _buildMainContent(),
+                  const SizedBox.shrink(),
+                ],
               ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                sliver: Obx(() {
-                  return SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 0.85,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final community = controller.dataCommunities[index];
-                        return _buildCommunityCard(community);
-                      },
-                      childCount: controller.dataCommunities.length,
-                    ),
-                  );
-                }),
-              ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: 80),
-              ),
-            ],
+            ),
           ),
         ],
       ),
       extendBody: true,
       bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      clipBehavior: Clip.hardEdge,
+      slivers: [
+        Obx(
+          () => SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Solo mostrar sección de recomendados si no hay búsqueda activa
+                  if (controller.searchQuery.value.isEmpty &&
+                      controller.recommendedCommunities.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _buildSectionHeader(
+                      icon: Icons.star,
+                      iconColor: Colors.amber,
+                      title: 'Recomendados',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildRecommendedList(),
+                    const SizedBox(height: 24),
+                  ],
+                  const SizedBox(height: 10),
+                  _buildSectionHeader(
+                    icon: controller.searchQuery.value.isEmpty
+                        ? Icons.people
+                        : Icons.search,
+                    iconColor: AppColors.primary,
+                    title: controller.searchQuery.value.isEmpty
+                        ? 'Explora y únete'
+                        : 'Resultados',
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          sliver: Obx(() {
+            return SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.85,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final community = controller.filteredCommunities[index];
+                  return _buildCommunityCard(community);
+                },
+                childCount: controller.filteredCommunities.length,
+              ),
+            );
+          }),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: 80),
+        ),
+      ],
     );
   }
 
@@ -110,7 +134,9 @@ class CommunitiesPage extends GetView<CommunitiesController> {
           cacheWidth: 48,
           cacheHeight: 48,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(
+          width: 20,
+        ),
         const Text(
           'Comunidades Digitales',
           style: TextStyle(
@@ -119,36 +145,37 @@ class CommunitiesPage extends GetView<CommunitiesController> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(width: 12),
       ],
     );
   }
 
   Widget _buildAnimatedSearchBar() {
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(128, 149, 117, 205),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 16),
-          Text(
-            'Buscar',
-            style: TextStyle(color: Colors.white70, fontSize: 18),
+    return SizedBox(
+      child: TextField(
+        controller: controller.searchController,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(
+            Icons.search,
+            color: Colors.white,
           ),
-          const Spacer(),
-          Container(
-            margin: const EdgeInsets.all(6),
-            child: Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 18,
-            ),
+          suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, color: Colors.grey),
+                  onPressed: controller.clearSearch,
+                )
+              : const SizedBox()),
+          hintText: 'Buscar comunidad',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
           ),
-          const SizedBox(width: 5),
-        ],
+          filled: true,
+          fillColor: AppColors.backgroundDarkLigth,
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+        ),
+        onChanged: (value) {
+          controller.searchQuery.value = value;
+        },
       ),
     );
   }
@@ -186,7 +213,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
             return _buildRecommendedCard(item);
           },
           cacheExtent: 300,
-          addAutomaticKeepAlives: false,
+          addAutomaticKeepAlives: true,
           addRepaintBoundaries: true,
         ),
       ),
@@ -197,7 +224,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
     return RepaintBoundary(
       child: GestureDetector(
         onTap: () {
-          Get.toNamed("/community_detail", arguments: space.id);
+          Get.offAllNamed("/community_detail", arguments: space.id);
         },
         child: Container(
           margin: const EdgeInsets.only(right: 16),
@@ -213,6 +240,8 @@ class CommunitiesPage extends GetView<CommunitiesController> {
                 child: CachedNetworkImage(
                   imageUrl: space.profileImage,
                   fit: BoxFit.cover,
+                  memCacheWidth: 280,
+                  memCacheHeight: 300,
                   placeholder: (context, url) => Container(
                     color: Colors.grey[800],
                     child: const Center(
@@ -287,6 +316,8 @@ class CommunitiesPage extends GetView<CommunitiesController> {
                 child: CachedNetworkImage(
                   imageUrl: space.profileImage,
                   fit: BoxFit.cover,
+                  memCacheWidth: 400,
+                  memCacheHeight: 400,
                   placeholder: (context, url) => Container(
                     color: Colors.grey[800],
                     child: const Center(
@@ -380,6 +411,8 @@ class CommunitiesPage extends GetView<CommunitiesController> {
                           width: 20,
                           height: 20,
                           fit: BoxFit.cover,
+                          memCacheWidth: 40,
+                          memCacheHeight: 40,
                           placeholder: (context, url) => Container(
                             color: Colors.grey[700],
                             width: 20,

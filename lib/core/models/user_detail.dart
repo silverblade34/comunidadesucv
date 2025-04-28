@@ -45,4 +45,28 @@ class UserDetail {
         "profile": profile?.toJson(),
         "spaces": List<dynamic>.from(spaces.map((x) => x.toJson())),
       };
+
+  factory UserDetail.empty() => UserDetail(
+        id: 0,
+        guid: '',
+        displayName: '',
+        url: '',
+        account: Account(
+          id: 0,
+          guid: '',
+          username: '',
+          email: '',
+          visibility: 0,
+          status: 0,
+          tags: [],
+          language: '',
+          timeZone: '',
+          contentcontainerId: 0,
+          authclient: '',
+          authclientId: null,
+          lastLogin: '',
+        ),
+        profile: null,
+        spaces: [],
+      );
 }

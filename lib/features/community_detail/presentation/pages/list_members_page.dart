@@ -13,123 +13,169 @@ class ListMembersPage extends GetView<ListMembersController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Stack(
-        children: [
-          InkWell(
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            hoverColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Obx(
+        () => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).padding.top,
+            ),
+            Container(
+              height: AppBar().preferredSize.height,
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(
+                      Ionicons.chevron_back,
+                      size: 24,
+                      color: AppTheme.isLightTheme
+                          ? HexColor("#120C45")
+                          : HexColor('#FFFFFF'),
+                    ),
+                  ),
+                  Text(
+                    "Miembros",
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontSize: 16,
+                          color: AppTheme.isLightTheme
+                              ? HexColor("#1A1167")
+                              : HexColor('#E5E3FC'),
+                        ),
+                  ),
+                  SizedBox()
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: TextField(
+                controller: controller.searchController,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  suffixIcon: controller.searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(Icons.clear, color: Colors.grey),
+                          onPressed: () {
+                            controller.searchController.clear();
+                          },
+                        )
+                      : SizedBox(),
+                  hintText: 'Buscar miembros',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.backgroundDarkLigth,
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
+                ),
+                onChanged: (_) => controller.update(),
+              ),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: controller.memberships.isEmpty
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : _buildMembersList(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMembersList(BuildContext context) {
+    return CustomScrollView(
+      controller: controller.scrollController,
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).padding.top,
-                ),
-                Container(
-                  height: AppBar().preferredSize.height,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Icon(
-                          Ionicons.chevron_back,
-                          size: 24,
-                          color: AppTheme.isLightTheme
-                              ? HexColor("#120C45")
-                              : HexColor('#FFFFFF'),
+                // Sección de "Intereses en común" - Solo mostrar si no hay búsqueda
+                if (controller.searchController.text.isEmpty &&
+                    controller.recommendedMemberships.isNotEmpty) ...[
+                  Text(
+                    'Intereses en común',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontSize: 14,
                         ),
-                      ),
-                      Spacer(),
-                      Icon(
-                        Ionicons.search,
-                        size: 24,
-                        color: AppTheme.isLightTheme
-                            ? HexColor("#120C45")
-                            : HexColor('#FFFFFF'),
-                      ),
-                    ],
                   ),
-                ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 15),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _buildInterestingMembers(context),
+                      ),
+                    ),
+                  ),
+                ],
+
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Miembros de la comunidad',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              fontSize: 16,
-                              color: AppTheme.isLightTheme
-                                  ? HexColor("#1A1167")
-                                  : HexColor('#E5E3FC'),
-                            ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
+                  padding: const EdgeInsets.only(top: 25),
+                  child: Text(
+                    controller.searchController.text.isEmpty
+                        ? 'Todos los miembros'
+                        : 'Resultados',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontSize: 14,
+                        ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: Obx(() => controller.memberships.isEmpty
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ListView(
-                          padding: EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              bottom:
-                                  MediaQuery.of(context).padding.bottom + 20),
-                          children: [
-                            if (controller.recommendedMemberships.isNotEmpty) ...[
-                              Text(
-                                'Intereses en común',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                      fontSize: 14,
-                                    ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 15),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: _buildInterestingMembers(context),
-                                  ),
-                                ),
-                              ),
-                            ],
-                            Padding(
-                              padding: const EdgeInsets.only(top: 25),
-                              child: Text(
-                                'Todos los miembros',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                      fontSize: 14,
-                                    ),
-                              ),
-                            ),
-                            ..._buildAllMembers(context),
-                          ],
-                        )),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+        // Lista principal con paginación
+        SliverPadding(
+          padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              bottom: MediaQuery.of(context).padding.bottom + 20),
+          sliver: SliverList.builder(
+            itemCount: controller.filteredMemberships.length +
+                1, // +1 para indicador de carga
+            itemBuilder: (context, index) {
+              // Si llegamos al final y hay más datos, mostrar indicador de carga
+              if (index == controller.filteredMemberships.length) {
+                return Obx(
+                    () => controller.isLoading.value && controller.hasMore.value
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : SizedBox());
+              }
+
+              // Renderizar el item de miembro
+              final membership = controller.filteredMemberships[index];
+              return _buildContactTile(
+                context,
+                id: membership.user.id,
+                name: membership.user.displayName,
+                phone: '${membership.user.carrera}',
+                avatar: membership.user.imageUrl,
+                statusColor: null,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -140,43 +186,33 @@ class ListMembersPage extends GetView<ListMembersController> {
 
     for (var i = 0; i < interestingMembers.length; i++) {
       final member = interestingMembers[i];
-      widgets.add(_buildPinnedContact(context, member.user.imageUrl));
+      widgets.add(
+          _buildPinnedContact(context, member.user.imageUrl, member.user.id));
 
       if (i < interestingMembers.length - 1) {
         widgets.add(const SizedBox(width: 10));
       }
     }
-
+    
     return widgets;
   }
 
-  List<Widget> _buildAllMembers(BuildContext context) {
-    return controller.memberships.map((membership) {
-      Color? statusColor;
-
-      return _buildContactTile(
-        context,
-        id: membership.user.id,
-        name: membership.user.displayName,
-        phone: '${membership.user.carrera}',
-        avatar: membership.user.imageUrl,
-        statusColor: statusColor,
-      );
-    }).toList();
-  }
-
-  Widget _buildPinnedContact(BuildContext context, String avatarUrl) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          image: NetworkImage(avatarUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
+  Widget _buildPinnedContact(
+      BuildContext context, String avatarUrl, int userId) {
+    return GestureDetector(
+        onTap: () =>
+            Get.toNamed("/detail_member", arguments: userId.toString()),
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: NetworkImage(avatarUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ));
   }
 
   Widget _buildContactTile(
