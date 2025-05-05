@@ -1,3 +1,6 @@
+import 'package:comunidadesucv/features/communities/data/dto/space_dto.dart';
+import 'package:comunidadesucv/features/community_detail/data/dto/content_space_dto.dart';
+import 'package:comunidadesucv/features/community_feed/data/repository/registered_post_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -5,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 class MediaAttachment {
   final String? url;
-  final String? path; // For local files
+  final String? path;
   final bool isFile;
   final MediaType type;
 
@@ -28,20 +31,21 @@ class Community {
 }
 
 class RegisteredPostController extends GetxController {
-  final TextEditingController titleController = TextEditingController();
+  final Space space = Get.arguments;
+
   final TextEditingController bodyController = TextEditingController();
 
   final ImagePicker _picker = ImagePicker();
 
+  final RxBool isPublishing = false.obs;
   final RxList<MediaAttachment> mediaAttachments = <MediaAttachment>[].obs;
-  final Rx<Community?> selectedCommunity = Rx<Community?>(null);
+  RegisteredPostRepository registeredPostRepository =
+      RegisteredPostRepository();
 
   @override
   void onInit() {
     super.onInit();
     // Initialize with a default community if needed
-    selectedCommunity.value =
-        Community(id: '1', name: 'Cualquier...', imageUrl: null);
   }
 
   Future<void> pickImageFromGallery() async {
@@ -61,8 +65,6 @@ class RegisteredPostController extends GetxController {
         }
       }
     } catch (e) {
-      print("=============================");
-      print(e.toString());
       Get.snackbar(
         'Error',
         'No se pudo seleccionar la imagen: $e',
@@ -94,8 +96,6 @@ class RegisteredPostController extends GetxController {
         ));
       }
     } catch (e) {
-      print("=============================");
-      print(e.toString());
       Get.snackbar(
         'Error',
         'No se pudo tomar la foto: $e',
@@ -141,101 +141,62 @@ class RegisteredPostController extends GetxController {
     );
   }
 
-  void showMoreOptions() {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(Icons.poll),
-              title: Text('Crear encuesta'),
-              onTap: () {
-                Get.back();
-                // Implement poll creation
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.link),
-              title: Text('Añadir enlace'),
-              onTap: () {
-                Get.back();
-                // Implement link addition
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.document_scanner),
-              title: Text('Añadir documento'),
-              onTap: () {
-                Get.back();
-                // Implement document addition
-              },
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-    );
-  }
-
-  void publishPost() {
-    // Implement post publishing logic
-    if (titleController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Por favor, añade un título a tu publicación',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+  Future<void> publishPost() async {
+    if (bodyController.text.isEmpty) {
       return;
     }
 
-    // Here you would upload the media files and create the post
-    Get.snackbar(
-      'Éxito',
-      'Publicación creada correctamente',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    Get.back();
+    try {
+      isPublishing.value = true;
+
+      Post publishedPost = await registeredPostRepository.publishPostMessage(
+          bodyController.text, space.contentContainerId);
+
+      if (mediaAttachments.isNotEmpty) {
+        try {
+          await uploadFilesForPost(publishedPost.id);
+
+          Get.snackbar(
+            'Éxito',
+            'Publicación con archivos creada correctamente',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } catch (fileError) {
+          Get.snackbar(
+            'Advertencia',
+            'Publicación creada, pero hubo problemas al subir los archivos: $fileError',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Éxito',
+          'Publicación creada correctamente',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+
+      Get.offAllNamed("/community_feed", arguments: space);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudo crear la publicación: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      isPublishing.value = false;
+    }
   }
 
-  void schedulePost() {
-    // Implement post scheduling logic
-    Get.dialog(
-      AlertDialog(
-        title: Text('Programar publicación'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-                'Esta función te permite programar tu publicación para una fecha y hora específicas.'),
-            SizedBox(height: 16),
-            // Add date and time pickers here
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // Implement scheduling logic
-              Get.back();
-            },
-            child: Text('Programar'),
-          ),
-        ],
-      ),
-    );
+  Future<void> uploadFilesForPost(int postId) async {
+    try {
+      await registeredPostRepository.uploadFilesPost(mediaAttachments, postId);
+    } catch (e) {
+      throw Exception("Error al subir archivos: $e");
+    }
   }
 
   @override
   void onClose() {
-    titleController.dispose();
     bodyController.dispose();
     super.onClose();
   }

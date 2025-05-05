@@ -1,37 +1,53 @@
 import 'dart:typed_data';
 
-import 'package:comunidadesucv/core/models/comment.dart';
+import 'package:comunidadesucv/core/models/comment_status.dart';
+import 'package:comunidadesucv/core/models/pending_comment.dart';
 import 'package:comunidadesucv/core/models/user_detail.dart';
 import 'package:comunidadesucv/features/communities/data/dto/space_dto.dart';
 import 'package:comunidadesucv/features/community_detail/data/dto/content_space_dto.dart';
 import 'package:comunidadesucv/features/community_detail/data/repository/community_detail_repository.dart';
+import 'package:comunidadesucv/features/community_feed/data/repository/community_feed_repository.dart';
 import 'package:comunidadesucv/features/splash/data/repository/splash_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
 class CommunityFeedController extends GetxController {
+  final box = GetStorage();
+
   final Space space = Get.arguments;
+
   SplashRepository splashRepository = SplashRepository();
   CommunityDetailRepository communityDetailRepository =
       CommunityDetailRepository();
+  CommunityFeedRepository communityFeedRepository = CommunityFeedRepository();
 
-  final RxList<Post> dataPost = <Post>[].obs;
   var isLoading = false.obs;
-  final box = GetStorage();
-
+  final RxList<Post> dataPost = <Post>[].obs;
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
   final RxMap<int, bool> userLikes = <int, bool>{}.obs;
-  final RxMap<int, List<Comment>> postComments = <int, List<Comment>>{}.obs;
 
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: null,
-      profile: null,
-      spaces: []).obs;
+  final RxSet<int> likedCommentIds = <int>{}.obs;
+  final RxSet<int> likedCommentOfCommentIds = <int>{}.obs;
+
+  final pendingComments = <PendingComment>[].obs;
+  final postVisualizingComments = <CommentItem>[].obs;
+
+  final Rx<UserDetail> user = UserDetail.empty().obs;
+  final Set<int> expandedCommentIds = <int>{};
+
+  // Variables para la gestión de comentarios
+  final RxList<CommentItem> comments = <CommentItem>[].obs;
+  bool isInitialCommentsLoading = false;
+  bool isLoadingMoreComments = false;
+  bool isAddingComment = false;
+  bool noMoreCommentsToLoad = false;
+
+  // Variables para la paginación
+  int currentPage = 1;
+  final int commentLimit = 10;
+  int? currentPostId;
 
   @override
   void onInit() async {
@@ -40,6 +56,7 @@ class CommunityFeedController extends GetxController {
     _loadLastPostContainer();
   }
 
+  // Carga de los datos del usuario
   void _loadUser() async {
     var userData = box.read("user");
     if (userData != null) {
@@ -51,7 +68,105 @@ class CommunityFeedController extends GetxController {
     }
   }
 
-  void toggleLike(int postId) {
+  // Método para alternar la expansión de respuestas para un comentario
+  void toggleCommentExpansion(int commentId, int postId, int objectId) {
+    if (expandedCommentIds.contains(commentId)) {
+      expandedCommentIds.remove(commentId);
+    } else {
+      expandedCommentIds.add(commentId);
+    }
+    update(['comments-list-$objectId']);
+  }
+
+  void initCommentLoading(int objectId) {
+    comments.clear();
+    isInitialCommentsLoading = true;
+    currentPage = 1;
+    noMoreCommentsToLoad = false;
+    currentPostId = objectId;
+    update(['comments-list-$objectId']);
+
+    getCommentsByPost(objectId);
+  }
+
+  // Obtener comentarios por post (primera carga)
+  Future<void> getCommentsByPost(int objectId) async {
+    try {
+      final response = await communityFeedRepository.getComments(
+          objectId, currentPage, commentLimit);
+
+      comments.assignAll(response.results);
+
+      // Verificar si hay más páginas para cargar
+      noMoreCommentsToLoad = currentPage >= response.pages;
+
+      isInitialCommentsLoading = false;
+      update(['comments-list-$objectId']);
+    } catch (e) {
+      isInitialCommentsLoading = false;
+      update(['comments-list-$objectId']);
+    }
+  }
+
+  // Cargar más comentarios (paginación)
+  Future<void> loadMoreComments(int objectId) async {
+    if (isLoadingMoreComments || noMoreCommentsToLoad) return;
+
+    isLoadingMoreComments = true;
+    update(['comments-list-$objectId']);
+
+    try {
+      currentPage++;
+      final response = await communityFeedRepository.getComments(
+          objectId, currentPage, commentLimit);
+
+      // Agregar nuevos comentarios a la lista existente
+      comments.addAll(response.results);
+
+      // Verificar si hay más páginas para cargar
+      noMoreCommentsToLoad = currentPage >= response.pages;
+
+      isLoadingMoreComments = false;
+      update(['comments-list-$objectId']);
+    } catch (e) {
+      currentPage--; // Revertir incremento de página si hay error
+      isLoadingMoreComments = false;
+      update(['comments-list-$objectId']);
+    }
+  }
+
+  // Refrescar comentarios (pull to refresh)
+  Future<void> refreshComments(int objectId) async {
+    currentPage = 1;
+    noMoreCommentsToLoad = false;
+
+    try {
+      final response = await communityFeedRepository.getComments(
+          objectId, currentPage, commentLimit);
+
+      comments.assignAll(response.results);
+
+      // Verificar si hay más páginas para cargar
+      noMoreCommentsToLoad = currentPage >= response.pages;
+
+      update(['comments-list-$objectId']);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron refrescar los comentarios',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[400],
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Método para verificar si un comentario tiene sus respuestas expandidas
+  bool isCommentExpanded(int commentId) {
+    return expandedCommentIds.contains(commentId);
+  }
+
+  void toggleLikePost(int postId) async {
     if (userLikes.containsKey(postId)) {
       userLikes[postId] = !userLikes[postId]!;
     } else {
@@ -59,37 +174,195 @@ class CommunityFeedController extends GetxController {
     }
 
     final postIndex = dataPost.indexWhere((post) => post.id == postId);
+
     if (postIndex != -1) {
       if (userLikes[postId]!) {
-        dataPost[postIndex].content.likes.total++;
+        try {
+          dataPost[postIndex].content.likes.total++;
+          await communityFeedRepository.addLike(
+              dataPost[postIndex].content.metadata.objectModel,
+              dataPost[postIndex].content.metadata.objectId);
+        } catch (e) {
+          dataPost[postIndex].content.likes.total--;
+        }
       } else {
-        dataPost[postIndex].content.likes.total--;
+        try {
+          dataPost[postIndex].content.likes.total--;
+          await communityFeedRepository.addLike(
+              dataPost[postIndex].content.metadata.objectModel,
+              dataPost[postIndex].content.metadata.objectId);
+        } catch (e) {
+          dataPost[postIndex].content.likes.total++;
+        }
       }
     }
   }
 
-  void addComment(int postId, String text) {
+  Future<void> addCommentPost({
+    required int postId,
+    required String text,
+    required int objectId,
+  }) async {
     if (text.trim().isEmpty) return;
 
-    final comment = Comment(
-      id: DateTime.now().millisecondsSinceEpoch,
-      text: text,
-      username:
-          "${user.value.profile?.firstname ?? ""} ${user.value.profile?.lastname ?? ""}",
-      userImage: user.value.profile!.imageUrl,
-      timestamp: DateTime.now(),
-    );
+    isAddingComment = true;
+    update(['comment-submit-btn']);
 
-    if (!postComments.containsKey(postId)) {
-      postComments[postId] = <Comment>[].obs;
+    final postIndex = dataPost.indexWhere((post) => post.id == postId);
+    if (postIndex == -1) {
+      Get.snackbar('Error', 'No se encontró la publicación');
+      return;
     }
 
-    postComments[postId]!.add(comment);
+    final objectModel = dataPost[postIndex].content.metadata.objectModel;
+    final objectId = dataPost[postIndex].content.metadata.objectId;
 
-    // Actualiza el conteo de comentarios en el post
-    final postIndex = dataPost.indexWhere((post) => post.id == postId);
-    if (postIndex != -1) {
-      dataPost[postIndex].content.comments.total++;
+    final pendingId = DateTime.now().millisecondsSinceEpoch.toString();
+    final newComment = PendingComment(
+      id: pendingId,
+      postId: postId,
+      message: text,
+      status: CommentStatus.sending,
+      createdBy: CreatedBy(
+          id: 1,
+          guid: "guid",
+          displayName:
+              "${user.value.profile!.firstname} ${user.value.profile!.lastname}",
+          url: "${user.value.profile!.url}",
+          // ignore: unnecessary_string_interpolations
+          imageUrl: "${user.value.profile!.imageUrl}",
+          // ignore: unnecessary_string_interpolations
+          imageUrlOrg: "${user.value.profile!.imageUrlOrg}",
+          // ignore: unnecessary_string_interpolations
+          bannerUrl: "${user.value.profile!.bannerUrl}",
+          // ignore: unnecessary_string_interpolations
+          bannerUrlOrg: "${user.value.profile!.bannerUrlOrg}",
+          tags: [],
+          carrera: "",
+          filial: ""),
+      createdAt: DateTime.now().toIso8601String(),
+    );
+
+    pendingComments.add(newComment);
+
+    update(['comments-list-$objectId']);
+
+    dataPost[postIndex].content.comments.total++;
+
+    try {
+      final commentSaved =
+          await communityFeedRepository.addComment(objectModel, objectId, text);
+
+      pendingComments.removeWhere((c) => c.id == pendingId);
+
+      comments.insert(0, commentSaved);
+
+      update(['comments-list-$objectId']);
+
+      isAddingComment = false;
+      update(['comment-submit-btn']);
+    } catch (e) {
+      final failedCommentIndex =
+          pendingComments.indexWhere((c) => c.id == pendingId);
+
+      if (failedCommentIndex != -1) {
+        pendingComments[failedCommentIndex].status = CommentStatus.failed;
+        update(['comments-list-$objectId']);
+      }
+
+      dataPost[postIndex].content.comments.total--;
+    }
+  }
+
+  Future<bool> likeComment(CommentItem comment, int objectId) async {
+    try {
+      bool success = await communityFeedRepository.addLike(
+          "humhub\\modules\\comment\\models\\Comment", comment.id);
+
+      if (success) {
+        // Buscar el comentario en la lista y actualizar su estado
+        final index = comments.indexWhere((item) => item.id == comment.id);
+        if (index != -1) {
+          final updatedComment = comments[index];
+
+          // Verificar si el comentario ya está en nuestra lista de likes
+          final bool currentLikedState = likedCommentIds.contains(comment.id);
+
+          // Actualizar nuestra lista de comentarios con like
+          if (!currentLikedState) {
+            likedCommentIds.add(comment.id);
+            updatedComment.likes.total += 1;
+          } else {
+            likedCommentIds.remove(comment.id);
+            if (updatedComment.likes.total > 0) {
+              updatedComment.likes.total -= 1;
+            }
+          }
+
+          // Actualizar el comentario en la lista
+          comments[index] = updatedComment;
+
+          // Refrescar la UI
+          update(['comments-list-$objectId']);
+        }
+      }
+
+      return success;
+    } catch (e) {
+      print("Error liking comment: ${e.toString()}");
+      return false;
+    }
+  }
+
+  // Ahora, en tu controlador, añadimos la función para manejar likes en comentarios anidados
+  Future<bool> likeNestedComment(
+      CommentItem nestedComment, int objectId, int parentCommentId) async {
+    try {
+      bool success = await communityFeedRepository.addLike(
+          "humhub\\modules\\comment\\models\\Comment", nestedComment.id);
+
+      if (success) {
+        // Verificamos si el comentario ya tiene like
+        final bool currentLikedState =
+            likedCommentOfCommentIds.contains(nestedComment.id);
+
+        // Actualizamos la lista de likes
+        if (!currentLikedState) {
+          likedCommentOfCommentIds.add(nestedComment.id);
+        } else {
+          likedCommentOfCommentIds.remove(nestedComment.id);
+        }
+
+        // Buscar el comentario padre en la lista
+        final parentIndex =
+            comments.indexWhere((item) => item.id == parentCommentId);
+        if (parentIndex != -1 && comments[parentIndex].comments != null) {
+          // Buscar el comentario anidado dentro del padre
+          final nestedIndex = comments[parentIndex]
+              .comments!
+              .indexWhere((item) => item.id == nestedComment.id);
+
+          if (nestedIndex != -1) {
+            // Actualizar el contador de likes
+            if (!currentLikedState) {
+              comments[parentIndex].comments![nestedIndex].likes.total += 1;
+            } else if (comments[parentIndex]
+                    .comments![nestedIndex]
+                    .likes
+                    .total >
+                0) {
+              comments[parentIndex].comments![nestedIndex].likes.total -= 1;
+            }
+
+            update(['replies-comment-$parentCommentId']);
+          }
+        }
+      }
+
+      return success;
+    } catch (e) {
+      print("Error liking nested comment: ${e.toString()}");
+      return false;
     }
   }
 
@@ -113,6 +386,18 @@ class CommunityFeedController extends GetxController {
     if (response.statusCode == 200) {
       imagesMap[idFile] = response.bodyBytes;
     }
+  }
+
+  Future<void> retryComment(String pendingId, int objectId) async {
+    final pendingIndex = pendingComments.indexWhere((c) => c.id == pendingId);
+    if (pendingIndex == -1) return;
+
+    final comment = pendingComments[pendingIndex];
+    comment.status = CommentStatus.sending;
+    update(['comments-${comment.postId}']);
+
+    await addCommentPost(
+        postId: comment.postId, text: comment.message, objectId: objectId);
   }
 
   void _loadLastPostContainer() async {

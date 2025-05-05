@@ -70,7 +70,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
                   // Solo mostrar sección de recomendados si no hay búsqueda activa
                   if (controller.searchQuery.value.isEmpty &&
                       controller.recommendedCommunities.isNotEmpty) ...[
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     _buildSectionHeader(
                       icon: Icons.star,
                       iconColor: Colors.amber,
@@ -166,7 +166,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
               : const SizedBox()),
           hintText: 'Buscar comunidad',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
           filled: true,
@@ -302,7 +302,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
     return RepaintBoundary(
       child: GestureDetector(
         onTap: () {
-          Get.toNamed("/community_detail", arguments: space.id);
+          Get.offAllNamed("/community_detail", arguments: space.id);
         },
         child: Container(
           decoration: BoxDecoration(

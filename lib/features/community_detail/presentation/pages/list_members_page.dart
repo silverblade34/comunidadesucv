@@ -70,7 +70,7 @@ class ListMembersPage extends GetView<ListMembersController> {
                       : SizedBox(),
                   hintText: 'Buscar miembros',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
@@ -193,7 +193,7 @@ class ListMembersPage extends GetView<ListMembersController> {
         widgets.add(const SizedBox(width: 10));
       }
     }
-    
+
     return widgets;
   }
 

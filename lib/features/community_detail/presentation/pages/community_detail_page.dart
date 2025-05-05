@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
 import 'package:comunidadesucv/features/community_detail/presentation/widgets/members_avatar_row.dart';
 import 'package:confetti/confetti.dart';
@@ -85,23 +86,29 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                         ),
                         _buildMenuItem(
                           icon: Icons.bookmark_border,
-                          label: "Timeline",
+                          label: "Publicaciones",
                           iconBackgroundColor: Colors.blue,
-                          onTap: () => Get.offAllNamed("/community_feed",
-                              arguments: controller.space.value),
+                          onTap: () {
+                            if (controller.isButtonMember.value) {
+                              Get.offAllNamed("/community_feed",
+                                  arguments: controller.space.value);
+                            } else {
+                              showCustomDialog();
+                            }
+                          },
                         ),
                         _buildMenuItem(
                           icon: Icons.calendar_today,
-                          label: "Eventos",
+                          label: "Agenda UCV",
                           iconBackgroundColor: Colors.purple.shade300,
-                          onTap: () => Get.toNamed("/events",
+                          onTap: () => Get.offAllNamed("/events",
                               arguments: controller.space.value),
                         ),
                         _buildMenuItem(
                           icon: Icons.group,
-                          label: "Foros",
+                          label: "Lo que dice la comunidad",
                           iconBackgroundColor: Colors.orange,
-                          onTap: () => Get.toNamed("/forum",
+                          onTap: () => Get.offAllNamed("/forum",
                               arguments: controller.space.value),
                         )
                       ],
@@ -200,6 +207,61 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
           )
         ],
       ),
+    );
+  }
+
+  void showCustomDialog() {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.textBlackUCV,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10.0)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.lock, size: 40, color: Colors.red),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Acceso restringido",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                "Esta sección es exclusiva para miembros de la comunidad.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.backgroundDarkLigth,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                ),
+                onPressed: () => Get.back(),
+                child: Text("Entendido", style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
     );
   }
 

@@ -1,12 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comunidadesucv/config/constants/colors.dart';
-import 'package:comunidadesucv/config/constants/constance.dart';
+import 'package:comunidadesucv/core/models/comment_status.dart';
+import 'package:comunidadesucv/core/models/pending_comment.dart';
 import 'package:comunidadesucv/features/community_detail/data/dto/content_space_dto.dart';
 import 'package:comunidadesucv/features/community_feed/controllers/community_feed_controller.dart';
-import 'package:flutter/services.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/animated_counter.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/animated_search.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/commentlike_button_animation.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/community_title.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/replylike_button_animation.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/simplelike_button_animation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CommunityFeedPage extends GetView<CommunityFeedController> {
   const CommunityFeedPage({super.key});
@@ -18,12 +27,16 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            CommunityTitle(
+              controller: controller,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildAnimatedSearchBar(),
+              child: AnimatedSearch(),
             ),
-            _buildCommunityTitle(),
+            SizedBox(
+              height: 15,
+            ),
             Expanded(
               child: _buildFeedContent(),
             ),
@@ -38,6 +51,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.black.withOpacity(0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -59,7 +73,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
               ),
             ),
             GestureDetector(
-              onTap: () => Get.toNamed("/registered_post"),
+              onTap: () => Get.offAllNamed("/registered_post", arguments: controller.space),
               child: Container(
                 padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
@@ -90,152 +104,6 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        children: [
-          Image.asset(
-            ConstanceData.LogoUcv,
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'Comunidades Digitales',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 19,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAnimatedSearchBar() {
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(128, 149, 117, 205),
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 16),
-          Text(
-            'Buscar',
-            style: TextStyle(color: Colors.white70, fontSize: 18),
-          ),
-          const Spacer(),
-          Container(
-            margin: const EdgeInsets.all(6),
-            child: Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 5),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCommunityTitle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      child: Row(
-        children: [
-          Text(
-            controller.space.name,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          SizedBox(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: controller.space.lastMemberships.isEmpty
-                      ? 0
-                      : controller.space.lastMemberships.length == 1
-                          ? 28
-                          : controller.space.lastMemberships.length == 2
-                              ? 28 + 13
-                              : controller.space.lastMemberships.length >= 3
-                                  ? 28 + 13 + 13
-                                  : 0,
-                  height: 28,
-                  child: Stack(
-                    children: [
-                      if (controller.space.lastMemberships.isNotEmpty)
-                        Positioned(
-                          right: 0,
-                          child: ClipOval(
-                            child: Image.network(
-                              controller.space.lastMemberships[0].user.imageUrl,
-                              width: 20,
-                              height: 20,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      if (controller.space.lastMemberships.length > 1)
-                        Positioned(
-                          right: 15, // 32 * 0.7 = aproximadamente 22
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1),
-                            ),
-                            child: ClipOval(
-                              child: Image.network(
-                                controller
-                                    .space.lastMemberships[1].user.imageUrl,
-                                width: 20,
-                                height: 20,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (controller.space.lastMemberships.length > 2)
-                        Positioned(
-                          right: 30, // (32 * 0.7) * 2 = aproximadamente 44
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1),
-                            ),
-                            child: ClipOval(
-                              child: Image.network(
-                                controller
-                                    .space.lastMemberships[2].user.imageUrl,
-                                width: 20,
-                                height: 20,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFeedContent() {
     return Obx(() {
       if (controller.isLoading.value) {
@@ -252,7 +120,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
 
       return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        separatorBuilder: (context, index) => const SizedBox(height: 20),
+        separatorBuilder: (context, index) => const SizedBox(height: 1),
         itemCount: controller.dataPost.length,
         itemBuilder: (context, index) {
           final post = controller.dataPost[index];
@@ -380,34 +248,15 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
               padding: const EdgeInsets.all(15),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      controller.toggleLike(postId);
-                      HapticFeedback.lightImpact();
-                    },
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, animation) => ScaleTransition(
-                        scale: animation,
-                        child: child,
-                      ),
-                      child: Icon(
-                        controller.userLikes[postId] == true
-                            ? Icons.favorite
-                            : Icons.favorite_border_outlined,
-                        color: controller.userLikes[postId] == true
-                            ? Colors.red
-                            : Colors.pink,
-                        size: 28,
-                        key: ValueKey<bool>(
-                            controller.userLikes[postId] == true),
-                      ),
-                    ),
+                  SimpleLikeButtonAnimation(
+                    postId: postId,
+                    isLiked: controller.userLikes[postId] == true,
+                    onToggle: (id) => controller.toggleLikePost(id),
                   ),
                   const SizedBox(width: 5),
-                  Text(
-                    '${post.content.likes.total}',
-                    style: const TextStyle(
+                  AnimatedCounter(
+                    count: post.content.likes.total,
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                     ),
@@ -415,7 +264,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                   const SizedBox(width: 20),
                   GestureDetector(
                     onTap: () {
-                      _showCommentsModal(context, postId);
+                      _showCommentsModal(context, post);
                     },
                     child: const Icon(
                       Icons.chat_bubble_outline,
@@ -440,8 +289,14 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
     );
   }
 
-  void _showCommentsModal(BuildContext context, int postId) {
+  // Modal de los comentarios del Post con paginación y efectos de shimmer
+  void _showCommentsModal(BuildContext context, Post post) async {
     final TextEditingController commentController = TextEditingController();
+    final int postId = post.id;
+    final int objectId = post.content.metadata.objectId;
+
+    // Iniciar carga de comentarios antes de mostrar el modal
+    controller.initCommentLoading(objectId);
 
     Get.bottomSheet(
       Container(
@@ -450,12 +305,13 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         decoration: const BoxDecoration(
           color: AppColors.textBlackUCV,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(40),
+            topRight: Radius.circular(40),
           ),
         ),
         child: Column(
           children: [
+            const SizedBox(height: 10),
             Container(
               width: 40,
               height: 5,
@@ -465,155 +321,724 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Título
-            const Text(
+            Text(
               'Comentarios',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 20),
-
             Expanded(
-              child: Obx(() {
-                final comments = controller.postComments[postId] ?? [];
-
-                if (comments.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No hay comentarios aún',
-                      style: TextStyle(color: Colors.white70, fontSize: 15),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: comments.length,
-                  itemBuilder: (context, index) {
-                    final comment = comments[index];
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipOval(
-                            child: Image.network(
-                              comment.userImage,
-                              width: 35,
-                              height: 35,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.person,
-                                    size: 35, color: Colors.grey);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  comment.username,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  comment.text,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }),
+              child: _buildCommentsListWithPagination(objectId, postId),
             ),
-
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.grey[800],
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  ClipOval(
-                    child: Image.network(
-                      controller.user.value.profile!.imageUrl,
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.person,
-                            size: 30, color: Colors.grey);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: commentController,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
-                      decoration: const InputDecoration(
-                        hintText: 'Agregar comentario...',
-                        hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      if (commentController.text.isNotEmpty) {
-                        controller.addComment(postId, commentController.text);
-                        commentController.clear();
-                        FocusScope.of(context).unfocus();
-                      }
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4169E1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.arrow_upward,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildCommentInput(context, commentController, postId, objectId),
           ],
         ),
       ),
       isScrollControlled: true,
       enableDrag: true,
     );
+  }
+
+  // Widget para construir la lista de comentarios con paginación
+  Widget _buildCommentsListWithPagination(int objectId, int postId) {
+    return GetBuilder<CommunityFeedController>(
+      id: 'comments-list-$objectId',
+      builder: (ctrl) {
+        final pendingForThisPost = controller.pendingComments
+            .where((c) => c.postId == postId)
+            .toList();
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            // Detectar cuando el usuario llegó al final para cargar más comentarios
+            if (!ctrl.isLoadingMoreComments &&
+                !ctrl.noMoreCommentsToLoad &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.8) {
+              ctrl.loadMoreComments(objectId);
+            }
+            return false;
+          },
+          child: RefreshIndicator(
+            onRefresh: () => ctrl.refreshComments(objectId),
+            color: AppColors.textBlackUCV,
+            backgroundColor: Colors.grey[800],
+            child: ctrl.isInitialCommentsLoading
+                ? _buildCommentsShimmer()
+                : (ctrl.comments.isEmpty && pendingForThisPost.isEmpty)
+                    ? _buildEmptyComments()
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: pendingForThisPost.length +
+                            ctrl.comments.length +
+                            (ctrl.isLoadingMoreComments ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          // Si es el último item y estamos cargando más, mostrar indicador
+                          if (index == ctrl.comments.length &&
+                              ctrl.isLoadingMoreComments) {
+                            return _buildLoadingMoreIndicator();
+                          }
+
+                          if (index < pendingForThisPost.length) {
+                            return _buildPendingCommentItem(
+                                pendingForThisPost[index], objectId);
+                          }
+                          final commentIndex =
+                              index - pendingForThisPost.length;
+
+                          // Mostrar comentario normal
+                          return _buildCommentItem(
+                              ctrl.comments[commentIndex], postId, objectId);
+                        },
+                      ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Widget for displaying pending comments
+  Widget _buildPendingCommentItem(PendingComment pendingComment, int objectId) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipOval(
+            child: Image.network(
+              pendingComment.createdBy.imageUrl,
+              width: 35,
+              height: 35,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.person, size: 35, color: Colors.grey);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      pendingComment.createdBy.displayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      _formatDate(pendingComment.createdAt),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  pendingComment.message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 5),
+
+                // Status indicator
+                if (pendingComment.status == CommentStatus.sending)
+                  const Text(
+                    'Publicando...',
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic),
+                  )
+                else if (pendingComment.status == CommentStatus.failed)
+                  GestureDetector(
+                    onTap: () =>
+                        controller.retryComment(pendingComment.id, objectId),
+                    child: const Text(
+                      'No se pudo enviar. Toca para volver a intentarlo.',
+                      style: TextStyle(color: Colors.redAccent, fontSize: 12),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para mostrar efecto shimmer durante la carga inicial
+  Widget _buildCommentsShimmer() {
+    return ListView.builder(
+      itemCount: 5, // Número de placeholders de shimmer
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[800]!,
+            highlightColor: Colors.grey[700]!,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Avatar placeholder
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre usuario placeholder
+                      Container(
+                        height: 12,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Contenido comentario placeholder
+                      Container(
+                        height: 10,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        height: 10,
+                        width: MediaQuery.of(Get.context!).size.width * 0.6,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Widget para mostrar mensaje cuando no hay comentarios
+  Widget _buildEmptyComments() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.chat_bubble_outline, size: 60, color: Colors.grey[600]),
+          const SizedBox(height: 16),
+          Text(
+            'No hay comentarios todavía',
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '¡Sé el primero en comentar!',
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// Ahora, modificamos la función _buildCommentItem para integrar nuestro nuevo widget
+  Widget _buildCommentItem(CommentItem comment, int postId, int objectId) {
+    final String timeAgo = _formatDate(comment.createdAt);
+    // Verificamos si el comentario actual está en la lista de likes del usuario
+    final bool isLiked = controller.likedCommentIds.contains(comment.id);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: comment.createdBy.imageUrl,
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                width: 40,
+                height: 40,
+                color: Colors.grey[800],
+              ),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.person,
+                size: 40,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        comment.createdBy.displayName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      timeAgo,
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                parseMessage(comment.message, 14),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    CommentLikeButtonAnimation(
+                      commentId: comment.id,
+                      isLiked: isLiked,
+                      comment: comment,
+                      onToggle: (commentItem) {
+                        controller.likeComment(commentItem, objectId);
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: () {
+                        // Lógica para responder al comentario
+                      },
+                      child: Text(
+                        'Responder',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Mostrar botón "Ver X respuestas" si el comentario tiene respuestas
+                if ((comment.commentsCount ?? 0) > 0 &&
+                    comment.comments != null)
+                  _buildRepliesSection(comment, postId, objectId),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  RichText parseMessage(String message, double fontSizeText) {
+    final mentionRegex =
+        RegExp(r'\[([^\]]+)\]\(mention:([^\s]+)\s+"([^"]+)"\)');
+    final spans = <TextSpan>[];
+
+    int start = 0;
+
+    for (final match in mentionRegex.allMatches(message)) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: message.substring(start, match.start)));
+      }
+
+      final name = match.group(1)!;
+      final guid = match.group(2)!;
+      final url = match.group(3)!;
+
+      spans.add(
+        TextSpan(
+          text: name,
+          style: const TextStyle(
+            color: Colors.blue,
+            fontWeight: FontWeight.bold,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              // Aquí puedes manejar la navegación al perfil
+              print('Ir a perfil: $url (guid: $guid)');
+            },
+        ),
+      );
+
+      start = match.end;
+    }
+
+    if (start < message.length) {
+      spans.add(TextSpan(text: message.substring(start)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        children: spans,
+        style: TextStyle(color: Colors.white, fontSize: fontSizeText),
+      ),
+    );
+  }
+
+  // Widget para mostrar indicador de carga al cargar más comentarios
+  Widget _buildLoadingMoreIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[400]!),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget para el campo de entrada de comentarios
+  Widget _buildCommentInput(BuildContext context,
+      TextEditingController commentController, int postId, int objectId) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        children: [
+          GetBuilder<CommunityFeedController>(
+            builder: (ctrl) => ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: ctrl.user.value.profile!.imageUrl,
+                width: 30,
+                height: 30,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: 30,
+                  height: 30,
+                  color: Colors.grey[700],
+                ),
+                errorWidget: (context, error, stackTrace) {
+                  return const Icon(Icons.person, size: 30, color: Colors.grey);
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: commentController,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
+              decoration: const InputDecoration(
+                hintText: '¿Qué opinas sobre esto?',
+                hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          GetBuilder<CommunityFeedController>(
+            id: 'comment-submit-btn',
+            builder: (ctrl) => GestureDetector(
+              onTap: ctrl.isAddingComment
+                  ? null
+                  : () {
+                      if (commentController.text.isNotEmpty) {
+                        ctrl.addCommentPost(
+                            postId: postId,
+                            text: commentController.text,
+                            objectId: objectId);
+                        commentController.clear();
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: ctrl.isAddingComment
+                      ? Colors.grey[600]
+                      : const Color(0xFF4169E1),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: ctrl.isAddingComment
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(
+                          Icons.arrow_upward,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget para mostrar la sección de respuestas (botón de expandir o lista de respuestas)
+  Widget _buildRepliesSection(CommentItem comment, int postId, int objectId) {
+    final isExpanded = controller.isCommentExpanded(comment.id);
+
+    return GetBuilder<CommunityFeedController>(
+      id: 'replies-comment-${comment.id}',
+      builder: (_) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 5),
+            GestureDetector(
+              onTap: () => controller.toggleCommentExpansion(
+                  comment.id, postId, objectId),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                  isExpanded
+                      ? 'Ocultar respuestas'
+                      : 'Ver ${comment.commentsCount} ${comment.commentsCount == 1 ? 'respuesta' : 'respuestas'}',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+
+            // Mostrar las respuestas si están expandidas
+            if (isExpanded && comment.comments != null)
+              _buildNestedReplies(comment.comments!, postId, objectId, comment),
+          ],
+        );
+      },
+    );
+  }
+
+  // Widget para mostrar las respuestas anidadas
+  Widget _buildNestedReplies(List<CommentItem> replies, int postId,
+      int objectId, CommentItem parentComment) {
+    return Container(
+      padding: const EdgeInsets.only(left: 10), // Indentación para respuestas
+      child: Column(
+        children: replies
+            .map((reply) =>
+                _buildReplyItem(reply, postId, objectId, parentComment.id))
+            .toList(),
+      ),
+    );
+  }
+
+  // Widget para mostrar una respuesta individual
+  Widget _buildReplyItem(
+      CommentItem reply, int postId, int objectId, int parentCommentId) {
+    final bool isLiked = controller.likedCommentOfCommentIds.contains(reply.id);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: const BoxDecoration(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(width: 8), // Espacio para la línea vertical
+          ClipOval(
+            child: Image.network(
+              reply.createdBy.imageUrl,
+              width: 28, // Tamaño más pequeño para respuestas
+              height: 28,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.person, size: 28, color: Colors.grey);
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Reemplazamos el GestureDetector por nuestro widget animado
+                    Text(
+                      reply.createdBy.displayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      _formatDate(reply.createdAt),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 9,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                parseMessage(reply.message, 13),
+                if (reply.files.isNotEmpty) _buildAttachedFiles(reply.files),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    ReplyLikeButtonAnimation(
+                      commentId: reply.id,
+                      isLiked: isLiked,
+                      comment: reply,
+                      onToggle: (replyComment) {
+                        // Pasamos el ID del comentario padre para saber dónde actualizar la UI
+                        controller.likeNestedComment(
+                            replyComment, objectId, parentCommentId);
+                      },
+                    ),
+                    const SizedBox(width: 15),
+                    GestureDetector(
+                      onTap: () => {},
+                      child: const Text(
+                        'Responder',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Función para formatear fecha
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+
+      if (difference.inDays > 365) {
+        return '${(difference.inDays / 365).floor()} año(s)';
+      } else if (difference.inDays > 30) {
+        return '${(difference.inDays / 30).floor()} mes(es)';
+      } else if (difference.inDays > 0) {
+        return '${difference.inDays} día(s)';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours} hora(s)';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes} minuto(s)';
+      } else {
+        return 'ahora';
+      }
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  // Widget para mostrar archivos adjuntos
+  Widget _buildAttachedFiles(List<dynamic> files) {
+    if (files.isEmpty) return const SizedBox();
+
+    return Container(
+      margin: const EdgeInsets.only(top: 5),
+      height: 70,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: files.length,
+        itemBuilder: (context, index) {
+          final file = files[index];
+          return Container(
+            width: 70,
+            height: 70,
+            margin: const EdgeInsets.only(right: 5),
+            decoration: BoxDecoration(
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: _getFilePreview(file),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _getFilePreview(dynamic file) {
+    if (file is Map && file.containsKey('type')) {
+      if (file['type'].toString().contains('image')) {
+        return Image.network(
+          file['url'] ?? '',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.image, color: Colors.grey);
+          },
+        );
+      } else if (file['type'].toString().contains('video')) {
+        return const Icon(Icons.video_file, color: Colors.blue);
+      } else if (file['type'].toString().contains('pdf')) {
+        return const Icon(Icons.picture_as_pdf, color: Colors.red);
+      }
+    }
+    return const Icon(Icons.insert_drive_file, color: Colors.grey);
   }
 }
