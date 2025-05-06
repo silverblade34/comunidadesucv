@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 
 class PreferencesTag extends StatelessWidget {
   final String tag;
-  final String imagePath;
 
   const PreferencesTag({
     super.key,
     required this.tag,
-    required this.imagePath,
   });
 
   @override
@@ -22,23 +20,6 @@ class PreferencesTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: HexColor('#4540CF'),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Image.asset(
-                imagePath,
-                height: 20.0,
-                width: 20.0,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

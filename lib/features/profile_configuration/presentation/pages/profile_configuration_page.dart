@@ -20,14 +20,14 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
           children: [
             Container(
               width: double.infinity,
-              height: 150,
+              height: 100,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter, // Changed direction to match Reddit
+                  end: Alignment.topCenter,
                   colors: [
-                    const Color(0xFF1A237E), // Darker blue at bottom
-                    const Color(0xFF3949AB), // Lighter blue at top
+                    const Color(0xFF1A237E),
+                    const Color(0xFF3949AB),
                   ],
                 ),
               ),
@@ -42,7 +42,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                     () => Container(
                       width: double.infinity,
                       padding: const EdgeInsets.only(
-                          top: 60, left: 16, right: 16, bottom: 16),
+                          top: 70, left: 16, right: 16, bottom: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -67,10 +67,10 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                   ),
                   Positioned(
                     top: -45,
-                    left: 30,
+                    left: 20,
                     child: Container(
-                      width: 90,
-                      height: 90,
+                      width: 100,
+                      height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFF7FFFD4),

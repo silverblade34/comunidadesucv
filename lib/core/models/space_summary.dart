@@ -6,6 +6,7 @@ class SpaceSummary {
   String url;
   String profileImage;
   String coverImage;
+  int membersCount;
 
   SpaceSummary({
     required this.id,
@@ -15,6 +16,7 @@ class SpaceSummary {
     required this.url,
     required this.profileImage,
     required this.coverImage,
+    required this.membersCount,
   });
 
   factory SpaceSummary.fromJson(Map<String, dynamic> json) => SpaceSummary(
@@ -25,6 +27,7 @@ class SpaceSummary {
         url: json["url"],
         profileImage: json["profile_image"],
         coverImage: json["cover_image"],
+        membersCount: json["members_count"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,5 +38,6 @@ class SpaceSummary {
         "url": url,
         "profile_image": profileImage,
         "cover_image": coverImage,
+        "members_count": membersCount,
       };
 }

@@ -301,10 +301,46 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
 
   Widget buildRecentPublicationsList() {
     return Obx(() {
+      if (controller.isLoadingLastPost.value) {
+        return _buildPublicationsLoadingShimmer();
+      }
+
+      // Si no hay publicaciones después de cargar
       if (controller.dataPost.isEmpty) {
         return Center(
-          child: Text("No hay publicaciones con archivos",
-              style: TextStyle(fontSize: 12)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Text(
+              "No hay publicaciones con imagenes",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Filtrar solo las publicaciones que tienen archivos
+      final postsWithFiles = controller.dataPost
+          .where((post) => post.content.files.isNotEmpty)
+          .toList();
+
+      // Si después de filtrar no hay publicaciones con archivos
+      if (postsWithFiles.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Text(
+              "No hay publicaciones con imagenes",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
         );
       }
 
@@ -312,23 +348,53 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
         height: 100,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: controller.dataPost.length,
+          itemCount: postsWithFiles.length,
           itemBuilder: (context, index) {
-            if (controller.dataPost[index].content.files.isNotEmpty) {
-              final fileInfo = controller.dataPost[index].content.files[0];
-              final int idFile = fileInfo['id'] ?? '';
-              return _buildRecentPublicationItem(idFile);
-            }
-            return SizedBox.shrink();
+            final fileInfo = postsWithFiles[index].content.files[0];
+            final int idFile = fileInfo['id'] ?? 0;
+
+            if (idFile == 0) return SizedBox.shrink();
+
+            return _buildRecentPublicationItem(idFile);
           },
         ),
       );
     });
   }
 
+// Método para mostrar shimmer mientras se cargan las publicaciones
+  Widget _buildPublicationsLoadingShimmer() {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 100,
+            height: 100,
+            margin: EdgeInsets.only(right: 10),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildRecentPublicationItem(int idFile) {
-    controller.loadImage(idFile,
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NDMzODA1MjQsImlzcyI6Imh0dHA6Ly9jb211bmlkYWRlc3Vjdi51dmN2LmVkdS5wZSIsIm5iZiI6MTc0MzM4MDUyNCwidWlkIjoxLCJlbWFpbCI6IndlYm1hc3RlckB1Y3YuZWR1LnBlIn0.TlA5yxow3ugHd0rX3SjvhEL1W6ntQTeOHOnWR-9mncnXkpPNf2mU489GnyS5BFjNuzQS64ItfYL3PGTQ436-3w");
+    if (!controller.imagesMap.containsKey(idFile)) {
+      controller.loadImage(idFile,
+          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NDMzODA1MjQsImlzcyI6Imh0dHA6Ly9jb211bmlkYWRlc3Vjdi51dmN2LmVkdS5wZSIsIm5iZiI6MTc0MzM4MDUyNCwidWlkIjoxLCJlbWFpbCI6IndlYm1hc3RlckB1Y3YuZWR1LnBlIn0.TlA5yxow3ugHd0rX3SjvhEL1W6ntQTeOHOnWR-9mncnXkpPNf2mU489GnyS5BFjNuzQS64ItfYL3PGTQ436-3w");
+    }
 
     return Obx(
       () => Container(
@@ -343,10 +409,19 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                   fit: BoxFit.cover,
                 )
               : null,
-          color: Colors.grey[300],
+          color: Colors.transparent,
         ),
         child: !controller.imagesMap.containsKey(idFile)
-            ? Center(child: CircularProgressIndicator())
+            ? Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              )
             : null,
       ),
     );

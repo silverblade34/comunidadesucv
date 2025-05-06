@@ -72,7 +72,7 @@ class SplashController extends GetxController
     if (isNewUser) {
       Get.offAllNamed("/intro");
     } else {
-      Get.offAllNamed("/communities"); // "/communities"
+      Get.offAllNamed("/intro"); // "/communities"
     }
   }
 }

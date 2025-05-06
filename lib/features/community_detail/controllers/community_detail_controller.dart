@@ -17,6 +17,7 @@ class CommunityDetailController extends GetxController {
   final int spaceId = Get.arguments;
   final RxBool isButtonMember = false.obs;
   var isLoading = false.obs;
+  var isLoadingLastPost = false.obs;
 
   final ConfettiController confettiController =
       ConfettiController(duration: const Duration(seconds: 3));
@@ -41,6 +42,7 @@ class CommunityDetailController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    isLoadingLastPost.value = true;
     Future.wait([
       _loadUser(),
       _loadCommunity(),
@@ -113,6 +115,8 @@ class CommunityDetailController extends GetxController {
       dataPost.assignAll(filteredPosts);
     } catch (e) {
       print("Error cargando posts: $e");
+    } finally {
+      isLoadingLastPost.value = false;
     }
   }
 

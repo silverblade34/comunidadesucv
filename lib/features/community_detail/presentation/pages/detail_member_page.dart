@@ -245,7 +245,6 @@ class DetailMemberPage extends GetView<DetailMemberController> {
                                             .map((tagData) {
                                             return PreferencesTag(
                                               tag: tagData,
-                                              imagePath: "assets/image/a3.png",
                                             );
                                           }).toList()
                                         : [
