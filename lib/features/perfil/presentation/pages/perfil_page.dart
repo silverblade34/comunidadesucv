@@ -314,7 +314,7 @@ class PerfilPage extends GetView<PerfilController> {
                           ),
                           TextButton(
                             onPressed: () {
-                              // Navigate to all contacts/friends page
+                              Get.toNamed("/friendships");
                             },
                             child: Text(
                               "Ver todo",

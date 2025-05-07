@@ -12,5 +12,6 @@ abstract class Routes {
   static const communityFeed = '/community_feed';
   static const registeredPost = '/registered_post';
   static const listMembers = '/list_members';
+  static const friendships = '/friendships';
   static const forum = '/forum';
 }

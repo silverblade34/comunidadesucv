@@ -15,7 +15,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: controller.scaffoldKey,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: AppColors.backgroundDarkIntense,
       extendBodyBehindAppBar: false,
       body: Column(
         children: [

@@ -14,7 +14,9 @@ import 'package:comunidadesucv/features/community_feed/presentation/pages/commun
 import 'package:comunidadesucv/features/community_feed/presentation/pages/registered_post_page.dart';
 import 'package:comunidadesucv/features/intro/bindings/intro_binding.dart';
 import 'package:comunidadesucv/features/intro/presentation/pages/intro_page.dart';
+import 'package:comunidadesucv/features/perfil/bindings/friendships_binding.dart';
 import 'package:comunidadesucv/features/perfil/bindings/perfil_binding.dart';
+import 'package:comunidadesucv/features/perfil/presentation/pages/friendships_page.dart';
 import 'package:comunidadesucv/features/perfil/presentation/pages/perfil_page.dart';
 import 'package:comunidadesucv/features/profile_configuration/bindings/profile_configuration_binding.dart';
 import 'package:comunidadesucv/features/profile_configuration/presentation/pages/profile_configuration_page.dart';
@@ -80,6 +82,11 @@ abstract class AppPages {
       name: Routes.registeredPost,
       binding: RegisteredPostBinding(),
       page: () => const RegisteredPostPage(),
+    ),
+       GetPage(
+      name: Routes.friendships,
+      binding: FriendshipsBinding(),
+      page: () => const FriendshipsPage(),
     ),
   ];
 }

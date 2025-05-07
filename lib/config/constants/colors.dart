@@ -4,7 +4,7 @@ class AppColors {
   static const Color primary = Color(0xff9852F6);
   static const Color secondary = Color(0xffFFB200);
   static const Color backgroundLight = Color(0xffF5F4FF);
-  static const Color backgroundDark = Color(0xff0E0847);
+  static const Color backgroundDark = Color(0xff220C61);
   static const Color backgroundDarkIntense = Color(0xff0E0847);
   static const Color backgroundDarkLigth = Color.fromARGB(128, 149, 117, 205);
   static const Color textBlackUCV = Color(0xFF0E0847);
