@@ -61,8 +61,6 @@ class CommunityFeedController extends GetxController {
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
-      user.value = await splashRepository.getUser(user.value.account!.username);
-      box.write("user", user.value);
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");
     }

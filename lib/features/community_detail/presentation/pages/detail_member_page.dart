@@ -6,6 +6,7 @@ import 'package:comunidadesucv/features/perfil/presentation/widgets/preferences_
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:comunidadesucv/core/enum/friendship_state.dart';
 
 class DetailMemberPage extends GetView<DetailMemberController> {
   const DetailMemberPage({super.key});
@@ -96,8 +97,8 @@ class DetailMemberPage extends GetView<DetailMemberController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
-                        onTap: () {
-                          Get.back();
+                        onTap: () async {
+                          Get.back(result: true);
                         },
                         child: Icon(
                           Ionicons.chevron_back,
@@ -136,7 +137,8 @@ class DetailMemberPage extends GetView<DetailMemberController> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.45,
                             child: Text(
                               "${controller.user.value.profile?.firstname ?? ""} ${controller.user.value.profile?.lastname ?? ""}",
                               style: Theme.of(context)
@@ -148,29 +150,12 @@ class DetailMemberPage extends GetView<DetailMemberController> {
                             ),
                           ),
                           SizedBox(width: 8),
-                          InkWell(
-                            onTap: () {
-                              Get.snackbar(
-                                "Agregar contacto",
-                                "Función para agregar contacto activada",
-                                snackPosition: SnackPosition.BOTTOM,
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppTheme.isLightTheme
-                                    ? HexColor('#F5F5F5')
-                                    : HexColor('#1A1167'),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.person_add,
-                                size: 24,
-                                color: AppTheme.isLightTheme
-                                    ? HexColor('#1A1167')
-                                    : HexColor('#FFFFFF'),
-                              ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                buildFriendshipButton(context),
+                              ],
                             ),
                           ),
                         ],
@@ -309,6 +294,170 @@ class DetailMemberPage extends GetView<DetailMemberController> {
     );
   }
 
+  Widget buildFriendshipButton(BuildContext context) {
+    return GetBuilder<DetailMemberController>(
+      builder: (controller) {
+        IconData buttonIcon;
+        String buttonText;
+        Color buttonColor;
+        Color textColor;
+        VoidCallback onTapAction;
+
+        switch (controller.state) {
+          case FriendshipState.SELF:
+            buttonIcon = Icons.edit;
+            buttonText = "Editar perfil";
+            buttonColor = Theme.of(context).primaryColor;
+            textColor = Colors.white;
+            onTapAction = () {
+              Get.toNamed("/edit_profile");
+            };
+            break;
+          case FriendshipState.NO_FRIEND:
+            buttonIcon = Icons.person_add;
+            buttonText = "Enviar solicitud";
+            buttonColor = Theme.of(context).primaryColor;
+            textColor = Colors.white;
+            onTapAction = () {
+              controller
+                  .sendAndAcceptRequestFriend(FriendshipState.REQUEST_SENT);
+            };
+            break;
+          case FriendshipState.FRIEND:
+            buttonIcon = Icons.check_circle;
+            buttonText = "Amigos";
+            buttonColor = Colors.green;
+            textColor = Colors.white;
+            onTapAction = () {
+              _showFriendOptions(context);
+            };
+            break;
+          case FriendshipState.REQUEST_SENT:
+            buttonIcon = Icons.hourglass_top;
+            buttonText = "Solicitud enviada";
+            buttonColor = Colors.orange;
+            textColor = Colors.white;
+            onTapAction = () {
+              controller.deleteFriend();
+            };
+            break;
+          case FriendshipState.REQUEST_RECEIVED:
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () {
+                    controller
+                        .sendAndAcceptRequestFriend(FriendshipState.FRIEND);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check, size: 16, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
+                          "Aceptar",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 6),
+                InkWell(
+                  onTap: () {
+                    controller.deleteFriend();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.close, size: 16, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text("Rechazar",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+        }
+
+        return InkWell(
+          onTap: onTapAction,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: buttonColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(buttonIcon, size: 16, color: textColor),
+                SizedBox(width: 4),
+                Text(buttonText,
+                    style: TextStyle(
+                        color: textColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showFriendOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.backgroundDialogDark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Opciones de amistad",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            ListTile(
+                leading: Icon(Icons.person_remove, color: Colors.red),
+                title:
+                    Text("Eliminar amigo", style: TextStyle(color: Colors.red)),
+                onTap: () => controller.deleteFriend()),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCommunity(String title, String imagePath, SpaceSummary space) {
     return GestureDetector(
       onTap: () {
@@ -334,7 +483,10 @@ class DetailMemberPage extends GetView<DetailMemberController> {
           child: Text(
             title,
             style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
           ),
         ),
       ),

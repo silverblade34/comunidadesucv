@@ -15,37 +15,37 @@ class AppTheme {
   static TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(
       titleLarge: TextStyle(
-        fontSize: 30,
-        fontFamily: 'Montserrat', // Especificar la fuente
+        fontSize: 25,
+        fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.bold,
       ),
       titleMedium: TextStyle(
-        fontSize: 24,
+        fontSize: 20,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.w500,
       ),
       titleSmall: TextStyle(
-        fontSize: 24,
+        fontSize: 15,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.w600,
       ),
       bodyLarge: TextStyle(
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.bold,
       ),
       bodyMedium: TextStyle(
-        fontSize: 16,
+        fontSize: 13,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.w500,
       ),
       bodySmall: TextStyle(
-        fontSize: 16,
+        fontSize: 12,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.w600,
@@ -73,11 +73,11 @@ class AppTheme {
       appBarTheme: AppBarTheme(color: Colors.grey[700]),
       iconTheme: IconThemeData(color: AppColors.iconDark),
       primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
+      scaffoldBackgroundColor: AppColors.backgroundDarkIntense,
       textTheme: _buildTextTheme(base.textTheme),
       primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
       inputDecorationTheme: InputDecorationTheme(
-        fillColor: AppColors.backgroundDark,
+        fillColor: AppColors.backgroundDarkIntense,
       ),
     );
   }

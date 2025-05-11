@@ -219,7 +219,7 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
         child: Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.textBlackUCV,
+            color: AppColors.backgroundDialogDark,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10.0)],
@@ -458,7 +458,10 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                   ),
                 ),
                 Image.network(
-                  controller.space.value.profileImage,
+                  controller.space.value.coverImage !=
+                          "http://comunidadesucv.uvcv.edu.pe/static/img/default_banner.jpg"
+                      ? controller.space.value.coverImage
+                      : controller.space.value.profileImage,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,

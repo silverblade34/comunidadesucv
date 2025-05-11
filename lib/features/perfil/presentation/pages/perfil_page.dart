@@ -1,5 +1,6 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
+import 'package:comunidadesucv/core/enum/friendship_state.dart';
 import 'package:comunidadesucv/core/models/space_summary.dart';
 import 'package:comunidadesucv/core/models/user_friendship.dart';
 import 'package:flutter/material.dart';
@@ -373,42 +374,48 @@ class PerfilPage extends GetView<PerfilController> {
 
   Widget _buildFriendCard(
       UserFriendship friend, Color primaryColor, Color textColor) {
-    return Container(
-      width: 110,
-      margin: EdgeInsets.only(right: 15),
-      child: Column(
-        children: [
-          _buildFriendAvatar(friend, primaryColor),
-          SizedBox(height: 8),
-          Text(
-            friend.displayName,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-            ),
-          ),
-          SizedBox(height: 4),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              // ignore: deprecated_member_use
-              color: primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              "Amigo",
+    return GestureDetector(
+      onTap: () => Get.toNamed("/detail_member", arguments: {
+        "friendId": friend.id.toString(),
+        "state": FriendshipState.FRIEND
+      }),
+      child: Container(
+        width: 110,
+        margin: EdgeInsets.only(right: 15),
+        child: Column(
+          children: [
+            _buildFriendAvatar(friend, primaryColor),
+            SizedBox(height: 8),
+            Text(
+              friend.displayName,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 10,
-                color: primaryColor,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
+                color: textColor,
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 4),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                // ignore: deprecated_member_use
+                color: primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                "Amigo",
+                style: TextStyle(
+                  fontSize: 10,
+                  color: primaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ class AppColors {
   static const Color backgroundDarkIntense = Color(0xff0E0847);
   static const Color backgroundDarkLigth = Color.fromARGB(128, 149, 117, 205);
   static const Color textBlackUCV = Color(0xFF0E0847);
+  static const Color backgroundDialogDark = Color(0xFF0E0847);
   static const Color textLight = Color(0xff120C45);
   static const Color textDarkTitle = Color(0xffE5E3FC);
   static const Color textDarkSubtitle = Color(0xff9790CC);

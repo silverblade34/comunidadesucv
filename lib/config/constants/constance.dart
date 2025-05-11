@@ -5,7 +5,7 @@
 
 class ConstanceData {
   static const ImageUrl = 'assets/image/';
-  static const splashImage = 'assets/image/s1.png';
+  static const splashImage = 'assets/image/splash-ucv.png';
 
   static const Logo = ImageUrl + "s3.png";
   static const LogoUcv = ImageUrl + "logo-ucv.png";

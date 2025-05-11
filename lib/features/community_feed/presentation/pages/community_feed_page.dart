@@ -165,7 +165,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.textBlackUCV,
+        color: AppColors.backgroundDialogDark,
         borderRadius: BorderRadius.circular(20),
       ),
       margin: const EdgeInsets.only(bottom: 15),
@@ -303,7 +303,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         height: MediaQuery.of(context).size.height * 0.7,
         padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
         decoration: const BoxDecoration(
-          color: AppColors.textBlackUCV,
+          color: AppColors.backgroundDialogDark,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(40),
             topRight: Radius.circular(40),
@@ -353,7 +353,6 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
 
         return NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
-            // Detectar cuando el usuario llegó al final para cargar más comentarios
             if (!ctrl.isLoadingMoreComments &&
                 !ctrl.noMoreCommentsToLoad &&
                 scrollInfo.metrics.pixels >=
@@ -364,7 +363,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
           },
           child: RefreshIndicator(
             onRefresh: () => ctrl.refreshComments(objectId),
-            color: AppColors.textBlackUCV,
+            color: AppColors.backgroundDialogDark,
             backgroundColor: Colors.grey[800],
             child: ctrl.isInitialCommentsLoading
                 ? _buildCommentsShimmer()
@@ -376,7 +375,6 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                             ctrl.comments.length +
                             (ctrl.isLoadingMoreComments ? 1 : 0),
                         itemBuilder: (context, index) {
-                          // Si es el último item y estamos cargando más, mostrar indicador
                           if (index == ctrl.comments.length &&
                               ctrl.isLoadingMoreComments) {
                             return _buildLoadingMoreIndicator();
@@ -389,7 +387,6 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                           final commentIndex =
                               index - pendingForThisPost.length;
 
-                          // Mostrar comentario normal
                           return _buildCommentItem(
                               ctrl.comments[commentIndex], postId, objectId);
                         },

@@ -28,13 +28,14 @@ class FriendshipsPage extends GetView<FriendshipsController> {
         elevation: 0,
         backgroundColor: AppColors.backgroundDarkIntense,
       ),
+      backgroundColor: AppColors.backgroundDarkIntense,
       body: DefaultTabController(
         length: 3,
         child: Column(
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: AppColors.backgroundDarkIntense,
                 boxShadow: [
                   BoxShadow(
                     // ignore: deprecated_member_use

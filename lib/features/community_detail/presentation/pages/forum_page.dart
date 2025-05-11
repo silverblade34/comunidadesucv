@@ -139,7 +139,7 @@ class ForumPage extends GetView<ForumController> {
               return Container(
                 padding: const EdgeInsets.all(defaultPadding),
                 decoration: BoxDecoration(
-                  color: AppColors.textBlackUCV,
+                  color: AppColors.backgroundDialogDark,
                   borderRadius: BorderRadius.circular(8.0),
                   border: Border.all(
                     color: index == 0 ? universitySecondary : textSecondary,

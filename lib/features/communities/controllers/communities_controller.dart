@@ -16,14 +16,14 @@ class CommunitiesController extends GetxController {
   final cacheDuration = 24 * 60 * 60 * 1000;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   SplashRepository homeRepository = SplashRepository();
   CommunitiesRepository communitiesRepository = CommunitiesRepository();
 
-  final RxList<Space> recommendedCommunities = <Space>[].obs;
   final RxList<Space> filteredCommunities = <Space>[].obs;
-  final RxList<Space> dataCommunities = <Space>[].obs;
+  final RxList<Space> allCommunities = <Space>[].obs;
   final RxList<Space> spaces = <Space>[].obs;
   final RxBool isLoading = false.obs;
 
@@ -41,10 +41,10 @@ class CommunitiesController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    filteredCommunities.assignAll(dataCommunities);
+    filteredCommunities.assignAll(allCommunities);
 
     _loadUser();
-    
+
     // Primero cargamos desde caché, luego desde la API
     await _loadCommunitiesFromCache();
     if (_isCacheExpired()) {
@@ -60,7 +60,7 @@ class CommunitiesController extends GetxController {
   bool _isCacheExpired() {
     final timestamp = box.read(cacheTimestampKey);
     if (timestamp == null) return true;
-    
+
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     return (currentTime - timestamp) > cacheDuration;
   }
@@ -70,7 +70,8 @@ class CommunitiesController extends GetxController {
     final cachedData = box.read(cacheKey);
     if (cachedData != null) {
       try {
-        final cachedSpaces = (cachedData as List).map((e) => Space.fromJson(e)).toList();
+        final cachedSpaces =
+            (cachedData as List).map((e) => Space.fromJson(e)).toList();
         spaces.value = cachedSpaces;
         _processCommunities();
       } catch (e) {
@@ -85,40 +86,25 @@ class CommunitiesController extends GetxController {
     try {
       final response = await communitiesRepository.findSpaces();
       spaces.value = response.results;
-      
+
       // Guardar en caché
       box.write(cacheKey, spaces.map((e) => e.toJson()).toList());
       box.write(cacheTimestampKey, DateTime.now().millisecondsSinceEpoch);
-      
+
       _processCommunities();
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron cargar las comunidades");
+      Get.snackbar("Error", "No se pudieron cargar las comunidades",
+          backgroundColor: Get.theme.colorScheme.errorContainer,
+          colorText: Get.theme.colorScheme.onErrorContainer);
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Procesa las comunidades para separar recomendadas y otras
+  // Procesa las comunidades para mostrarlas todas sin separar recomendadas
   void _processCommunities() {
-    final userTags = user.value.account!.tags.map((e) => e.toLowerCase()).toSet();
-
-    final List<Space> recommended = [];
-    final List<Space> others = [];
-
-    for (Space space in spaces) {
-      final spaceTags = (space.tags).map((e) => e.toLowerCase()).toSet();
-      final hasCommonTags = spaceTags.intersection(userTags).isNotEmpty;
-
-      if (hasCommonTags) {
-        recommended.add(space);
-      } else {
-        others.add(space);
-      }
-    }
-
-    recommendedCommunities.assignAll(recommended);
-    dataCommunities.assignAll(others);
-    filteredCommunities.assignAll(dataCommunities);
+    allCommunities.assignAll(spaces);
+    filteredCommunities.assignAll(allCommunities);
   }
 
   // Método para recargar las comunidades (usado por RefreshIndicator)
@@ -128,9 +114,9 @@ class CommunitiesController extends GetxController {
 
   void filterCommunities() {
     if (searchQuery.value.isEmpty) {
-      filteredCommunities.assignAll(dataCommunities);
+      filteredCommunities.assignAll(allCommunities);
     } else {
-      filteredCommunities.assignAll(dataCommunities
+      filteredCommunities.assignAll(allCommunities
           .where((community) =>
               community.name
                   .toLowerCase()
@@ -161,7 +147,9 @@ class CommunitiesController extends GetxController {
     if (userData != null) {
       user.value = userData;
     } else {
-      Get.snackbar("Error", "No se encontró información del usuario");
+      Get.snackbar("Error", "No se encontró información del usuario",
+          backgroundColor: Get.theme.colorScheme.errorContainer,
+          colorText: Get.theme.colorScheme.onErrorContainer);
     }
   }
 
