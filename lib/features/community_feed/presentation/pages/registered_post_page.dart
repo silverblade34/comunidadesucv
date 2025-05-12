@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_feed/controllers/registered_post_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,7 +37,7 @@ class RegisteredPostPage extends GetView<RegisteredPostController> {
           )
         ],
         elevation: 0,
-        backgroundColor: const Color(0xFF8260F2),
+        backgroundColor: AppColors.backgroundDark,
       ),
       body: SafeArea(
         child: Column(
@@ -170,7 +171,7 @@ class RegisteredPostPage extends GetView<RegisteredPostController> {
                     child: Obx(() => ElevatedButton(
                           onPressed: controller.isPublishing.value
                               ? null // Deshabilitar el botón mientras se está publicando
-                              : () => controller.publishPost(),
+                              : () => controller.simulationPublishPost(),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),

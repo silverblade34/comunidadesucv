@@ -6,6 +6,7 @@ class Space {
   final String guid;
   final String name;
   final String description;
+  final String about;
   final String url;
   final int contentContainerId;
   final int visibility;
@@ -29,6 +30,7 @@ class Space {
     required this.guid,
     required this.name,
     required this.description,
+    required this.about,
     required this.url,
     required this.contentContainerId,
     required this.visibility,
@@ -54,6 +56,7 @@ class Space {
       guid: '',
       name: '',
       description: '',
+      about: '',
       url: '',
       contentContainerId: 0,
       visibility: 0,
@@ -80,6 +83,7 @@ class Space {
       guid: json['guid'],
       name: json['name'],
       description: json['description'] ?? '',
+      about: json['about'] ?? '',
       url: json['url'],
       contentContainerId: json['contentcontainer_id'],
       visibility: json['visibility'],
@@ -109,6 +113,7 @@ class Space {
       'guid': guid,
       'name': name,
       'description': description,
+      'about': about,
       'url': url,
       'contentcontainer_id': contentContainerId,
       'visibility': visibility,

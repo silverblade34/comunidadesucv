@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
@@ -18,7 +20,7 @@ class DetailMemberProvider {
     try {
       Dio dioClient = Dio();
       dioClient.options.headers["Authorization"] = "Impersonate $token";
-
+      print(jsonEncode({"friend_user_id": int.parse(userId)}));
       final response = await dioClient.delete(
         '$baseUrl/friendship',
         data: {"friend_user_id": int.parse(userId)},

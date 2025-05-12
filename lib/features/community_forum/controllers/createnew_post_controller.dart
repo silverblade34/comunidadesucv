@@ -1,0 +1,180 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class CreateNewPostController extends GetxController {
+  final int spaceId = Get.arguments;
+  final titleController = TextEditingController();
+  final bodyController = TextEditingController();
+  final mediaAttachments = <String>[].obs;
+  final isUploading = false.obs;
+  final isPublishing = false.obs;
+
+  Future<void> pickImage() async {
+    // Simulación de selección de imagen
+    isUploading.value = true;
+    await Future.delayed(Duration(seconds: 2));
+    mediaAttachments.add('imagen_mascota.jpg');
+    isUploading.value = false;
+  }
+
+  Future<void> simulatePublishPost() async {
+    if (bodyController.text.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Por favor escribe el contenido de tu publicación',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    try {
+      isPublishing.value = true;
+
+      // Simulamos un breve retraso para dar sensación de procesamiento
+      await Future.delayed(Duration(seconds: 2));
+
+      // Aquí mostramos el diálogo de "enviado para aprobación"
+      await _showPendingApprovalDialogWithAnimation();
+
+      // Limpiamos el estado después de "publicar"
+      titleController.clear();
+      bodyController.clear();
+      mediaAttachments.clear();
+
+      // Redirigimos al feed de la comunidad
+      Get.offAllNamed("/community_forum", arguments: spaceId);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudo procesar la publicación: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isPublishing.value = false;
+    }
+  }
+
+  Future<void> _showPendingApprovalDialogWithAnimation() async {
+    return Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF7B2CBF),
+                Color(0xFF5A189A),
+              ],
+            ),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10.0)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Animación de "en revisión"
+              SizedBox(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      height: 70,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF9D4EDD).withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF9D4EDD)),
+                      ),
+                    ),
+                    Icon(Icons.pets, size: 30, color: Color(0xFF9D4EDD)),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                "¡Publicación Enviada!",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 12),
+              Text(
+                "Tu publicación ha sido enviada al administrador para su revisión y aprobación.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.9),
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Te notificaremos cuando tu publicación sea aprobada para la comunidad Pet Lovers.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.7),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () => Get.back(),
+                  child: Text("Continuar",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF7B2CBF),
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  @override
+  void onClose() {
+    titleController.dispose();
+    bodyController.dispose();
+    super.onClose();
+  }
+}

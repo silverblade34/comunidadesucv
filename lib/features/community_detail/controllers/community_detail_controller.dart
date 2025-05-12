@@ -38,6 +38,7 @@ class CommunityDetailController extends GetxController {
       spaces: []).obs;
 
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
+  final isRulesExpanded = false.obs;
 
   @override
   void onInit() async {
@@ -47,6 +48,11 @@ class CommunityDetailController extends GetxController {
       _loadUser(),
       _loadCommunity(),
     ]);
+  }
+
+  // Método para alternar la visibilidad de las reglas
+  void toggleRulesExpanded() {
+    isRulesExpanded.value = !isRulesExpanded.value;
   }
 
   Future<void> loadImage(int idFile, String token) async {
@@ -84,7 +90,7 @@ class CommunityDetailController extends GetxController {
   Future<void> _loadCommunity() async {
     final response = await communityDetailRepository.getSpace(spaceId);
     space.value = response;
-    _loadLastPostContainer();
+    loadLastPostContainer();
 
     if (user.value.spaces.any((userSpace) => userSpace.id == spaceId)) {
       isButtonMember.value = true;
@@ -93,19 +99,14 @@ class CommunityDetailController extends GetxController {
     }
   }
 
-  void _loadLastPostContainer() async {
+  Future<void> loadLastPostContainer() async {
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.value.contentContainerId, 5);
+          space.value.contentContainerId, 10);
 
       final filteredPosts = response.results.where((post) {
         return post.content.files.isNotEmpty;
       }).toList();
-
-      if (filteredPosts.isNotEmpty) {
-        print("Estructura de files en el primer post:");
-        print(filteredPosts[0].content.files);
-      }
 
       dataPost.assignAll(filteredPosts);
     } catch (e) {

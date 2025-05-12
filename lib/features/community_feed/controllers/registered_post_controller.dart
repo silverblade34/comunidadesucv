@@ -3,6 +3,7 @@ import 'package:comunidadesucv/features/community_detail/data/dto/content_space_
 import 'package:comunidadesucv/features/community_feed/data/repository/registered_post_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -185,6 +186,154 @@ class RegisteredPostController extends GetxController {
       );
       isPublishing.value = false;
     }
+  }
+
+  Future<void> simulationPublishPost() async {
+    if (bodyController.text.isEmpty) {
+      return;
+    }
+
+    try {
+      isPublishing.value = true;
+
+      // Simulamos un breve retraso para dar sensación de procesamiento
+      await Future.delayed(Duration(seconds: 2));
+
+      // Aquí mostramos el diálogo de "enviado para aprobación"
+      await _showPendingApprovalDialogWithAnimation();
+
+      // Limpiamos el estado después de "publicar"
+      bodyController.clear();
+      mediaAttachments.clear();
+
+      // Redirigimos al feed de la comunidad
+      Get.offAllNamed("/community_feed", arguments: space);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudo procesar la publicación: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      isPublishing.value = false;
+    }
+  }
+
+  Future<void> _showPendingApprovalDialogWithAnimation() async {
+    return Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF7B2CBF),
+                Color(0xFF5A189A),
+              ],
+            ),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10.0)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Animación de "en revisión"
+              SizedBox(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      height: 70,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF9D4EDD).withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF9D4EDD)),
+                      ),
+                    ),
+                    Icon(Ionicons.document_text_outline,
+                        size: 30, color: Color(0xFF9D4EDD)),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                "¡Publicación Enviada!",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 12),
+              Text(
+                "Tu publicación ha sido enviada al administrador para su revisión y aprobación.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white.withOpacity(0.9),
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline,
+                        size: 16, color: Colors.white.withOpacity(0.7)),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Te notificaremos cuando sea aprobada.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.7),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: () => Get.back(),
+                  child: Text("Continuar",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF7B2CBF),
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
   }
 
   Future<void> uploadFilesForPost(int postId) async {

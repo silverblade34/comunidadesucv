@@ -13,7 +13,7 @@ class CommunitiesController extends GetxController {
   final cacheImagesKey = 'communities_images_cache';
   final cacheTimestampKey = 'communities_cache_timestamp';
   // 24 horas en milisegundos para la caducidad de la caché
-  final cacheDuration = 24 * 60 * 60 * 1000;
+  final cacheDuration = 6 * 60 * 60 * 1000;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
@@ -101,13 +101,11 @@ class CommunitiesController extends GetxController {
     }
   }
 
-  // Procesa las comunidades para mostrarlas todas sin separar recomendadas
   void _processCommunities() {
     allCommunities.assignAll(spaces);
     filteredCommunities.assignAll(allCommunities);
   }
 
-  // Método para recargar las comunidades (usado por RefreshIndicator)
   Future<void> refreshCommunities() async {
     return _loadCommunitiesFromAPI();
   }

@@ -30,24 +30,29 @@ class IntroPage extends GetView<IntroController> {
                 SizedBox(height: MediaQuery.of(context).padding.top),
                 Container(height: AppBar().preferredSize.height),
                 Image.asset(
-                  ConstanceData.S3,
-                  height: 270,
+                  ConstanceData.ucvito,
+                  height: 230,
                   width: MediaQuery.of(context).size.width,
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Expanded(
                   child: Column(
                     children: [
                       Text(
                         'Una comunidad que vibra contigo',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           color: HexColor('#E5E3FC'),
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 5),
+                      SizedBox(height: 15),
                       Text(
                         'Descubre espacios donde compartir conocimientos, experiencias y pasiones se vuelve parte de tu día a día. Aquí, tus intereses académicos y extracurriculares encuentran una comunidad que los potencia.',
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                               fontSize: 15,
                               color: AppTheme.isLightTheme

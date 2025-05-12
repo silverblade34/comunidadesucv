@@ -1,4 +1,5 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/core/enum/friendship_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -111,9 +112,16 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   icon: Icons.visibility,
                   label: "Ver",
                   color: primaryColor,
-                  onTap: () {
-                    // Implementar la acción para ver el perfil
-                    Get.toNamed('/perfil/${friend.id}');
+                  onTap: () async {
+                    final result =
+                        await Get.toNamed("/detail_member", arguments: {
+                      "friendId": friend.id.toString(),
+                      "state": FriendshipState.FRIEND,
+                    });
+
+                    if (result == true) {
+                      await controller.initData();
+                    }
                   },
                 ),
                 _buildActionButton(
@@ -121,14 +129,14 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   label: "Eliminar",
                   color: Colors.red,
                   onTap: () {
-                    // Implementar la acción para eliminar amigo
                     _showConfirmDialog(
+                        id: friend.id,
                         context: Get.context!,
                         title: "Eliminar contacto",
                         message:
                             "¿Estás seguro que deseas eliminar a ${friend.displayName} de tus contactos?",
                         onConfirm: () {
-                          // Aquí va la lógica para eliminar
+                          controller.deleteFriend(friend.id.toString());
                         });
                   },
                 ),
@@ -169,7 +177,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   label: "Rechazar",
                   color: Colors.red,
                   onTap: () {
-                    // Implementar la acción para rechazar solicitud
+                    controller.deleteFriend(request.id.toString());
                   },
                 ),
               ]);
@@ -203,12 +211,13 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   onTap: () {
                     // Implementar la acción para cancelar solicitud enviada
                     _showConfirmDialog(
+                        id: request.id,
                         context: Get.context!,
                         title: "Cancelar solicitud",
                         message:
                             "¿Estás seguro que deseas cancelar la solicitud enviada a ${request.displayName}?",
                         onConfirm: () {
-                          // Aquí va la lógica para cancelar
+                          controller.deleteFriend(request.id.toString());
                         });
                   },
                 ),
@@ -319,6 +328,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
     required List<Widget> actions,
   }) {
     return Card(
+      color: AppColors.backgroundDark,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -369,6 +379,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
+          // ignore: deprecated_member_use
           color: primaryColor.withOpacity(0.2),
           width: 2,
         ),
@@ -450,6 +461,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
   void _showConfirmDialog({
     required BuildContext context,
     required String title,
+    required int id,
     required String message,
     required VoidCallback onConfirm,
   }) {
@@ -457,6 +469,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: AppColors.backgroundDark,
           title: Text(title),
           content: Text(message),
           actions: [

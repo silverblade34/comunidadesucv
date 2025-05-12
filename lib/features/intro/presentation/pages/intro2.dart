@@ -33,7 +33,7 @@ class _Intro2State extends State<Intro2> {
                 SizedBox(height: MediaQuery.of(context).padding.top),
                 Container(height: AppBar().preferredSize.height),
                 Image.asset(
-                  ConstanceData.S5,
+                  ConstanceData.S3,
                   height: 270,
                   width: MediaQuery.of(context).size.width,
                 ),

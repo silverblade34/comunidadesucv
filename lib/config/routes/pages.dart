@@ -1,17 +1,19 @@
 import 'package:comunidadesucv/features/communities/bindings/communities_binding.dart';
 import 'package:comunidadesucv/features/communities/presentation/pages/communities_page.dart';
 import 'package:comunidadesucv/features/community_detail/bindings/community_detail_binding.dart';
-import 'package:comunidadesucv/features/community_detail/bindings/detail_member_binding.dart';
-import 'package:comunidadesucv/features/community_detail/bindings/forum_binding.dart';
-import 'package:comunidadesucv/features/community_detail/bindings/list_members_binding.dart';
+import 'package:comunidadesucv/features/community_member/bindings/detail_member_binding.dart';
 import 'package:comunidadesucv/features/community_detail/presentation/pages/community_detail_page.dart';
-import 'package:comunidadesucv/features/community_detail/presentation/pages/detail_member_page.dart';
-import 'package:comunidadesucv/features/community_detail/presentation/pages/forum_page.dart';
-import 'package:comunidadesucv/features/community_detail/presentation/pages/list_members_page.dart';
+import 'package:comunidadesucv/features/community_member/presentation/pages/detail_member_page.dart';
 import 'package:comunidadesucv/features/community_feed/bindings/community_feed_binding.dart';
 import 'package:comunidadesucv/features/community_feed/bindings/registered_post_binding.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/pages/community_feed_page.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/pages/registered_post_page.dart';
+import 'package:comunidadesucv/features/community_forum/bindings/community_forum_binding.dart';
+import 'package:comunidadesucv/features/community_forum/bindings/createnew_post_binding.dart';
+import 'package:comunidadesucv/features/community_forum/presentation/pages/community_forum_page.dart';
+import 'package:comunidadesucv/features/community_forum/presentation/pages/createnew_post_page.dart';
+import 'package:comunidadesucv/features/community_member/bindings/community_member_binding.dart';
+import 'package:comunidadesucv/features/community_member/presentation/pages/community_member_page.dart';
 import 'package:comunidadesucv/features/intro/bindings/intro_binding.dart';
 import 'package:comunidadesucv/features/intro/presentation/pages/intro_page.dart';
 import 'package:comunidadesucv/features/perfil/bindings/friendships_binding.dart';
@@ -64,9 +66,9 @@ abstract class AppPages {
       page: () => const CommunityFeedPage(),
     ),
     GetPage(
-      name: Routes.listMembers,
-      binding: ListMembersBinding(),
-      page: () => const ListMembersPage(),
+      name: Routes.communityMember,
+      binding: CommunityMemberBinding(),
+      page: () => const CommunityMemberPage(),
     ),
     GetPage(
       name: Routes.detailMember,
@@ -74,9 +76,14 @@ abstract class AppPages {
       page: () => const DetailMemberPage(),
     ),
     GetPage(
-      name: Routes.forum,
-      binding: ForumBinding(),
-      page: () => const ForumPage(),
+      name: Routes.communityForum,
+      binding: CommunityForumBinding(),
+      page: () => const CommunityForumPage(),
+    ),
+      GetPage(
+      name: Routes.createForum,
+      binding: CreateNewPostBinding(),
+      page: () => const CreateNewPostPage(),
     ),
     GetPage(
       name: Routes.registeredPost,

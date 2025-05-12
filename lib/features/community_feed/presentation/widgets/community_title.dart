@@ -22,8 +22,7 @@ class CommunityTitle extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              Get.offAllNamed("/community_detail",
-                  arguments: controller.space.id);
+              Get.back(result: true);
             },
             child: Icon(
               Ionicons.chevron_back,

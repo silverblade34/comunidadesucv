@@ -34,7 +34,6 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 15, right: 15),
       alignment: Alignment.center,
       height: 50,
       decoration: BoxDecoration(
@@ -57,11 +56,31 @@ class _MyTextFieldState extends State<MyTextField> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: TextStyle(
-            fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w600,
               color: AppTheme.isLightTheme
                   ? HexColor("#1A1167")
                   : HexColor('#E5E3FC')),
-          border: InputBorder.none,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey, // puedes personalizar el color
+              width: 0.5, // borde delgado
+            ),
+            borderRadius: BorderRadius.circular(17),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).primaryColor,
+              width: 0.8,
+            ),
+            borderRadius: BorderRadius.circular(17),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(17),
+          ),
         ),
       ),
     );

@@ -7,9 +7,11 @@ class ConstanceData {
   static const ImageUrl = 'assets/image/';
   static const splashImage = 'assets/image/splash-ucv.png';
 
+  static const bannerUcvConnect = 'assets/image/ucv-connect.jpeg';
   static const Logo = ImageUrl + "s3.png";
   static const LogoUcv = ImageUrl + "logo-ucv.png";
   static const backgroundIntro = 'assets/image/background-intro.png';
+  static const ucvito = 'assets/image/UCVITO2.gif';
 
   static const a1 = ImageUrl + "a1.png";
   static const a2 = ImageUrl + "a2.png";

@@ -1,6 +1,8 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
-import 'package:comunidadesucv/features/community_detail/presentation/widgets/members_avatar_row.dart';
+import 'package:comunidadesucv/features/community_detail/presentation/widgets/community_image_loading.dart';
+import 'package:comunidadesucv/features/community_detail/presentation/widgets/community_rules.dart';
+import 'package:comunidadesucv/features/community_member/presentation/widgets/members_avatar_row.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +22,9 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
         children: [
           Column(
             children: [
-              buildProfileImageWithLoading(context),
+              CommunityImageLoading(
+                controller: controller,
+              ),
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(top: 10),
@@ -65,6 +69,13 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                                       color: Colors.white.withOpacity(0.7),
                                       fontSize: 14),
                                 ),
+                                SizedBox(height: 15),
+                                Obx(() => CommunityRulesWidget(
+                                      rules: controller.space.value.about,
+                                      isExpanded:
+                                          controller.isRulesExpanded.value,
+                                      onToggle: controller.toggleRulesExpanded,
+                                    )),
                               ],
                             ),
                           ),
@@ -88,10 +99,15 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                           icon: Icons.bookmark_border,
                           label: "Publicaciones",
                           iconBackgroundColor: Colors.blue,
-                          onTap: () {
+                          onTap: () async {
                             if (controller.isButtonMember.value) {
-                              Get.offAllNamed("/community_feed",
+                              final result = await Get.toNamed(
+                                  "/community_feed",
                                   arguments: controller.space.value);
+
+                              if (result == true) {
+                                await controller.loadLastPostContainer();
+                              }
                             } else {
                               showCustomDialog();
                             }
@@ -108,8 +124,14 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                           icon: Icons.group,
                           label: "Lo que dice la comunidad",
                           iconBackgroundColor: Colors.orange,
-                          onTap: () => Get.offAllNamed("/forum",
-                              arguments: controller.space.value),
+                          onTap: () async {
+                            final result = await Get.toNamed("/community_forum",
+                                arguments: controller.space.value);
+
+                            if (result == true) {
+                              await controller.loadLastPostContainer();
+                            }
+                          },
                         )
                       ],
                     ),
@@ -423,76 +445,6 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
                 ),
               )
             : null,
-      ),
-    );
-  }
-
-  Widget buildProfileImageWithLoading(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: double.infinity,
-      child: Stack(
-        children: [
-          Obx(() {
-            if (controller.space.value.profileImage.isEmpty) {
-              return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.white,
-                ),
-              );
-            }
-
-            return Stack(
-              children: [
-                Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.white,
-                  ),
-                ),
-                Image.network(
-                  controller.space.value.coverImage !=
-                          "http://comunidadesucv.uvcv.edu.pe/static/img/default_banner.jpg"
-                      ? controller.space.value.coverImage
-                      : controller.space.value.profileImage,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    }
-                    return Container();
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: Colors.grey[700],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          }),
-          Container(
-            color: Colors.purple.withOpacity(0.3),
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ],
       ),
     );
   }

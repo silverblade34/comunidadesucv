@@ -20,6 +20,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
+    
   ));
   WakelockPlus.enable();
   runApp(GetMaterialApp(
