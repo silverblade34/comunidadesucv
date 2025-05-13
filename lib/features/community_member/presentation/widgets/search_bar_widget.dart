@@ -12,6 +12,10 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenSize = MediaQuery.of(context).size;
+    final double fontSize = screenSize.width * 0.04;
+
     return TextField(
       controller: controller.searchController,
       decoration: InputDecoration(
@@ -29,6 +33,11 @@ class SearchBarWidget extends StatelessWidget {
               )
             : SizedBox(),
         hintText: 'Buscar miembros',
+        hintStyle: theme.textTheme.bodySmall?.copyWith(
+          // ignore: deprecated_member_use
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          fontSize: fontSize,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,

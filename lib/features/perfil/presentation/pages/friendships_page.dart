@@ -158,29 +158,42 @@ class FriendshipsPage extends GetView<FriendshipsController> {
         itemCount: controller.dataUserFriendshipReceived.length,
         itemBuilder: (context, index) {
           final request = controller.dataUserFriendshipReceived[index];
-          return _buildRequestCard(
-              friend: request,
-              primaryColor: primaryColor,
-              textColor: textColor,
-              subtitle: "Quiere ser tu amigo",
-              actions: [
-                _buildActionButton(
-                  icon: Icons.check_circle,
-                  label: "Aceptar",
-                  color: Colors.green,
-                  onTap: () {
-                    // Implementar la acción para aceptar solicitud
-                  },
-                ),
-                _buildActionButton(
-                  icon: Icons.cancel,
-                  label: "Rechazar",
-                  color: Colors.red,
-                  onTap: () {
-                    controller.deleteFriend(request.id.toString());
-                  },
-                ),
-              ]);
+          return GestureDetector(
+            onTap: () async {
+              final result = await Get.toNamed("/detail_member", arguments: {
+                "friendId": request.id.toString(),
+                "state": FriendshipState.REQUEST_RECEIVED,
+              });
+
+              if (result == true) {
+                await controller.initData();
+              }
+            },
+            child: _buildRequestCard(
+                friend: request,
+                primaryColor: primaryColor,
+                textColor: textColor,
+                subtitle: "Quiere ser tu amigo",
+                actions: [
+                  _buildActionButton(
+                    icon: Icons.check_circle,
+                    label: "Aceptar",
+                    color: Colors.green,
+                    onTap: () {
+                      controller
+                          .sendAndAcceptRequestFriend(request.id.toString());
+                    },
+                  ),
+                  _buildActionButton(
+                    icon: Icons.cancel,
+                    label: "Rechazar",
+                    color: Colors.red,
+                    onTap: () {
+                      controller.deleteFriend(request.id.toString());
+                    },
+                  ),
+                ]),
+          );
         },
       );
     });
@@ -198,30 +211,42 @@ class FriendshipsPage extends GetView<FriendshipsController> {
         itemCount: controller.dataUserFriendshipSent.length,
         itemBuilder: (context, index) {
           final request = controller.dataUserFriendshipSent[index];
-          return _buildRequestCard(
-              friend: request,
-              primaryColor: primaryColor,
-              textColor: textColor,
-              subtitle: "Solicitud pendiente",
-              actions: [
-                _buildActionButton(
-                  icon: Icons.cancel,
-                  label: "Cancelar",
-                  color: Colors.orange,
-                  onTap: () {
-                    // Implementar la acción para cancelar solicitud enviada
-                    _showConfirmDialog(
-                        id: request.id,
-                        context: Get.context!,
-                        title: "Cancelar solicitud",
-                        message:
-                            "¿Estás seguro que deseas cancelar la solicitud enviada a ${request.displayName}?",
-                        onConfirm: () {
-                          controller.deleteFriend(request.id.toString());
-                        });
-                  },
-                ),
-              ]);
+          return GestureDetector(
+             onTap: () async {
+              final result = await Get.toNamed("/detail_member", arguments: {
+                "friendId": request.id.toString(),
+                "state": FriendshipState.REQUEST_SENT,
+              });
+
+              if (result == true) {
+                await controller.initData();
+              }
+            },
+            child: _buildRequestCard(
+                friend: request,
+                primaryColor: primaryColor,
+                textColor: textColor,
+                subtitle: "Solicitud pendiente",
+                actions: [
+                  _buildActionButton(
+                    icon: Icons.cancel,
+                    label: "Cancelar",
+                    color: Colors.orange,
+                    onTap: () {
+                      // Implementar la acción para cancelar solicitud enviada
+                      _showConfirmDialog(
+                          id: request.id,
+                          context: Get.context!,
+                          title: "Cancelar solicitud",
+                          message:
+                              "¿Estás seguro que deseas cancelar la solicitud enviada a ${request.displayName}?",
+                          onConfirm: () {
+                            controller.deleteFriend(request.id.toString());
+                          });
+                    },
+                  ),
+                ]),
+          );
         },
       );
     });
@@ -388,8 +413,8 @@ class FriendshipsPage extends GetView<FriendshipsController> {
         child: Stack(
           children: [
             Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: AppColors.shimmerBaseColor,
+              highlightColor: AppColors.shimmerHighlightColor,
               child: Container(
                 width: size,
                 height: size,
@@ -409,8 +434,8 @@ class FriendshipsPage extends GetView<FriendshipsController> {
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: AppColors.shimmerBaseColor,
+                  highlightColor: AppColors.shimmerHighlightColor,
                   child: Container(
                     width: size,
                     height: size,

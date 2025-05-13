@@ -1,8 +1,9 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
-import 'package:comunidadesucv/core/models/space_summary.dart';
 import 'package:comunidadesucv/core/models/user_friendship.dart';
+import 'package:comunidadesucv/core/widgets/perfil_interests.dart';
+import 'package:comunidadesucv/core/widgets/simple_community_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
@@ -14,7 +15,7 @@ class PerfilPage extends GetView<PerfilController> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = HexColor('#5E35B1');
+    final primaryColor = AppColors.backgroundDarkLigth;
     final textColor = AppTheme.isLightTheme ? Colors.black87 : Colors.white;
     final backgroundColor =
         AppTheme.isLightTheme ? Colors.white : AppColors.backgroundDarkIntense;
@@ -53,12 +54,14 @@ class PerfilPage extends GetView<PerfilController> {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.1),
                               blurRadius: 8,
                               offset: Offset(0, 3),
                             ),
                           ],
                           border: Border.all(
+                            // ignore: deprecated_member_use
                             color: primaryColor.withOpacity(0.2),
                             width: 3,
                           ),
@@ -90,6 +93,7 @@ class PerfilPage extends GetView<PerfilController> {
                         controller.user.value.account?.username ?? "",
                         style: TextStyle(
                           fontSize: 14,
+                          // ignore: deprecated_member_use
                           color: textColor.withOpacity(0.6),
                         ),
                       ),
@@ -103,15 +107,12 @@ class PerfilPage extends GetView<PerfilController> {
                     color: backgroundColor,
                     boxShadow: [
                       BoxShadow(
+                        // ignore: deprecated_member_use
                         color: Colors.black.withOpacity(0.05),
                         blurRadius: 10,
                         offset: Offset(0, 5),
                       ),
                     ],
-                    border: Border.all(
-                      color: primaryColor.withOpacity(0.1),
-                      width: 1,
-                    ),
                   ),
                   child: Column(
                     children: [
@@ -122,10 +123,9 @@ class PerfilPage extends GetView<PerfilController> {
                         color: primaryColor,
                         textColor: textColor,
                       ),
-                      Divider(
-                          height: 15,
-                          thickness: 1,
-                          color: primaryColor.withOpacity(0.1)),
+                      SizedBox(
+                        height: 12,
+                      ),
                       _buildInfoRow(
                         icon: Ionicons.location_outline,
                         title: "Campus",
@@ -133,10 +133,9 @@ class PerfilPage extends GetView<PerfilController> {
                         color: primaryColor,
                         textColor: textColor,
                       ),
-                      Divider(
-                          height: 15,
-                          thickness: 1,
-                          color: primaryColor.withOpacity(0.1)),
+                      SizedBox(
+                        height: 12,
+                      ),
                       _buildInfoRow(
                         icon: Ionicons.time_outline,
                         title: "Ciclo",
@@ -144,10 +143,9 @@ class PerfilPage extends GetView<PerfilController> {
                         color: primaryColor,
                         textColor: textColor,
                       ),
-                      Divider(
-                          height: 15,
-                          thickness: 1,
-                          color: primaryColor.withOpacity(0.1)),
+                      SizedBox(
+                        height: 12,
+                      ),
                       _buildInfoRow(
                         icon: Ionicons.mail_outline,
                         title: "Correo",
@@ -158,132 +156,20 @@ class PerfilPage extends GetView<PerfilController> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Ionicons.pricetag_outline,
-                            size: 18,
-                            color: primaryColor,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            "Mis intereses",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15),
-                      controller.user.value.account?.tags != null &&
-                              controller.user.value.account!.tags.isNotEmpty
-                          ? Wrap(
-                              spacing: 10,
-                              runSpacing: 10,
-                              children: controller.user.value.account!.tags
-                                  .map((tagData) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: primaryColor.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    tagData,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: const Color.fromARGB(
-                                          255, 189, 189, 189),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            )
-                          : Text(
-                              "No se han agregado intereses",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: textColor.withOpacity(0.5),
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                    ],
-                  ),
+                  child: PerfilInterests(
+                      tags: controller.user.value.account!.tags,
+                      description: "Mis intereses"),
                 ),
                 SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Ionicons.people_outline,
-                                size: 18,
-                                color: primaryColor,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "Mis comunidades",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 15),
-                      controller.user.value.spaces.isNotEmpty
-                          ? SizedBox(
-                              height: 150,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: controller.user.value.spaces.length,
-                                itemBuilder: (context, index) {
-                                  final space =
-                                      controller.user.value.spaces[index];
-                                  return _buildCommunityCard(
-                                      space, primaryColor);
-                                },
-                              ),
-                            )
-                          : Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                child: Text(
-                                  "No se han unido a comunidades",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    // ignore: deprecated_member_use
-                                    color: textColor.withOpacity(0.5),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            ),
-                    ],
+                  child: SimpleCommunityCard(
+                    spaces: controller.user.value.spaces,
+                    primaryColor: primaryColor,
+                    description: "Mis comunidades",
                   ),
                 ),
                 SizedBox(height: 25),
@@ -350,6 +236,7 @@ class PerfilPage extends GetView<PerfilController> {
               "No tienes contactos agregados",
               style: TextStyle(
                 fontSize: 14,
+                // ignore: deprecated_member_use
                 color: textColor.withOpacity(0.5),
                 fontStyle: FontStyle.italic,
               ),
@@ -436,8 +323,8 @@ class PerfilPage extends GetView<PerfilController> {
         child: Stack(
           children: [
             Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: AppColors.shimmerBaseColor,
+              highlightColor: AppColors.shimmerHighlightColor,
               child: Container(
                 width: 75,
                 height: 75,
@@ -457,8 +344,8 @@ class PerfilPage extends GetView<PerfilController> {
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: AppColors.shimmerBaseColor,
+                  highlightColor: AppColors.shimmerHighlightColor,
                   child: Container(
                     width: 75,
                     height: 75,
@@ -494,7 +381,8 @@ class PerfilPage extends GetView<PerfilController> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14,
+                // ignore: deprecated_member_use
                 color: textColor.withOpacity(0.6),
               ),
             ),
@@ -510,71 +398,6 @@ class PerfilPage extends GetView<PerfilController> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildCommunityCard(SpaceSummary space, Color primaryColor) {
-    return GestureDetector(
-      onTap: () {
-        Get.toNamed("/community_detail", arguments: space.id);
-      },
-      child: Container(
-        margin: EdgeInsets.only(right: 15),
-        width: 140,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: NetworkImage(space.profileImage),
-            fit: BoxFit.cover,
-          ),
-          boxShadow: [
-            BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.7),
-              ],
-            ),
-          ),
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                space.name,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 4),
-              Text(
-                "${space.membersCount} miembros",
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

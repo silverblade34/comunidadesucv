@@ -18,8 +18,7 @@ class RegisteredPostPage extends GetView<RegisteredPostController> {
             Icons.close,
             color: Colors.white,
           ),
-          onPressed: () =>
-              Get.offAllNamed("/community_feed", arguments: controller.space),
+          onPressed: () => Get.back(result: true),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -159,53 +158,49 @@ class RegisteredPostPage extends GetView<RegisteredPostController> {
                         onPressed: () => controller.takePhoto(),
                         tooltip: 'Tomar foto',
                       ),
-                      IconButton(
-                        icon: Icon(Icons.videocam_outlined),
-                        onPressed: () => controller.pickVideo(),
-                        tooltip: 'Seleccionar video',
-                      ),
                     ],
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Obx(() => ElevatedButton(
-                          onPressed: controller.isPublishing.value
-                              ? null // Deshabilitar el botón mientras se está publicando
-                              : () => controller.simulationPublishPost(),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            backgroundColor: Color(0xFF8260F2),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                    child: Obx(
+                      () => ElevatedButton(
+                        onPressed: controller.isPublishing.value
+                            ? null // Deshabilitar el botón mientras se está publicando
+                            : () => controller.publishPost(),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          child: controller.isPublishing.value
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Publicando',
-                                      style: TextStyle(color: Colors.white),
+                          backgroundColor: Color(0xFF8260F2),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        ),
+                        child: controller.isPublishing.value
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Publicando',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
                                     ),
-                                    SizedBox(width: 8),
-                                    SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Text(
-                                  'Publicar',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                        )),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                'Publicar',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                      ),
+                    ),
                   )
                 ],
               ),

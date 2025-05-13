@@ -110,7 +110,7 @@ class _Intro2State extends State<Intro2> {
                       ),
                       MyIcon(
                         click: () {
-                          Get.offAllNamed("profile_configuration");
+                          Get.toNamed("profile_configuration");
                         },
                       ),
                     ],

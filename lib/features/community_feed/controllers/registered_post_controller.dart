@@ -157,63 +157,15 @@ class RegisteredPostController extends GetxController {
         try {
           await uploadFilesForPost(publishedPost.id);
 
-          Get.snackbar(
-            'Éxito',
-            'Publicación con archivos creada correctamente',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        } catch (fileError) {
-          Get.snackbar(
-            'Advertencia',
-            'Publicación creada, pero hubo problemas al subir los archivos: $fileError',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        }
+          await _showPendingApprovalDialogWithAnimation();
+        } catch (fileError) {}
       } else {
-        Get.snackbar(
-          'Éxito',
-          'Publicación creada correctamente',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        await _showPendingApprovalDialogWithAnimation();
       }
-
-      Get.offAllNamed("/community_feed", arguments: space);
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudo crear la publicación: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      isPublishing.value = false;
-    }
-  }
-
-  Future<void> simulationPublishPost() async {
-    if (bodyController.text.isEmpty) {
-      return;
-    }
-
-    try {
-      isPublishing.value = true;
-
-      // Simulamos un breve retraso para dar sensación de procesamiento
-      await Future.delayed(Duration(seconds: 2));
-
-      // Aquí mostramos el diálogo de "enviado para aprobación"
-      await _showPendingApprovalDialogWithAnimation();
-
-      // Limpiamos el estado después de "publicar"
       bodyController.clear();
       mediaAttachments.clear();
-
-      // Redirigimos al feed de la comunidad
-      Get.offAllNamed("/community_feed", arguments: space);
+      Get.back(result: true);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudo procesar la publicación: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
       isPublishing.value = false;
     }
   }

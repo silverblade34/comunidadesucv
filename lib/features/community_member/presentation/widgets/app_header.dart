@@ -6,7 +6,7 @@ import 'package:ionicons/ionicons.dart';
 class AppHeader extends StatelessWidget {
   final String title;
   final Widget? trailingWidget;
-  
+
   const AppHeader({
     super.key,
     required this.title,
@@ -35,12 +35,11 @@ class AppHeader extends StatelessWidget {
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  fontSize: 16,
-                  color: AppTheme.isLightTheme
-                      ? HexColor("#1A1167")
-                      : HexColor('#E5E3FC'),
-                ),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           trailingWidget ?? SizedBox(),
         ],

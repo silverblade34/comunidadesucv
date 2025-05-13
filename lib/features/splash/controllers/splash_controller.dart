@@ -70,9 +70,9 @@ class SplashController extends GetxController
     box.write("user", userData);
 
     if (isNewUser) {
-      Get.offAllNamed("/intro");
+      Get.toNamed("/intro");
     } else {
-      Get.offAllNamed("/communities"); // "/communities"
+      Get.toNamed("/communities"); // "/communities"
     }
   }
 }

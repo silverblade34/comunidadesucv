@@ -24,6 +24,8 @@ class CommunityFeedController extends GetxController {
   CommunityFeedRepository communityFeedRepository = CommunityFeedRepository();
 
   var isLoading = false.obs;
+  var isLoadingMore = false.obs;
+  var hasMorePosts = true.obs;
   final RxList<Post> dataPost = <Post>[].obs;
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
   final RxMap<int, bool> userLikes = <int, bool>{}.obs;
@@ -46,14 +48,27 @@ class CommunityFeedController extends GetxController {
 
   // Variables para la paginación
   int currentPage = 1;
+  final int postsLimit = 10;
   final int commentLimit = 10;
   int? currentPostId;
+
+  final RxBool isSearchActive = false.obs;
+  final RxString searchQuery = ''.obs;
+  final RxList filteredPosts = [].obs;
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() async {
     super.onInit();
     _loadUser();
-    _loadLastPostContainer();
+    loadInitialPosts();
+
+    scrollController.addListener(_scrollListener);
+    // Initialize search functionality
+    filteredPosts.assignAll(dataPost);
+    ever(dataPost, (_) => updateFilteredPosts());
+    ever(searchQuery, (_) => updateFilteredPosts());
   }
 
   // Carga de los datos del usuario
@@ -63,6 +78,102 @@ class CommunityFeedController extends GetxController {
       user.value = userData;
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");
+    }
+  }
+
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+      updateFilteredPosts();
+    }
+  }
+
+  void updateSearchQuery(String query) {
+    searchQuery.value = query;
+    updateFilteredPosts();
+  }
+
+  void updateFilteredPosts() {
+    if (searchQuery.value.isEmpty) {
+      filteredPosts.assignAll(dataPost);
+    } else {
+      filteredPosts.assignAll(dataPost
+          .where((post) => post.message
+              .toString()
+              .toLowerCase()
+              .contains(searchQuery.value.toLowerCase()))
+          .toList());
+    }
+  }
+
+  @override
+  void onClose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _scrollListener() {
+    // Si estamos al 80% del scroll, cargamos más posts
+    if (scrollController.position.pixels >
+        scrollController.position.maxScrollExtent * 0.8) {
+      if (!isLoadingMore.value && hasMorePosts.value) {
+        loadMorePosts();
+      }
+    }
+  }
+
+  Future<void> loadMorePosts() async {
+    if (isLoadingMore.value || !hasMorePosts.value) return;
+
+    isLoadingMore.value = true;
+    currentPage++;
+
+    try {
+      final response = await communityDetailRepository.postContainerSpace(
+          space.contentContainerId, postsLimit, currentPage);
+
+      if (response.results.isEmpty) {
+        hasMorePosts.value = false;
+      } else {
+        dataPost.addAll(response.results);
+        hasMorePosts.value = response.results.length >= postsLimit;
+      }
+    } catch (e) {
+      currentPage--;
+      Get.snackbar("Error", "Error al cargar más publicaciones");
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
+  // Método para refrescar los posts
+  Future<void> refreshPosts() async {
+    hasMorePosts.value = true;
+    await loadInitialPosts();
+  }
+
+  Future<void> loadInitialPosts() async {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
+    currentPage = 1;
+
+    try {
+      final response = await communityDetailRepository.postContainerSpace(
+          space.contentContainerId, postsLimit, currentPage);
+
+      if (response.results.isEmpty) {
+        hasMorePosts.value = false;
+      } else {
+        dataPost.assignAll(response.results);
+        hasMorePosts.value = response.results.length >= postsLimit;
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Error al cargar publicaciones");
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -396,20 +507,5 @@ class CommunityFeedController extends GetxController {
 
     await addCommentPost(
         postId: comment.postId, text: comment.message, objectId: objectId);
-  }
-
-  void _loadLastPostContainer() async {
-    isLoading.value = true;
-    try {
-      final response = await communityDetailRepository.postContainerSpace(
-          space.contentContainerId, 100);
-
-      final filteredPosts = response.results;
-
-      dataPost.assignAll(filteredPosts);
-      isLoading.value = false;
-    } catch (e) {
-      isLoading.value = false;
-    }
   }
 }

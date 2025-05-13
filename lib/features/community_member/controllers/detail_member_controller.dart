@@ -11,14 +11,9 @@ class DetailMemberController extends GetxController {
       ListMembershipRepository();
   DetailMemberRepository detailMemberRepository = DetailMemberRepository();
 
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: null,
-      profile: null,
-      spaces: []).obs;
+  final Rx<UserDetail> user = UserDetail.empty().obs;
+  final RxBool isSendingRequest = false.obs;
+  final RxBool isLoading = true.obs;
 
   @override
   void onInit() {
@@ -27,11 +22,20 @@ class DetailMemberController extends GetxController {
   }
 
   void _loadUser() async {
-    user.value = await listMembershipRepository.getMemberId(memberId);
+    isLoading.value = true;
+    try {
+      user.value = await listMembershipRepository.getMemberId(memberId);
+    } catch (e) {
+      print('Error loading user: $e');
+    } finally {
+      isLoading.value = false; // End loading
+    }
   }
 
   void deleteFriend() async {
+    isSendingRequest.value = true;
     bool response = await detailMemberRepository.deleteFriend(memberId);
+    isSendingRequest.value = false;
     if (response) {
       state = FriendshipState.NO_FRIEND;
       update();
@@ -39,11 +43,13 @@ class DetailMemberController extends GetxController {
   }
 
   void sendAndAcceptRequestFriend(FriendshipState friendshipState) async {
+    isSendingRequest.value = true;
     bool response =
         await detailMemberRepository.sendAndAcceptRequestFriend(memberId);
+    isSendingRequest.value = false;
     if (response) {
       state = friendshipState;
-      update();
     }
+    update();
   }
 }

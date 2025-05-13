@@ -1,4 +1,3 @@
-import 'package:comunidadesucv/core/models/account.dart';
 import 'package:comunidadesucv/features/profile_configuration/data/repository/profile_configuration_repository.dart';
 import 'package:comunidadesucv/core/models/user_detail.dart';
 import 'package:flutter/material.dart';
@@ -15,28 +14,7 @@ class ProfileConfigurationController extends GetxController {
 
   final RxString selectedTag = ''.obs;
 
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: Account(
-        id: 0,
-        guid: '',
-        username: '',
-        email: '',
-        visibility: 0,
-        status: 0,
-        tags: [],
-        language: '',
-        timeZone: '',
-        contentcontainerId: 0,
-        authclient: '',
-        authclientId: null,
-        lastLogin: '',
-      ),
-      profile: null,
-      spaces: []).obs;
+  final Rx<UserDetail> user = UserDetail.empty().obs;
 
   @override
   void onInit() {

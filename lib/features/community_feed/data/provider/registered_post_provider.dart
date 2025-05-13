@@ -28,14 +28,6 @@ class RegisteredPostProvider {
           "data": {
             "message": message,
             "content": {
-              "metadata": {
-                "visibility": 1,
-                "state": 1,
-                "archived": false,
-                "hidden": false,
-                "pinned": false,
-                "locked_comments": false
-              },
               "topics": []
             }
           }

@@ -28,14 +28,7 @@ class CommunityDetailController extends GetxController {
   final RxList<Post> dataPost = <Post>[].obs;
 
   final Rx<Space> space = Space.empty().obs;
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: null,
-      profile: null,
-      spaces: []).obs;
+  final Rx<UserDetail> user = UserDetail.empty().obs;
 
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
   final isRulesExpanded = false.obs;
@@ -102,7 +95,7 @@ class CommunityDetailController extends GetxController {
   Future<void> loadLastPostContainer() async {
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.value.contentContainerId, 10);
+          space.value.contentContainerId, 10, 1);
 
       final filteredPosts = response.results.where((post) {
         return post.content.files.isNotEmpty;

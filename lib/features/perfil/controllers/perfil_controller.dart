@@ -10,16 +10,10 @@ class PerfilController extends GetxController {
   SplashRepository splashRepository = SplashRepository();
   PerfilRepository perfilRepository = PerfilRepository();
 
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: null,
-      profile: null,
-      spaces: []).obs;
+  final Rx<UserDetail> user = UserDetail.empty().obs;
 
   final RxList<UserFriendship> dataUserFriendship = <UserFriendship>[].obs;
+  final RxBool isLoading = true.obs;
 
   @override
   void onInit() {
@@ -28,6 +22,7 @@ class PerfilController extends GetxController {
   }
 
   void _initData() async {
+    isLoading.value = true;
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
@@ -44,5 +39,6 @@ class PerfilController extends GetxController {
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");
     }
+    isLoading.value = false;
   }
 }

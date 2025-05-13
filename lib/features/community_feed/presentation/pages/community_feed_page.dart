@@ -9,12 +9,12 @@ import 'package:comunidadesucv/features/community_feed/presentation/widgets/anim
 import 'package:comunidadesucv/features/community_feed/presentation/widgets/commentlike_button_animation.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/widgets/community_title.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/widgets/replylike_button_animation.dart';
+import 'package:comunidadesucv/features/community_feed/presentation/widgets/responsive_navigation_feed.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/widgets/simplelike_button_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CommunityFeedPage extends GetView<CommunityFeedController> {
@@ -30,10 +30,14 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
             CommunityTitle(
               controller: controller,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AnimatedSearch(),
-            ),
+           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Obx(() => AnimatedSearch(
+              onSearch: controller.updateSearchQuery,
+              isSearchActive: controller.isSearchActive.value,
+              onSearchTap: controller.toggleSearch,
+            )),
+          ),
             SizedBox(
               height: 15,
             ),
@@ -43,103 +47,85 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
-        height: 60,
-        decoration: BoxDecoration(
-          color: const Color(0xFF0E0745),
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: [
-            BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            GestureDetector(
-              onTap: () => Get.toNamed("/communities"),
-              child: Container(
-                padding: const EdgeInsets.all(9),
-                child: const Icon(
-                  Ionicons.home,
-                  color: Colors.grey,
-                  size: 28,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.offAllNamed("/registered_post", arguments: controller.space),
-              child: Container(
-                padding: const EdgeInsets.all(9),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8260F2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.add_box_outlined,
-                  color: Colors.white,
-                  size: 28,
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.toNamed("/perfil"),
-              child: Container(
-                padding: const EdgeInsets.all(9),
-                child: const Icon(
-                  Ionicons.person,
-                  color: Colors.grey,
-                  size: 28,
-                ),
-              ),
-            ),
-          ],
-        ),
+      extendBody: true,
+      bottomNavigationBar: ResponsiveNavigationFeed(
+        controller: controller,
       ),
     );
   }
 
-  Widget _buildFeedContent() {
+   Widget _buildFeedContent() {
     return Obx(() {
-      if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
-      if (controller.dataPost.isEmpty) {
-        return const Center(
-            child: Text(
+        if (controller.isLoading.value) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    if (controller.isSearchActive.value && controller.filteredPosts.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'No se encontraron resultados para "${controller.searchQuery.value}"',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    
+    if (controller.filteredPosts.isEmpty) {
+      return Center(
+        child: Text(
           'No hay publicaciones disponibles',
-          style: TextStyle(fontSize: 13),
-        ));
-      }
-
-      return ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        separatorBuilder: (context, index) => const SizedBox(height: 1),
-        itemCount: controller.dataPost.length,
-        itemBuilder: (context, index) {
-          final post = controller.dataPost[index];
-          final user = post.content.metadata.createdBy;
-
-          final hasImage = post.content.files.isNotEmpty;
-          final imageId = hasImage ? post.content.files.first['id'] : null;
-
-          return _buildPostItem(
-            context: context,
-            post: post,
-            userImageUrl: user.imageUrl,
-            userName: user.displayName,
-            imageId: imageId,
-            message: post.message,
-            likes: post.content.likes.total,
-            comments: post.content.comments.total,
-          );
-        },
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+    
+      // Lista con paginación
+      return RefreshIndicator(
+        onRefresh: controller.refreshPosts,
+        child: ListView.separated(
+          controller: controller.scrollController, // Usar el ScrollController
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          separatorBuilder: (context, index) => const SizedBox(height: 1),
+          // Añadir +1 para mostrar indicador de carga al final si hay más posts
+        itemCount: controller.filteredPosts.length + (controller.isLoadingMore.value ? 1 : 0),
+          itemBuilder: (context, index) {
+            // Si estamos en el último ítem y hay más posts para cargar, mostrar indicador de carga
+          if (index == controller.filteredPosts.length) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Center(
+                  child: controller.isLoadingMore.value 
+                    ? const CircularProgressIndicator()
+                    : const SizedBox.shrink(),
+                ),
+              );
+            }
+            
+            // Renderizar post normal
+            final post = controller.filteredPosts[index];
+            final user = post.content.metadata.createdBy;
+            final hasImage = post.content.files.isNotEmpty;
+            final imageId = hasImage ? post.content.files.first['id'] : null;
+            
+            return _buildPostItem(
+              context: context,
+              post: post,
+              userImageUrl: user.imageUrl,
+              userName: user.displayName,
+              imageId: imageId,
+              message: post.message,
+              likes: post.content.likes.total,
+              comments: post.content.comments.total,
+            );
+          },
+        ),
       );
     });
   }
@@ -191,7 +177,9 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    userName,
+                    userName.length > 30
+                        ? '${userName.substring(0, 30)}...'
+                        : userName,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -484,8 +472,8 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Shimmer.fromColors(
-            baseColor: Colors.grey[800]!,
-            highlightColor: Colors.grey[700]!,
+            baseColor: AppColors.shimmerBaseColor,
+            highlightColor: AppColors.shimmerHighlightColor,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

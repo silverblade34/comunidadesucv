@@ -46,6 +46,7 @@ class CommunityRulesWidget extends StatelessWidget {
                     // ignore: deprecated_member_use
                     color: Colors.white.withOpacity(0.9),
                     fontWeight: FontWeight.w500,
+                    fontSize: 15
                   ),
                 ),
                 SizedBox(width: 8),

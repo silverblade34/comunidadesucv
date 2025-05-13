@@ -8,13 +8,16 @@ class AppColors {
   static const Color backgroundDarkIntense = Color(0xff0E0847);
   static const Color backgroundDarkLigth = Color.fromARGB(128, 149, 117, 205);
   static const Color textBlackUCV = Color(0xFF0E0847);
-  static const Color backgroundDialogDark = Color(0xFF0E0847);
+  static const Color backgroundDialogDark = Color.fromARGB(255, 9, 3, 55);
   static const Color textLight = Color(0xff120C45);
   static const Color textDarkTitle = Color(0xffE5E3FC);
   static const Color textDarkSubtitle = Color(0xff9790CC);
   static const Color textDark = Colors.white;
   static const Color iconLight = Color(0xff2b2b2b);
   static const Color iconDark = Colors.white;
+
+  static Color shimmerBaseColor = Colors.grey[400]!;
+  static Color shimmerHighlightColor = Colors.grey[200]!;
 }
 
 class HexColor extends Color {

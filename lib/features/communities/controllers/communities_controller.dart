@@ -12,12 +12,8 @@ class CommunitiesController extends GetxController {
   final cacheKey = 'communities_cache';
   final cacheImagesKey = 'communities_images_cache';
   final cacheTimestampKey = 'communities_cache_timestamp';
-  // 24 horas en milisegundos para la caducidad de la caché
+  // 12 horas en milisegundos para la caducidad de la caché
   final cacheDuration = 6 * 60 * 60 * 1000;
-
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   SplashRepository homeRepository = SplashRepository();
   CommunitiesRepository communitiesRepository = CommunitiesRepository();
@@ -149,10 +145,6 @@ class CommunitiesController extends GetxController {
           backgroundColor: Get.theme.colorScheme.errorContainer,
           colorText: Get.theme.colorScheme.onErrorContainer);
     }
-  }
-
-  void openDrawer() {
-    scaffoldKey.currentState?.openDrawer();
   }
 
   @override

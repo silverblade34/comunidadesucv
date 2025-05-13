@@ -52,7 +52,11 @@ class CommunityForumPage extends GetView<CommunityForumController> {
             SizedBox(width: 8),
             Text(
               'Foro ${controller.space.name}',
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

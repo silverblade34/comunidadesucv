@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,15 +15,15 @@ class CommunityImageLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.3,
+      height: MediaQuery.of(context).size.height * 0.29,
       width: double.infinity,
       child: Stack(
         children: [
           Obx(() {
             if (controller.space.value.profileImage.isEmpty) {
               return Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: AppColors.shimmerBaseColor,
+                highlightColor: AppColors.shimmerHighlightColor,
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -34,8 +35,8 @@ class CommunityImageLoading extends StatelessWidget {
             return Stack(
               children: [
                 Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: AppColors.shimmerBaseColor,
+                  highlightColor: AppColors.shimmerHighlightColor,
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,

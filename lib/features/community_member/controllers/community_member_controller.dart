@@ -38,14 +38,7 @@ class CommunityMemberController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool hasMore = true.obs;
 
-  final Rx<UserDetail> user = UserDetail(
-      id: 0,
-      guid: '',
-      displayName: '',
-      url: '',
-      account: null,
-      profile: null,
-      spaces: []).obs;
+  final Rx<UserDetail> user = UserDetail.empty().obs;
 
   @override
   void onReady() async {
