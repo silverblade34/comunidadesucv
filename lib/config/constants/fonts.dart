@@ -31,9 +31,26 @@ class AppFonts {
     color: Color.fromARGB(255, 56, 56, 56),
   );
 
-  static const TextStyle titleAppBar = TextStyle(
+  static const TextStyle titleCommunityDetail = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 20,
+    fontSize: 25,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static TextStyle descriptionCommunityDetail = TextStyle(
+    fontFamily: fontFamily,
+    // ignore: deprecated_member_use
+    color: Colors.white.withOpacity(0.7),
+    fontSize: 13,
+  );
+
+  static TextStyle intermediateLabel = TextStyle(
+      fontFamily: fontFamily, fontSize: 14, fontWeight: FontWeight.bold);
+
+  static const TextStyle subtitleCommunity = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 15,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );

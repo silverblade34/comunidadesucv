@@ -57,7 +57,7 @@ class ProfileConfigurationController extends GetxController {
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
-      preferenceName.text = "${user.value.profile!.preferredName}";
+      preferenceName.text = user.value.profile!.preferredName != null ? "${user.value.profile!.preferredName}": "";
       _updateSelectedTags(user.value.account?.tags ?? []);
     } else {
       Get.snackbar("Error", "No se encontró información del usuario");

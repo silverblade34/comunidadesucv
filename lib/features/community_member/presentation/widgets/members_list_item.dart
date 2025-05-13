@@ -105,7 +105,7 @@ class MemberListItem extends StatelessWidget {
                     Text(
                       details,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontSize: 11,
+                            fontSize: 10,
                           ),
                     ),
                   ],
@@ -196,10 +196,8 @@ class MemberListItem extends StatelessWidget {
         Text(
           getDisplayName(name),
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontSize: 14,
-                fontWeight: friendshipState == FriendshipState.SELF
-                    ? FontWeight.bold
-                    : FontWeight.normal,
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
               ),
         ),
         if (friendshipState == FriendshipState.SELF)

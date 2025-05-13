@@ -43,10 +43,10 @@ class CommunityRulesWidget extends StatelessWidget {
                 Text(
                   "Reglas de la comunidad",
                   style: TextStyle(
+                    fontWeight: FontWeight.w500,
                     // ignore: deprecated_member_use
                     color: Colors.white.withOpacity(0.9),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15
+                    fontSize: 13,
                   ),
                 ),
                 SizedBox(width: 8),
@@ -88,7 +88,7 @@ class CommunityRulesWidget extends StatelessWidget {
                       "Normas y directrices",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -102,7 +102,7 @@ class CommunityRulesWidget extends StatelessWidget {
                       styleSheet: MarkdownStyleSheet(
                         p: TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                     ),

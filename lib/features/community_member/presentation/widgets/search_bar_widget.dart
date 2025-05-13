@@ -14,15 +14,14 @@ class SearchBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    final double fontSize = screenSize.width * 0.04;
+    final double fontSize = screenSize.width * 0.034;
+    final double iconSize = screenSize.width * 0.045;
 
     return TextField(
       controller: controller.searchController,
       decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.search,
-          color: Colors.white,
-        ),
+        prefixIcon: Icon(Icons.search,
+            color: theme.colorScheme.onSurface, size: iconSize),
         suffixIcon: controller.searchController.text.isNotEmpty
             ? IconButton(
                 icon: Icon(Icons.clear, color: Colors.grey),

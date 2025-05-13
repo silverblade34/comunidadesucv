@@ -15,7 +15,7 @@ class AppTheme {
   static TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(
       titleLarge: TextStyle(
-        fontSize: 25,
+        fontSize: 23,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.bold,
@@ -27,7 +27,7 @@ class AppTheme {
         fontWeight: FontWeight.w500,
       ),
       titleSmall: TextStyle(
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: 'Montserrat',
         color: isLightTheme ? AppColors.textLight : AppColors.textDark,
         fontWeight: FontWeight.w600,

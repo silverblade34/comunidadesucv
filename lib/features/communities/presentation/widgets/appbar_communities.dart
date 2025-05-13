@@ -17,14 +17,14 @@ class AppBarCommunities extends StatelessWidget {
           cacheHeight: 48,
         ),
         const SizedBox(
-          width: 20,
+          width: 10,
         ),
-         Text(
+        Text(
           'Comunidades Digitales',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onBackground,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
         ),
       ],
     );

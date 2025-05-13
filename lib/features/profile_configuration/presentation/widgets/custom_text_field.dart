@@ -19,8 +19,10 @@ class CustomTextField extends StatelessWidget {
       enabled: enabled,
       decoration: InputDecoration(
         hintText: hintText,
+        hintStyle: TextStyle(fontSize: 12),
         filled: true,
         fillColor: backgroundColor,
+        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(17),
           borderSide: const BorderSide(

@@ -98,25 +98,25 @@ class DetailMemberPage extends GetView<DetailMemberController> {
                         ),
                 ),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 40.0, left: 5.0, right: 15.0),
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          Get.back(result: true);
-                        },
-                        child: Icon(
+              GestureDetector(
+                onTap: () async {
+                  Get.back(result: true);
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(top: 40.0, left: 5.0, right: 15.0),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(
                           Ionicons.chevron_back,
                           size: 24,
                           color: Colors.white,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

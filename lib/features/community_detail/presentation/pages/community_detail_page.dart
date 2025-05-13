@@ -51,7 +51,7 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
           _buildBackButton(),
           JoinButton(
             controller: controller,
-            top: MediaQuery.of(context).size.height * 0.3 -
+            top: MediaQuery.of(context).size.height * 0.29 -
                 ResponsiveSize.getHeight(context, 20),
             right: ResponsiveSize.getWidth(context, 20),
           ),
@@ -109,8 +109,11 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
           Text(
             "Publicaciones recientes",
             style: TextStyle(
-                color: Colors.white,
-                fontSize: ResponsiveSize.getFontSize(context, 16)),
+              // ignore: deprecated_member_use
+              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.bold,
+              fontSize: ResponsiveSize.getFontSize(context, 14),
+            ),
           ),
           SizedBox(height: ResponsiveSize.getHeight(context, 10)),
           RecentPublicationsList(controller: controller),

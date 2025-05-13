@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -14,10 +15,8 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    final double iconSize = screenSize.width * 0.055;
-    final double titleSize = screenSize.width * 0.045;
+    final double iconSize = screenSize.width * 0.045;
     
     return Row(
       children: [
@@ -25,11 +24,7 @@ class SectionHeader extends StatelessWidget {
         SizedBox(width: screenSize.width * 0.02),
         Text(
           title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: theme.colorScheme.onBackground,
-            fontWeight: FontWeight.bold,
-            fontSize: titleSize,
-          ),
+          style: AppFonts.subtitleCommunity,
         ),
       ],
     );

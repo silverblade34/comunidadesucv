@@ -7,6 +7,7 @@ class SearchBarCommunities extends StatelessWidget {
   final Function(String) onChanged;
   final VoidCallback onClear;
   final RxString searchQuery;
+  final String hintext;
 
   const SearchBarCommunities({
     super.key,
@@ -14,14 +15,15 @@ class SearchBarCommunities extends StatelessWidget {
     required this.onChanged,
     required this.onClear,
     required this.searchQuery,
+    required this.hintext,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    final double fontSize = screenSize.width * 0.04;
-    final double iconSize = screenSize.width * 0.055;
+    final double fontSize = screenSize.width * 0.034;
+    final double iconSize = screenSize.width * 0.045;
 
     return Container(
       height: screenSize.height * 0.06,
@@ -52,7 +54,7 @@ class SearchBarCommunities extends StatelessWidget {
                   onPressed: onClear,
                 )
               : const SizedBox()),
-          hintText: 'Buscar comunidad',
+          hintText: hintext,
           hintStyle: theme.textTheme.bodySmall?.copyWith(
             // ignore: deprecated_member_use
             color: theme.colorScheme.onSurface.withOpacity(0.6),

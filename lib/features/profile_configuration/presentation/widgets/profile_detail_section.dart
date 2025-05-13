@@ -1,7 +1,7 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:comunidadesucv/features/profile_configuration/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-
 
 class ProfileDetailsSection extends StatelessWidget {
   final String career;
@@ -27,7 +27,6 @@ class ProfileDetailsSection extends StatelessWidget {
           enabled: false,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
-
         const SizedBox(height: 10),
         _buildSectionTitle('Ciclo'),
         const SizedBox(height: 10),
@@ -36,7 +35,6 @@ class ProfileDetailsSection extends StatelessWidget {
           enabled: false,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
-
         const SizedBox(height: 10),
         _buildSectionTitle('Nombre visible en tu perfil'),
         const SizedBox(height: 10),
@@ -48,10 +46,7 @@ class ProfileDetailsSection extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 16, 
-        fontWeight: FontWeight.bold
-      ),
+      style: AppFonts.intermediateLabel,
     );
   }
 
@@ -62,23 +57,28 @@ class ProfileDetailsSection extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(17),
         color: AppColors.backgroundDark,
+        border: Border.all(
+          color: AppColors.primary,
+          width: 0.5,
+        ),
       ),
       child: TextFormField(
         controller: preferenceNameController,
         cursorColor: AppColors.primary,
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 12,
           color: Colors.white,
         ),
         decoration: InputDecoration(
           hintText: "Ingresa un nombre de preferencia",
           hintStyle: TextStyle(
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            fontSize: 12,
+            color: const Color.fromARGB(184, 183, 183, 183),
           ),
           enabledBorder: _buildInputBorder(Colors.black54),
           focusedBorder: _buildInputBorder(AppColors.backgroundDark),
-          border: _buildInputBorder(Colors.black54),
+          // border: _buildInputBorder(Colors.black54),
         ),
       ),
     );

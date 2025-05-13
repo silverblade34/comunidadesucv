@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:comunidadesucv/features/communities/data/dto/space_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -103,7 +104,6 @@ class CommunityCard extends StatelessWidget {
   Widget _buildCommunityInfo(
       BuildContext context, ThemeData theme, String membersText) {
     final screenSize = MediaQuery.of(context).size;
-    final double textSize = screenSize.width < 400 ? 14 : 13;
     final double padding = screenSize.width * 0.03;
 
     return Positioned(
@@ -115,11 +115,7 @@ class CommunityCard extends StatelessWidget {
         children: [
           Text(
             space.name,
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: textSize,
-            ),
+            style:AppFonts.subtitleCommunity,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -165,9 +161,9 @@ class CommunityCard extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 2),
           child: Text(
             membersText,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: textSize,
+              fontSize: textSize - 2,
             ),
           ),
         ),

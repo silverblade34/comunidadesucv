@@ -42,7 +42,7 @@ class MenuItem extends StatelessWidget {
                 label,
                 style: TextStyle(
                   color: Colors.white, 
-                  fontSize: ResponsiveSize.getFontSize(context, 14),
+                  fontSize: ResponsiveSize.getFontSize(context, 13),
                 ),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -20,11 +21,7 @@ class DescriptionText extends StatelessWidget {
 
     return Text(
       description!,
-      style: TextStyle(
-        // ignore: deprecated_member_use
-        color: Colors.white.withOpacity(0.7),
-        fontSize: 15,
-      ),
+      style: AppFonts.descriptionCommunityDetail,
     );
   }
 

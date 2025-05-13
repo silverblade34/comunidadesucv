@@ -121,7 +121,7 @@ class CommunityMemberController extends GetxController {
   }
 
   String getDisplayName(String name) {
-    const maxChars = 27;
+    const maxChars = 22;
     return name.length > maxChars ? '${name.substring(0, maxChars)}...' : name;
   }
 

@@ -18,7 +18,7 @@ class InterestTag extends StatelessWidget {
     return GestureDetector(
       onTap: () => onPress(tag),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         decoration: BoxDecoration(
           color: isSelected
               ? HexColor('#635FF6')
@@ -37,7 +37,7 @@ class InterestTag extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
                 if (!isSelected) ...[

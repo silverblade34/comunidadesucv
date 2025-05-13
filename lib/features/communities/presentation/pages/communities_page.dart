@@ -16,53 +16,62 @@ class CommunitiesPage extends GetView<CommunitiesController> {
     final screenSize = MediaQuery.of(context).size;
     final horizontalPadding = screenSize.width * 0.04;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      extendBodyBehindAppBar: false,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: Column(
-                children: [
-                  const AppBarCommunities(),
-                  SizedBox(height: screenSize.height * 0.025),
-                  SearchBarCommunities(
-                    controller: controller.searchController,
-                    onChanged: (value) => controller.searchQuery.value = value,
-                    onClear: controller.clearSearch,
-                    searchQuery: controller.searchQuery,
-                  ),
-                  SizedBox(height: screenSize.height * 0.012),
-                ],
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        Get.back(result: true);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        extendBodyBehindAppBar: false,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: Column(
+                  children: [
+                    const AppBarCommunities(),
+                    SizedBox(height: screenSize.height * 0.025),
+                    SearchBarCommunities(
+                      controller: controller.searchController,
+                      onChanged: (value) =>
+                          controller.searchQuery.value = value,
+                      onClear: controller.clearSearch,
+                      searchQuery: controller.searchQuery,
+                      hintext: 'Buscar comunidad',
+                    ),
+                    SizedBox(height: screenSize.height * 0.012),
+                  ],
+                ),
               ),
-            ),
 
-            // Main
+              // Main
               Expanded(
-              child: Obx(() {
-                // Si está cargando y no hay datos todavía, mostrar indicador de carga
-                if (controller.isLoading.value && controller.filteredCommunities.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                
-                // RefreshIndicator sin GlobalKey
-                return RefreshIndicator(
-                  onRefresh: controller.refreshCommunities,
-                  color: theme.colorScheme.onPrimary,
-                  backgroundColor: theme.colorScheme.primary,
-                  child: _buildMainContent(theme, context),
-                );
-              }),
-            ),
-          ],
+                child: Obx(() {
+                  // Si está cargando y no hay datos todavía, mostrar indicador de carga
+                  if (controller.isLoading.value &&
+                      controller.filteredCommunities.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshCommunities,
+                    color: theme.colorScheme.onPrimary,
+                    backgroundColor: theme.colorScheme.primary,
+                    child: _buildMainContent(theme, context),
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
+        extendBody: true,
+        bottomNavigationBar: const ResponsiveBottomNavigationBar(),
       ),
-      extendBody: true,
-      bottomNavigationBar: const ResponsiveBottomNavigationBar(),
     );
   }
 
@@ -105,7 +114,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
           ),
 
           // Bottom padding
-          SizedBox(height: screenSize.height * 0.1),
+          SizedBox(height: screenSize.height * 0.03),
         ],
       ),
     );

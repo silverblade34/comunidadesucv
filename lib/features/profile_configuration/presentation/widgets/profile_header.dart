@@ -32,7 +32,7 @@ class ProfileHeader extends StatelessWidget {
               Text(
                 '$firstName $lastName',
                 style: const TextStyle(
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -40,7 +40,7 @@ class ProfileHeader extends StatelessWidget {
               Text(
                 filial,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: Colors.grey,
                 ),
               ),
@@ -62,7 +62,7 @@ class ProfileHeader extends StatelessWidget {
       height: 100,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF7FFFD4),
+        color: const Color.fromARGB(255, 176, 176, 176),
         border: Border.all(
           color: Theme.of(context).scaffoldBackgroundColor,
           width: 4,

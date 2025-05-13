@@ -1,6 +1,7 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 class AppHeader extends StatelessWidget {
@@ -23,23 +24,25 @@ class AppHeader extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              Navigator.pop(context);
+              Get.back(result: true);
             },
-            child: Icon(
-              Ionicons.chevron_back,
-              size: 24,
-              color: AppTheme.isLightTheme
-                  ? HexColor("#120C45")
-                  : HexColor('#FFFFFF'),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 8.0),
+              child: Icon(
+                Ionicons.chevron_back,
+                size: 24,
+                color: AppTheme.isLightTheme
+                    ? HexColor("#120C45")
+                    : HexColor('#FFFFFF'),
+              ),
             ),
           ),
           Text(
             title,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           trailingWidget ?? SizedBox(),
         ],

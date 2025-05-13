@@ -31,7 +31,7 @@ class IntroPage extends GetView<IntroController> {
                 Container(height: AppBar().preferredSize.height),
                 Image.asset(
                   ConstanceData.ucvito,
-                  height: 230,
+                  height: MediaQuery.of(context).size.height * 0.25,
                   width: MediaQuery.of(context).size.width,
                 ),
                 SizedBox(
@@ -53,8 +53,8 @@ class IntroPage extends GetView<IntroController> {
                       Text(
                         'Descubre espacios donde compartir conocimientos, experiencias y pasiones se vuelve parte de tu día a día. Aquí, tus intereses académicos y extracurriculares encuentran una comunidad que los potencia.',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                              fontSize: 15,
+                        style: TextStyle(
+                              fontSize: 14,
                               color: AppTheme.isLightTheme
                                   ? HexColor('#857FB4')
                                   : HexColor('#E5E3FC'),

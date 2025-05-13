@@ -35,7 +35,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                         lastName: controller.user.value.profile?.lastname ?? '',
                         filial: controller.user.value.profile?.filial ?? '',
                         profileImageUrl:
-                            controller.user.value.profile?.imageUrl,
+                            'https://trilce.ucv.edu.pe/Fotos/Mediana/${controller.user.value.profile?.codigo}.jpg',
                       ),
 
                       // Details

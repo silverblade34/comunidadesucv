@@ -1,5 +1,5 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
-import 'package:comunidadesucv/config/constants/responsive.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -21,11 +21,7 @@ class CommunityDetailTitle extends StatelessWidget {
 
     return Text(
       name!,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: ResponsiveSize.getFontSize(context, 30),
-        fontWeight: FontWeight.bold,
-      ),
+      style: AppFonts.titleCommunityDetail
     );
   }
 
@@ -38,7 +34,7 @@ class CommunityDetailTitle extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10),
         width: MediaQuery.of(context).size.width * 0.7,
         decoration: BoxDecoration(
-          color: Colors.grey[600],
+          color: AppColors.backgroundDark,
           borderRadius: BorderRadius.circular(4),
         ),
       ),

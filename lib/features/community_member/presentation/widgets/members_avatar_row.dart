@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 class MembersAvatarRow extends StatelessWidget {
   final List memberships;
   final int totalMembersCount;
@@ -82,7 +81,7 @@ class MembersAvatarRow extends StatelessWidget {
 
   Widget _buildShimmerAvatar(int index, int totalVisible) {
     final rightPosition = (totalVisible - index) * 18.0;
-    
+
     return Positioned(
       right: rightPosition,
       child: Container(
@@ -112,7 +111,7 @@ class MembersAvatarRow extends StatelessWidget {
     final double baseWidth = 31;
     final double stepWidth = 20;
     double totalWidth = 0;
-    
+
     if (visibleMembers >= 1) totalWidth += baseWidth;
     if (visibleMembers >= 2) totalWidth += stepWidth;
     if (visibleMembers >= 3) totalWidth += stepWidth;
@@ -132,21 +131,23 @@ class MembersAvatarRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              totalMembersCount == 1 ? '1 miembro' : '$totalMembersCount miembros',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
+        GestureDetector(
+          onTap: () {
+            Get.toNamed('/community_member', arguments: spaceId);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                totalMembersCount == 1
+                    ? '1 miembro'
+                    : '$totalMembersCount miembros',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                ),
               ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed('/community_member', arguments: spaceId);
-              },
-              child: Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -155,7 +156,7 @@ class MembersAvatarRow extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'Ver todos',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                        style: TextStyle(color: Colors.white, fontSize: 11),
                       ),
                     ),
                   ),
@@ -170,8 +171,8 @@ class MembersAvatarRow extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -179,7 +180,7 @@ class MembersAvatarRow extends StatelessWidget {
 
   Widget _buildMemberAvatar(int index, int totalVisible) {
     final rightPosition = (totalVisible - index) * 18.0;
-    
+
     return Positioned(
       right: rightPosition,
       child: Container(

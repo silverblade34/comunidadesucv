@@ -53,13 +53,12 @@ class _Intro1State extends State<Intro1> {
                       SizedBox(height: 5),
                       Text(
                         'Publica ideas, participa en conversaciones y mantente al día con lo que más te apasiona en tu vida universitaria. Este espacio es tuyo.',
-                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontSize: 15,
-                          color:
-                              AppTheme.isLightTheme
+                           style: TextStyle(
+                              fontSize: 14,
+                              color: AppTheme.isLightTheme
                                   ? HexColor('#857FB4')
                                   : HexColor('#E5E3FC'),
-                        ),
+                            ),
                       ),
                     ],
                   ),

@@ -1,4 +1,5 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
 import 'package:comunidadesucv/features/community_member/controllers/community_member_controller.dart';
 import 'package:comunidadesucv/features/community_member/presentation/widgets/friend_option_sheets.dart';
@@ -39,9 +40,7 @@ class MembersListView extends StatelessWidget {
                       controller.searchController.text.isEmpty
                           ? 'Todos los miembros'
                           : 'Resultados',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontSize: 14,
-                          ),
+                      style: AppFonts.subtitleCommunity,
                     ),
                   ),
                 ],

@@ -43,9 +43,7 @@ class CommunitiesGrid extends StatelessWidget {
   }
 
   int _getCrossAxisCount(double screenWidth) {
-    if (screenWidth < 400) {
-      return 1;
-    } else if (screenWidth < 700) {
+    if (screenWidth < 700) {
       return 2;
     } else if (screenWidth < 1000) {
       return 3;
@@ -55,10 +53,8 @@ class CommunitiesGrid extends StatelessWidget {
   }
 
   double _getChildAspectRatio(Size screenSize) {
-    if (screenSize.width < 400) {
-      return 1.6;
-    } else if (screenSize.height < 700) {
-      return 0.95;
+    if (screenSize.height < 700) {
+      return 0.75;
     } else {
       return 0.85;
     }

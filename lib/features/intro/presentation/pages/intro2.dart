@@ -51,7 +51,7 @@ class _Intro2State extends State<Intro2> {
                       SizedBox(height: 5),
                       Text(
                         'Selecciona tus temas de interés y recibe contenido relevante para aprovechar al máximo tu vida universitaria.',
-                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                           style: TextStyle(
                               fontSize: 14,
                               color: AppTheme.isLightTheme
                                   ? HexColor('#857FB4')
