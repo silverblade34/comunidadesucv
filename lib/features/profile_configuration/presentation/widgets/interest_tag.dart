@@ -22,7 +22,7 @@ class InterestTag extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? HexColor('#635FF6')
-              : HexColor('#0B0742'),
+              : AppColors.backgroundDark,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(

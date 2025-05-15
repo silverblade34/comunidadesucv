@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/core/models/comment_status.dart';
 import 'package:comunidadesucv/core/models/pending_comment.dart';
+import 'package:comunidadesucv/core/widgets/avatar_image.dart';
 import 'package:comunidadesucv/features/community_detail/data/dto/content_space_dto.dart';
 import 'package:comunidadesucv/features/community_feed/controllers/community_feed_controller.dart';
 import 'package:comunidadesucv/features/community_feed/presentation/widgets/animated_counter.dart';
@@ -30,14 +30,14 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
             CommunityTitle(
               controller: controller,
             ),
-           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Obx(() => AnimatedSearch(
-              onSearch: controller.updateSearchQuery,
-              isSearchActive: controller.isSearchActive.value,
-              onSearchTap: controller.toggleSearch,
-            )),
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Obx(() => AnimatedSearch(
+                    onSearch: controller.updateSearchQuery,
+                    isSearchActive: controller.isSearchActive.value,
+                    onSearchTap: controller.toggleSearch,
+                  )),
+            ),
             SizedBox(
               height: 15,
             ),
@@ -54,38 +54,38 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
     );
   }
 
-   Widget _buildFeedContent() {
+  Widget _buildFeedContent() {
     return Obx(() {
-        if (controller.isLoading.value) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    
-    if (controller.isSearchActive.value && controller.filteredPosts.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'No se encontraron resultados para "${controller.searchQuery.value}"',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-    
-    if (controller.filteredPosts.isEmpty) {
-      return Center(
-        child: Text(
-          'No hay publicaciones disponibles',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      );
-    }
-    
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.isSearchActive.value && controller.filteredPosts.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'No se encontraron resultados para "${controller.searchQuery.value}"',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (controller.filteredPosts.isEmpty) {
+        return Center(
+          child: Text(
+            'No hay publicaciones disponibles',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        );
+      }
+
       // Lista con paginación
       return RefreshIndicator(
         onRefresh: controller.refreshPosts,
@@ -94,26 +94,27 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           separatorBuilder: (context, index) => const SizedBox(height: 1),
           // Añadir +1 para mostrar indicador de carga al final si hay más posts
-        itemCount: controller.filteredPosts.length + (controller.isLoadingMore.value ? 1 : 0),
+          itemCount: controller.filteredPosts.length +
+              (controller.isLoadingMore.value ? 1 : 0),
           itemBuilder: (context, index) {
             // Si estamos en el último ítem y hay más posts para cargar, mostrar indicador de carga
-          if (index == controller.filteredPosts.length) {
+            if (index == controller.filteredPosts.length) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Center(
-                  child: controller.isLoadingMore.value 
-                    ? const CircularProgressIndicator()
-                    : const SizedBox.shrink(),
+                  child: controller.isLoadingMore.value
+                      ? const CircularProgressIndicator()
+                      : const SizedBox.shrink(),
                 ),
               );
             }
-            
+
             // Renderizar post normal
             final post = controller.filteredPosts[index];
             final user = post.content.metadata.createdBy;
             final hasImage = post.content.files.isNotEmpty;
             final imageId = hasImage ? post.content.files.first['id'] : null;
-            
+
             return _buildPostItem(
               context: context,
               post: post,
@@ -164,26 +165,23 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
               child: Row(
                 children: [
                   ClipOval(
-                    child: Image.network(
-                      userImageUrl,
-                      height: 40,
-                      width: 40,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.person,
-                            size: 40, color: Colors.grey);
-                      },
-                    ),
-                  ),
+                      child: AvatarImage(
+                          avatar:
+                              'https://trilce.ucv.edu.pe/Fotos/Mediana/${post.content.metadata.createdBy.codigo}.jpg',
+                          avatarError: userImageUrl,
+                          width: 40,
+                          height: 40)),
                   const SizedBox(width: 10),
-                  Text(
-                    userName.length > 30
-                        ? '${userName.substring(0, 30)}...'
-                        : userName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      userName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -570,22 +568,12 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: comment.createdBy.imageUrl,
-              width: 40,
-              height: 40,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                width: 40,
-                height: 40,
-                color: Colors.grey[800],
-              ),
-              errorWidget: (context, url, error) => const Icon(
-                Icons.person,
-                size: 40,
-                color: Colors.grey,
-              ),
-            ),
+            child: AvatarImage(
+                avatar:
+                    'https://trilce.ucv.edu.pe/Fotos/Mediana/${comment.createdBy.codigo}.jpg',
+                avatarError: comment.createdBy.imageUrl,
+                width: 50,
+                height: 50),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -732,21 +720,12 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         children: [
           GetBuilder<CommunityFeedController>(
             builder: (ctrl) => ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: ctrl.user.value.profile!.imageUrl,
-                width: 30,
-                height: 30,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  width: 30,
-                  height: 30,
-                  color: Colors.grey[700],
-                ),
-                errorWidget: (context, error, stackTrace) {
-                  return const Icon(Icons.person, size: 30, color: Colors.grey);
-                },
-              ),
-            ),
+                child: AvatarImage(
+                    avatar:
+                        'https://trilce.ucv.edu.pe/Fotos/Mediana/${ctrl.user.value.profile!.codigo}.jpg',
+                    avatarError: ctrl.user.value.profile!.imageUrl,
+                    width: 30,
+                    height: 30)),
           ),
           const SizedBox(width: 10),
           Expanded(

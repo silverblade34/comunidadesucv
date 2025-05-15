@@ -15,4 +15,5 @@ abstract class Routes {
   static const registeredPost = '/registered_post';
   static const friendships = '/friendships';
   static const createForum = '/create_forum';
+  static const questionDetail = '/question_detail';
 }

@@ -71,6 +71,9 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                           },
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
                 ),

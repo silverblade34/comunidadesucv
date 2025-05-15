@@ -1,7 +1,6 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CommunityImageLoading extends StatelessWidget {
@@ -19,9 +18,9 @@ class CommunityImageLoading extends StatelessWidget {
       width: double.infinity,
       child: Stack(
         children: [
-          Obx(() {
-            if (controller.space.value.profileImage.isEmpty) {
-              return Shimmer.fromColors(
+          Stack(
+            children: [
+              Shimmer.fromColors(
                 baseColor: AppColors.shimmerBaseColor,
                 highlightColor: AppColors.shimmerHighlightColor,
                 child: Container(
@@ -29,51 +28,38 @@ class CommunityImageLoading extends StatelessWidget {
                   height: double.infinity,
                   color: Colors.white,
                 ),
-              );
-            }
-
-            return Stack(
-              children: [
-                Shimmer.fromColors(
-                  baseColor: AppColors.shimmerBaseColor,
-                  highlightColor: AppColors.shimmerHighlightColor,
-                  child: Container(
+              ),
+              Image.network(
+                controller.space.coverImage !=
+                        "http://comunidadesucv.uvcv.edu.pe/static/img/default_banner.jpg"
+                    ? controller.space.coverImage
+                    : controller.space.profileImage,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Container();
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
                     width: double.infinity,
                     height: double.infinity,
-                    color: Colors.white,
-                  ),
-                ),
-                Image.network(
-                  controller.space.value.coverImage !=
-                          "http://comunidadesucv.uvcv.edu.pe/static/img/default_banner.jpg"
-                      ? controller.space.value.coverImage
-                      : controller.space.value.profileImage,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    }
-                    return Container();
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.image_not_supported,
-                        size: 50,
-                        color: Colors.grey[700],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          }),
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.image_not_supported,
+                      size: 50,
+                      color: Colors.grey[700],
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
           Container(
+            // ignore: deprecated_member_use
             color: Colors.purple.withOpacity(0.3),
             width: double.infinity,
             height: double.infinity,

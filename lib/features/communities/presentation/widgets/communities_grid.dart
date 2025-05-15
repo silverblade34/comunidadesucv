@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // Corrección del CommunitiesGrid
 class CommunitiesGrid extends StatelessWidget {
   final List<Space> communities;
-  final Function(int) onTap;
+  final Function(Space) onTap;
   
   const CommunitiesGrid({
     super.key,
@@ -35,7 +35,7 @@ class CommunitiesGrid extends StatelessWidget {
         final community = communities[index];
         return CommunityCard(
           space: community,
-          onTap: () => onTap(community.id),
+          onTap: () => onTap(community),
         );
       },
       itemCount: communities.length,

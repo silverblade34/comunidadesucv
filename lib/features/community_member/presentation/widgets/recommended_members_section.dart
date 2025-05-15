@@ -1,4 +1,5 @@
 import 'package:comunidadesucv/config/constants/fonts.dart';
+import 'package:comunidadesucv/core/widgets/avatar_image.dart';
 import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,8 +41,12 @@ class RecommendedMembersSection extends StatelessWidget {
 
     for (var i = 0; i < recommendedMemberships.length; i++) {
       final member = recommendedMemberships[i];
-      widgets.add(
-          _buildPinnedContact(context, member.user.imageUrl, member.user.id));
+      widgets.add(_buildPinnedContact(
+          context,
+          member,
+          'https://trilce.ucv.edu.pe/Fotos/Mediana/${member.user.codigo}.jpg',
+          member.user.imageUrl,
+          member.user.id));
 
       if (i < recommendedMemberships.length - 1) {
         widgets.add(const SizedBox(width: 10));
@@ -51,24 +56,16 @@ class RecommendedMembersSection extends StatelessWidget {
     return widgets;
   }
 
-  Widget _buildPinnedContact(
-      BuildContext context, String avatarUrl, int userId) {
+  Widget _buildPinnedContact(BuildContext context, MembershipInfo membership,
+      String imageUrl, String urlError, int userId) {
     return GestureDetector(
       onTap: () => Get.toNamed("/detail_member", arguments: {
-        "friendId": userId.toString(),
+        "membership": membership,
         "state": getFriendshipState(userId)
       }),
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: NetworkImage(avatarUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
+      child: ClipOval(
+          child: AvatarImage(
+              avatar: imageUrl, avatarError: urlError, width: 60, height: 60)),
     );
   }
 }

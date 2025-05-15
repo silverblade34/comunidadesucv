@@ -115,7 +115,7 @@ class CommunityCard extends StatelessWidget {
         children: [
           Text(
             space.name,
-            style:AppFonts.subtitleCommunity,
+            style: AppFonts.subtitleCommunity,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -182,7 +182,8 @@ class CommunityCard extends StatelessWidget {
           : null,
       child: ClipOval(
         child: CachedNetworkImage(
-          imageUrl: space.lastMemberships[index].user.imageUrl,
+          imageUrl:
+              'https://trilce.ucv.edu.pe/Fotos/Mediana/${space.lastMemberships[index].user.codigo}.jpg',
           width: avatarSize,
           height: avatarSize,
           fit: BoxFit.cover,
@@ -194,16 +195,27 @@ class CommunityCard extends StatelessWidget {
             width: avatarSize,
             height: avatarSize,
           ),
-          errorWidget: (context, url, error) => Container(
-            // ignore: deprecated_member_use
-            color: theme.colorScheme.surface.withOpacity(0.3),
-            width: avatarSize,
-            height: avatarSize,
-            child: Icon(
-              Icons.person,
-              size: avatarSize * 0.6,
+          errorWidget: (context, url, error) => CachedNetworkImage(
+            imageUrl: space.lastMemberships[index].user.imageUrl,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              width: 50,
+              height: 50,
               // ignore: deprecated_member_use
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: Colors.grey.withOpacity(0.2),
+            ),
+            errorWidget: (context, url, error) => Container(
+              width: 50,
+              height: 50,
+              // ignore: deprecated_member_use
+              color: Colors.grey.withOpacity(0.2),
+              child: Icon(
+                Icons.person,
+                size: 30,
+                color: Colors.grey.shade700,
+              ),
             ),
           ),
         ),

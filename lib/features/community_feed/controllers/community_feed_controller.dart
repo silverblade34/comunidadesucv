@@ -25,7 +25,10 @@ class CommunityFeedController extends GetxController {
 
   var isLoading = false.obs;
   var isLoadingMore = false.obs;
+  var isLoadingPrevious = false.obs;
   var hasMorePosts = true.obs;
+  var hasMorePreviousPosts = false.obs;
+
   final RxList<Post> dataPost = <Post>[].obs;
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
   final RxMap<int, bool> userLikes = <int, bool>{}.obs;
@@ -48,6 +51,7 @@ class CommunityFeedController extends GetxController {
 
   // Variables para la paginación
   int currentPage = 1;
+  int minPage = 1;
   final int postsLimit = 10;
   final int commentLimit = 10;
   int? currentPostId;
@@ -122,6 +126,15 @@ class CommunityFeedController extends GetxController {
         loadMorePosts();
       }
     }
+
+    // Cargar posts anteriores cuando estamos cerca del inicio (scroll < 50 píxeles)
+    if (scrollController.position.pixels < 50) {
+      if (!isLoadingPrevious.value &&
+          currentPage > minPage &&
+          !isLoading.value) {
+        loadPreviousPosts();
+      }
+    }
   }
 
   Future<void> loadMorePosts() async {
@@ -137,7 +150,11 @@ class CommunityFeedController extends GetxController {
       if (response.results.isEmpty) {
         hasMorePosts.value = false;
       } else {
-        dataPost.addAll(response.results);
+        final filteredPostsArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataPost.assignAll(filteredPostsArchived);
+
         hasMorePosts.value = response.results.length >= postsLimit;
       }
     } catch (e) {
@@ -148,10 +165,41 @@ class CommunityFeedController extends GetxController {
     }
   }
 
-  // Método para refrescar los posts
-  Future<void> refreshPosts() async {
-    hasMorePosts.value = true;
-    await loadInitialPosts();
+  Future<void> loadPreviousPosts() async {
+    if (isLoadingPrevious.value || currentPage <= minPage) return;
+
+    isLoadingPrevious.value = true;
+    int previousPage = currentPage - 1;
+
+    if (previousPage < minPage) {
+      isLoadingPrevious.value = false;
+      return;
+    }
+
+    try {
+      final response = await communityDetailRepository.postContainerSpace(
+          space.contentContainerId, postsLimit, previousPage);
+
+      if (response.results.isNotEmpty) {
+        final filteredPostsArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+
+        dataPost.insertAll(0, filteredPostsArchived);
+        currentPage = previousPage;
+
+        if (previousPage <= 1) {
+          minPage = 1;
+          hasMorePreviousPosts.value = false;
+        } else {
+          hasMorePreviousPosts.value = true;
+        }
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Error al cargar publicaciones anteriores");
+    } finally {
+      isLoadingPrevious.value = false;
+    }
   }
 
   Future<void> loadInitialPosts() async {
@@ -167,7 +215,11 @@ class CommunityFeedController extends GetxController {
       if (response.results.isEmpty) {
         hasMorePosts.value = false;
       } else {
-        dataPost.assignAll(response.results);
+        final filteredPostsArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataPost.assignAll(filteredPostsArchived);
+
         hasMorePosts.value = response.results.length >= postsLimit;
       }
     } catch (e) {
@@ -175,6 +227,12 @@ class CommunityFeedController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Método para refrescar los posts
+  Future<void> refreshPosts() async {
+    hasMorePosts.value = true;
+    await loadInitialPosts();
   }
 
   // Método para alternar la expansión de respuestas para un comentario
@@ -277,7 +335,7 @@ class CommunityFeedController extends GetxController {
 
   void toggleLikePost(int postId) async {
     if (userLikes.containsKey(postId)) {
-      userLikes[postId] = !userLikes[postId]!;
+      return;
     } else {
       userLikes[postId] = true;
     }
@@ -348,7 +406,8 @@ class CommunityFeedController extends GetxController {
           bannerUrlOrg: "${user.value.profile!.bannerUrlOrg}",
           tags: [],
           carrera: "",
-          filial: ""),
+          filial: "",
+          codigo: ""),
       createdAt: DateTime.now().toIso8601String(),
     );
 

@@ -38,8 +38,8 @@ class SplashController extends GetxController
     box.write("tags", tags);
 
     // Setear valores de usuario
-    code.value = "7002832380";
-    username.value = "rreyesk01";
+    code.value = "2000067902";
+    username.value = "daolivac";
     name.value = "DANIELA PIERINA";
     lastName.value = "OLIVA CHANTA";
 
@@ -72,8 +72,8 @@ class SplashController extends GetxController
     if (isNewUser) {
       Get.toNamed("/intro");
     } else {
-      final response =  await Get.toNamed("/intro"); // "/communities"
-      if(response){
+      final response = await Get.toNamed("/communities"); // "/communities"
+      if (response) {
         await _initData();
       }
     }

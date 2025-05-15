@@ -42,8 +42,9 @@ class RestrictedAccessDialog extends StatelessWidget {
             SizedBox(height: ResponsiveSize.getHeight(context, 16)),
             Text(
               "Acceso restringido",
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: ResponsiveSize.getFontSize(context, 20),
+                fontSize: ResponsiveSize.getFontSize(context, 22),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -52,7 +53,7 @@ class RestrictedAccessDialog extends StatelessWidget {
               "Esta sección es exclusiva para miembros de la comunidad.",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: ResponsiveSize.getFontSize(context, 16),
+                fontSize: ResponsiveSize.getFontSize(context, 14),
               ),
             ),
             SizedBox(height: ResponsiveSize.getHeight(context, 20)),
@@ -71,7 +72,7 @@ class RestrictedAccessDialog extends StatelessWidget {
               child: Text(
                 "Entendido", 
                 style: TextStyle(
-                  fontSize: ResponsiveSize.getFontSize(context, 16),
+                  fontSize: ResponsiveSize.getFontSize(context, 14),
                 ),
               ),
             ),

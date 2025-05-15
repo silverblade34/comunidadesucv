@@ -1,9 +1,10 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
+import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:comunidadesucv/core/models/user_friendship.dart';
 import 'package:comunidadesucv/features/perfil/controllers/friendships_controller.dart';
 
 class FriendshipsPage extends GetView<FriendshipsController> {
@@ -21,9 +22,12 @@ class FriendshipsPage extends GetView<FriendshipsController> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
+        title: Text(
           'Contactos y Amigos',
-          style: TextStyle(fontSize: 20),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         centerTitle: true,
         elevation: 0,
@@ -115,7 +119,15 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   onTap: () async {
                     final result =
                         await Get.toNamed("/detail_member", arguments: {
-                      "friendId": friend.id.toString(),
+                      "membership": MembershipInfo(
+                          user: friend,
+                          role: "",
+                          status: 1,
+                          canCancelMembership: 0,
+                          sendNotifications: 1,
+                          showAtDashboard: 1,
+                          memberSince: "",
+                          updatedAt: ""),
                       "state": FriendshipState.FRIEND,
                     });
 
@@ -161,7 +173,15 @@ class FriendshipsPage extends GetView<FriendshipsController> {
           return GestureDetector(
             onTap: () async {
               final result = await Get.toNamed("/detail_member", arguments: {
-                "friendId": request.id.toString(),
+                "membership": MembershipInfo(
+                    user: request,
+                    role: "",
+                    status: 1,
+                    canCancelMembership: 0,
+                    sendNotifications: 1,
+                    showAtDashboard: 1,
+                    memberSince: "",
+                    updatedAt: ""),
                 "state": FriendshipState.REQUEST_RECEIVED,
               });
 
@@ -212,12 +232,19 @@ class FriendshipsPage extends GetView<FriendshipsController> {
         itemBuilder: (context, index) {
           final request = controller.dataUserFriendshipSent[index];
           return GestureDetector(
-             onTap: () async {
+            onTap: () async {
               final result = await Get.toNamed("/detail_member", arguments: {
-                "friendId": request.id.toString(),
+                "membership": MembershipInfo(
+                    user: request,
+                    role: "",
+                    status: 1,
+                    canCancelMembership: 0,
+                    sendNotifications: 1,
+                    showAtDashboard: 1,
+                    memberSince: "",
+                    updatedAt: ""),
                 "state": FriendshipState.REQUEST_SENT,
               });
-
               if (result == true) {
                 await controller.initData();
               }
@@ -260,13 +287,14 @@ class FriendshipsPage extends GetView<FriendshipsController> {
           Icon(
             Icons.person_search,
             size: 80,
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.5),
           ),
           const SizedBox(height: 16),
           Text(
             title,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -275,7 +303,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
             subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: Colors.grey.shade600,
             ),
           ),
@@ -285,7 +313,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
   }
 
   Widget _buildFriendCard({
-    required UserFriendship friend,
+    required UserInfo friend,
     required Color primaryColor,
     required Color textColor,
     required List<Widget> actions,
@@ -346,7 +374,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
   }
 
   Widget _buildRequestCard({
-    required UserFriendship friend,
+    required UserInfo friend,
     required Color primaryColor,
     required Color textColor,
     required String subtitle,
@@ -371,7 +399,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
                   Text(
                     friend.displayName,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: textColor,
                     ),
@@ -396,7 +424,7 @@ class FriendshipsPage extends GetView<FriendshipsController> {
     );
   }
 
-  Widget _buildFriendAvatar(UserFriendship friend, Color primaryColor,
+  Widget _buildFriendAvatar(UserInfo friend, Color primaryColor,
       {required double size}) {
     return Container(
       width: size,

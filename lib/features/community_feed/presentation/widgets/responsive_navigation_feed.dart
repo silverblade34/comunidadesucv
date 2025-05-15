@@ -23,7 +23,9 @@ class ResponsiveNavigationFeed extends StatelessWidget {
       height: navigationBarHeight,
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: AppColors.backgroundDark.withOpacity(0.85),
+        color: AppColors.backgroundDarkIntense.withOpacity(0.85),
+        border: Border(
+            top: BorderSide(width: 0.5, color: AppColors.backgroundDark)),
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
@@ -36,41 +38,48 @@ class ResponsiveNavigationFeed extends StatelessWidget {
       child: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavButton(
-                context: context,
-                icon: Ionicons.home,
-                isActive: false,
-                padding: buttonPadding,
-                iconSize: iconSize,
-                onTap: () => Get.toNamed("/communities"),
-              ),
-              _buildNavButton(
-                context: context,
-                icon: Icons.add_box_outlined,
-                isActive: true,
-                padding: buttonPadding,
-                iconSize: iconSize,
-                onTap: () async {
-                  final result = await Get.toNamed("/registered_post",
-                      arguments: controller.space);
+          child: Container(
+            padding: EdgeInsets.only(top: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildNavButton(
+                  context: context,
+                  icon: Ionicons.home,
+                  isActive: false,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                  onTap: () {
+                    Get.delete<CommunityFeedController>();
+                    Get.toNamed("/communities");
+                  },
+                ),
+                _buildNavButton(
+                  context: context,
+                  icon: Icons.add_box_outlined,
+                  isActive: true,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                  onTap: () async {
+                    final result = await Get.toNamed("/registered_post",
+                        arguments: controller.space);
 
-                  if (result == true) {
-                    await controller.loadInitialPosts();
-                  }
-                },
-              ),
-              _buildNavButton(
-                context: context,
-                icon: Ionicons.person,
-                isActive: false,
-                padding: buttonPadding,
-                iconSize: iconSize,
-                onTap: () => Get.toNamed("/perfil"),
-              ),
-            ],
+                    if (result == true) {
+                      await controller.loadInitialPosts();
+                    }
+                  },
+                ),
+                _buildNavButton(
+                  context: context,
+                  icon: Ionicons.person,
+                  isActive: false,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                  onTap: () => Get.toNamed("/perfil"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -78,12 +87,12 @@ class ResponsiveNavigationFeed extends StatelessWidget {
   }
 
   double _calculateNavbarHeight(Size screenSize) {
-    final double height = screenSize.height * 0.075;
+    final double height = screenSize.height * 0.05;
 
     if (height < 56) {
-      return 56;
+      return 50;
     } else if (height > 80) {
-      return 80;
+      return 75;
     }
     return height;
   }

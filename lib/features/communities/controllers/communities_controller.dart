@@ -89,9 +89,7 @@ class CommunitiesController extends GetxController {
 
       _processCommunities();
     } catch (e) {
-      Get.snackbar("Error", "No se pudieron cargar las comunidades",
-          backgroundColor: Get.theme.colorScheme.errorContainer,
-          colorText: Get.theme.colorScheme.onErrorContainer);
+      print(e.toString());
     } finally {
       isLoading.value = false;
     }

@@ -1,8 +1,12 @@
+import 'package:comunidadesucv/core/widgets/custom_alert_dialog.dart';
+import 'package:comunidadesucv/features/community_forum/data/repository/community_forum_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreateNewPostController extends GetxController {
-  final int spaceId = Get.arguments;
+  final int contentContainerId = Get.arguments;
+  CommunityForumRepository communityForumRepository =
+      CommunityForumRepository();
   final titleController = TextEditingController();
   final bodyController = TextEditingController();
   final mediaAttachments = <String>[].obs;
@@ -30,24 +34,26 @@ class CreateNewPostController extends GetxController {
     try {
       isPublishing.value = true;
 
-      // Simulamos un breve retraso para dar sensación de procesamiento
-      await Future.delayed(Duration(seconds: 2));
+      await communityForumRepository.publishQuestion(
+          titleController.text, bodyController.text, contentContainerId);
 
-      // Aquí mostramos el diálogo de "enviado para aprobación"
       await _showPendingApprovalDialogWithAnimation();
 
-      // Limpiamos el estado después de "publicar"
       titleController.clear();
       bodyController.clear();
       mediaAttachments.clear();
 
-      // Redirigimos al feed de la comunidad
-      Get.offAllNamed("/community_forum", arguments: spaceId);
+      Get.back(result: true);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudo procesar la publicación: $e',
-        snackPosition: SnackPosition.BOTTOM,
+      CustomAlertDialog.show(
+        status: 'warning',
+        message: '¡Atención!',
+        description:
+            'No se ha podido registrar su tema, intentelo de nuevo mas tarde por favor',
+        buttonText: 'Aceptar',
+        onAccept: () {
+          print('Usuario confirmó la acción');
+        },
       );
     } finally {
       isPublishing.value = false;

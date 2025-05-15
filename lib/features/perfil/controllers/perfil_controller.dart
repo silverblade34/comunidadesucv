@@ -1,5 +1,5 @@
 import 'package:comunidadesucv/core/models/user_detail.dart';
-import 'package:comunidadesucv/core/models/user_friendship.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:comunidadesucv/features/perfil/data/repository/perfil_repository.dart';
 import 'package:comunidadesucv/features/splash/data/repository/splash_repository.dart';
 import 'package:get/get.dart';
@@ -12,7 +12,7 @@ class PerfilController extends GetxController {
 
   final Rx<UserDetail> user = UserDetail.empty().obs;
 
-  final RxList<UserFriendship> dataUserFriendship = <UserFriendship>[].obs;
+  final RxList<UserInfo> dataUserFriendship = <UserInfo>[].obs;
   final RxBool isLoading = true.obs;
 
   @override
@@ -33,7 +33,7 @@ class PerfilController extends GetxController {
       ]);
 
       user.value = results[0] as UserDetail;
-      dataUserFriendship.value = results[1] as List<UserFriendship>;
+      dataUserFriendship.value = results[1] as List<UserInfo>;
 
       box.write("user", user.value);
     } else {

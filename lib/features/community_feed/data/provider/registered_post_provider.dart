@@ -28,6 +28,7 @@ class RegisteredPostProvider {
           "data": {
             "message": message,
             "content": {
+              "metadata": {"archived": true},
               "topics": []
             }
           }
@@ -46,13 +47,14 @@ class RegisteredPostProvider {
     }
   }
 
- Future<Response> uploadFilesPost(List<MediaAttachment> mediaAttachments, int postId) async {
+  Future<Response> uploadFilesPost(
+      List<MediaAttachment> mediaAttachments, int postId) async {
     try {
       Dio dioClient = Dio();
       dioClient.options.headers["Authorization"] = "Impersonate $token";
-      
+
       FormData formData = FormData();
-      
+
       for (var mediaAttachment in mediaAttachments) {
         if (mediaAttachment.isFile && mediaAttachment.path != null) {
           String fileName = mediaAttachment.path!.split('/').last;
@@ -67,12 +69,12 @@ class RegisteredPostProvider {
           );
         }
       }
-      
+
       final response = await dioClient.post(
         '$baseUrl/post/$postId/upload-files',
         data: formData,
       );
-      
+
       return response;
     } on DioException catch (e) {
       if (e.response != null) {

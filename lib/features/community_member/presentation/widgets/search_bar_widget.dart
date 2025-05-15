@@ -14,7 +14,7 @@ class SearchBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    final double fontSize = screenSize.width * 0.034;
+    final double fontSize = screenSize.width * 0.038;
     final double iconSize = screenSize.width * 0.045;
 
     return TextField(

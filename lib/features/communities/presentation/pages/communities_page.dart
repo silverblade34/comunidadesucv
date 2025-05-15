@@ -15,25 +15,24 @@ class CommunitiesPage extends GetView<CommunitiesController> {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
     final horizontalPadding = screenSize.width * 0.04;
-
+ 
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         Get.back(result: true);
         return false;
       },
-      child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        extendBodyBehindAppBar: false,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: Column(
             children: [
               // Header
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Column(
                   children: [
+                    SizedBox(height: 15),
                     const AppBarCommunities(),
                     SizedBox(height: screenSize.height * 0.025),
                     SearchBarCommunities(
@@ -52,7 +51,7 @@ class CommunitiesPage extends GetView<CommunitiesController> {
               // Main
               Expanded(
                 child: Obx(() {
-                  // Si está cargando y no hay datos todavía, mostrar indicador de carga
+                  // Si está cargando y no hay datos todavía, indicador de carga
                   if (controller.isLoading.value &&
                       controller.filteredCommunities.isEmpty) {
                     return const Center(child: CircularProgressIndicator());
@@ -68,9 +67,8 @@ class CommunitiesPage extends GetView<CommunitiesController> {
               ),
             ],
           ),
+          bottomNavigationBar: const ResponsiveBottomNavigationBar(),
         ),
-        extendBody: true,
-        bottomNavigationBar: const ResponsiveBottomNavigationBar(),
       ),
     );
   }
@@ -107,10 +105,10 @@ class CommunitiesPage extends GetView<CommunitiesController> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Obx(() => CommunitiesGrid(
-                  communities: controller.filteredCommunities.value,
-                  onTap: (spaceId) =>
-                      Get.toNamed("/community_detail", arguments: spaceId),
-                )),
+                communities: controller.filteredCommunities.value,
+                onTap: (space) async {
+                  await Get.toNamed("/community_detail", arguments: space);
+                })),
           ),
 
           // Bottom padding

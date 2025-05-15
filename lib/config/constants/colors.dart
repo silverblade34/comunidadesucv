@@ -16,8 +16,10 @@ class AppColors {
   static const Color iconLight = Color(0xff2b2b2b);
   static const Color iconDark = Colors.white;
 
-  static Color shimmerBaseColor = Colors.grey[400]!;
-  static Color shimmerHighlightColor = Colors.grey[200]!;
+  // ignore: deprecated_member_use
+  static Color shimmerBaseColor = Colors.grey.withOpacity(0.3);
+  // ignore: deprecated_member_use
+  static Color shimmerHighlightColor = Colors.grey.withOpacity(0.2);
 }
 
 class HexColor extends Color {

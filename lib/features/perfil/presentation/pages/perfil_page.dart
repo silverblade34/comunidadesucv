@@ -1,9 +1,11 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
-import 'package:comunidadesucv/core/models/user_friendship.dart';
 import 'package:comunidadesucv/core/widgets/perfil_interests.dart';
 import 'package:comunidadesucv/core/widgets/simple_community_card.dart';
+import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
@@ -43,7 +45,8 @@ class PerfilPage extends GetView<PerfilController> {
                 Container(
                   width: double.infinity,
                   alignment: Alignment.center,
-                  padding: EdgeInsets.only(top: 10, bottom: 0),
+                  padding:
+                      EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 20),
                   child: Column(
                     children: [
                       Container(
@@ -82,6 +85,7 @@ class PerfilPage extends GetView<PerfilController> {
                       SizedBox(height: 15),
                       Text(
                         "${controller.user.value.profile?.firstname ?? ""} ${controller.user.value.profile?.lastname ?? ""}",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.bold,
@@ -121,7 +125,7 @@ class PerfilPage extends GetView<PerfilController> {
                         title: "Carrera",
                         value: controller.user.value.profile?.carrera ?? "",
                         color: primaryColor,
-                        textColor: textColor,
+                        textColor: Color.fromARGB(255, 189, 189, 189),
                       ),
                       SizedBox(
                         height: 12,
@@ -131,7 +135,7 @@ class PerfilPage extends GetView<PerfilController> {
                         title: "Campus",
                         value: controller.user.value.profile?.filial ?? "",
                         color: primaryColor,
-                        textColor: textColor,
+                        textColor: Color.fromARGB(255, 189, 189, 189),
                       ),
                       SizedBox(
                         height: 12,
@@ -141,7 +145,7 @@ class PerfilPage extends GetView<PerfilController> {
                         title: "Ciclo",
                         value: "8",
                         color: primaryColor,
-                        textColor: textColor,
+                        textColor: Color.fromARGB(255, 189, 189, 189),
                       ),
                       SizedBox(
                         height: 12,
@@ -151,12 +155,12 @@ class PerfilPage extends GetView<PerfilController> {
                         title: "Correo",
                         value: controller.user.value.account?.email ?? "",
                         color: primaryColor,
-                        textColor: textColor,
+                        textColor: Color.fromARGB(255, 189, 189, 189),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 5),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: PerfilInterests(
@@ -170,6 +174,7 @@ class PerfilPage extends GetView<PerfilController> {
                     spaces: controller.user.value.spaces,
                     primaryColor: primaryColor,
                     description: "Mis comunidades",
+                    isLoading: controller.isLoading.value,
                   ),
                 ),
                 SizedBox(height: 25),
@@ -238,7 +243,6 @@ class PerfilPage extends GetView<PerfilController> {
                 fontSize: 14,
                 // ignore: deprecated_member_use
                 color: textColor.withOpacity(0.5),
-                fontStyle: FontStyle.italic,
               ),
             ),
           ),
@@ -260,10 +264,18 @@ class PerfilPage extends GetView<PerfilController> {
   }
 
   Widget _buildFriendCard(
-      UserFriendship friend, Color primaryColor, Color textColor) {
+      UserInfo friend, Color primaryColor, Color textColor) {
     return GestureDetector(
       onTap: () => Get.toNamed("/detail_member", arguments: {
-        "friendId": friend.id.toString(),
+        "membership": MembershipInfo(
+            user: friend,
+            role: "",
+            status: 1,
+            canCancelMembership: 0,
+            sendNotifications: 1,
+            showAtDashboard: 1,
+            memberSince: "",
+            updatedAt: ""),
         "state": FriendshipState.FRIEND
       }),
       child: Container(
@@ -307,7 +319,7 @@ class PerfilPage extends GetView<PerfilController> {
     );
   }
 
-  Widget _buildFriendAvatar(UserFriendship friend, Color primaryColor) {
+  Widget _buildFriendAvatar(UserInfo friend, Color primaryColor) {
     return Container(
       width: 75,
       height: 75,
@@ -368,29 +380,33 @@ class PerfilPage extends GetView<PerfilController> {
     required Color textColor,
   }) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: color,
+        Column(
+          children: [
+            SizedBox(
+              height: 3,
+            ),
+            Icon(
+              icon,
+              size: 20,
+              color: color,
+            ),
+          ],
         ),
-        SizedBox(width: 15),
+        SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: TextStyle(
-                fontSize: 14,
-                // ignore: deprecated_member_use
-                color: textColor.withOpacity(0.6),
-              ),
+              style: AppFonts.subtitleCommunity,
             ),
             SizedBox(height: 3),
             Text(
               value,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 color: textColor,
                 fontWeight: FontWeight.w500,
               ),

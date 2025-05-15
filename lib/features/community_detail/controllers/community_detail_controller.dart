@@ -14,9 +14,10 @@ import 'package:path_provider/path_provider.dart';
 
 class CommunityDetailController extends GetxController {
   final box = GetStorage();
-  final int spaceId = Get.arguments;
+  final Space space = Get.arguments;
   final RxBool isButtonMember = false.obs;
   var isLoading = false.obs;
+  var isLoadingButton = false.obs;
   var isLoadingLastPost = false.obs;
 
   final ConfettiController confettiController =
@@ -27,7 +28,6 @@ class CommunityDetailController extends GetxController {
       CommunityDetailRepository();
   final RxList<Post> dataPost = <Post>[].obs;
 
-  final Rx<Space> space = Space.empty().obs;
   final Rx<UserDetail> user = UserDetail.empty().obs;
 
   final RxMap<int, Uint8List> imagesMap = <int, Uint8List>{}.obs;
@@ -81,23 +81,23 @@ class CommunityDetailController extends GetxController {
   }
 
   Future<void> _loadCommunity() async {
-    final response = await communityDetailRepository.getSpace(spaceId);
-    space.value = response;
-    loadLastPostContainer();
-
-    if (user.value.spaces.any((userSpace) => userSpace.id == spaceId)) {
+    if (user.value.spaces.any((userSpace) => userSpace.id == space.id)) {
       isButtonMember.value = true;
     } else {
       isButtonMember.value = false;
     }
+    await loadLastPostContainer();
   }
 
   Future<void> loadLastPostContainer() async {
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.value.contentContainerId, 10, 1);
+          space.contentContainerId, 20, 1);
 
-      final filteredPosts = response.results.where((post) {
+      final filteredPostsArchived = response.results
+          .where((item) => item.content.metadata.archived == false)
+          .toList();
+      final filteredPosts = filteredPostsArchived.where((post) {
         return post.content.files.isNotEmpty;
       }).toList();
 
@@ -110,25 +110,25 @@ class CommunityDetailController extends GetxController {
   }
 
   void toggleButton() async {
-    if (!isButtonMember.value && !isLoading.value) {
-      isLoading.value = true;
+    if (!isButtonMember.value && !isLoadingButton.value) {
+      isLoadingButton.value = true;
 
       await communityDetailRepository.addMembershipsSpace(
-          spaceId, user.value.id);
+          space.id, user.value.id);
 
       confettiController.play();
       isButtonMember.value = true;
 
-      isLoading.value = false;
-    } else if (isButtonMember.value && !isLoading.value) {
-      isLoading.value = true;
+      isLoadingButton.value = false;
+    } else if (isButtonMember.value && !isLoadingButton.value) {
+      isLoadingButton.value = true;
 
       await communityDetailRepository.deleteMembershipsSpace(
-          spaceId, user.value.id);
+          space.id, user.value.id);
 
       isButtonMember.value = false;
 
-      isLoading.value = false;
+      isLoadingButton.value = false;
     }
     user.value = await splashRepository.getUser(user.value.account!.username);
     box.write("user", user.value);

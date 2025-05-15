@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +54,11 @@ class JoinButton extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  color: Colors.deepPurple.shade400,
+                  color: AppColors.primary,
                 ),
                 child: Row(
                   children: [
-                    controller.isLoading.value
+                    controller.isLoadingButton.value
                         ? SizedBox(
                             width: 18,
                             height: 18,
@@ -78,7 +79,7 @@ class JoinButton extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      controller.isLoading.value
+                      controller.isLoadingButton.value
                           ? "Procesando..."
                           : controller.isButtonMember.value
                               ? "Miembro"

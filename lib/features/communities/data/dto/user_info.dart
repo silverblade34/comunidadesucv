@@ -10,6 +10,7 @@ class UserInfo {
   final List<dynamic> tags;
   final String? carrera;
   final String? filial;
+  final String? codigo;
 
   UserInfo({
     required this.id,
@@ -23,6 +24,7 @@ class UserInfo {
     required this.tags,
     this.carrera,
     this.filial,
+    this.codigo,
   });
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class UserInfo {
       tags: json['tags'],
       carrera: json['carrera'],
       filial: json['filial'],
+      codigo: json['codigo'],
     );
   }
 
@@ -54,6 +57,7 @@ class UserInfo {
       'tags': tags,
       'carrera': carrera,
       'filial': filial,
+      'codigo': codigo,
     };
   }
 }

@@ -72,9 +72,12 @@ class MembersListView extends StatelessWidget {
                 return MemberListItem(
                   controller: controller,
                   id: membership.user.id,
+                  membership: membership,
                   name: membership.user.displayName,
                   details: '${membership.user.carrera}',
-                  avatar: membership.user.imageUrl,
+                  avatar:
+                      'https://trilce.ucv.edu.pe/Fotos/Mediana/${membership.user.codigo}.jpg',
+                  avatarError: membership.user.imageUrl,
                   getDisplayName: controller.getDisplayName,
                   onIconTap: (id, name, friendshipState) =>
                       _handleIconTap(context, id, name, friendshipState),

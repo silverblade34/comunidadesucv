@@ -1,5 +1,7 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
+import 'package:comunidadesucv/core/widgets/avatar_image.dart';
+import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
 import 'package:comunidadesucv/features/community_member/controllers/community_member_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,9 +10,11 @@ import 'package:ionicons/ionicons.dart';
 class MemberListItem extends StatelessWidget {
   final CommunityMemberController controller;
   final int id;
+  final MembershipInfo membership;
   final String name;
   final String details;
   final String avatar;
+  final String avatarError;
   final String Function(String) getDisplayName;
   final Function(int, String, dynamic) onIconTap;
   final Color? statusColor;
@@ -19,9 +23,11 @@ class MemberListItem extends StatelessWidget {
     super.key,
     required this.controller,
     required this.id,
+    required this.membership,
     required this.name,
     required this.details,
     required this.avatar,
+    required this.avatarError,
     required this.getDisplayName,
     required this.onIconTap,
     this.statusColor,
@@ -70,7 +76,7 @@ class MemberListItem extends StatelessWidget {
             Get.toNamed("/perfil");
           } else {
             final result = await Get.toNamed("/detail_member", arguments: {
-              "friendId": id.toString(),
+              "membership": membership,
               "state": friendshipState,
             });
 
@@ -136,16 +142,9 @@ class MemberListItem extends StatelessWidget {
   Widget _buildAvatar(BuildContext context, FriendshipState friendshipState) {
     return Stack(
       children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: NetworkImage(avatar),
-              fit: BoxFit.cover,
-            ),
-          ),
+        ClipOval(
+          child: AvatarImage(
+              avatar: avatar, avatarError: avatarError, width: 50, height: 50),
         ),
         if (friendshipState == FriendshipState.SELF)
           Positioned(

@@ -151,6 +151,7 @@ class User {
   final String imageUrlOrg;
   final String bannerUrl;
   final String bannerUrlOrg;
+  final String codigo;
 
   User({
     required this.id,
@@ -161,6 +162,7 @@ class User {
     required this.imageUrlOrg,
     required this.bannerUrl,
     required this.bannerUrlOrg,
+    required this.codigo,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -173,6 +175,7 @@ class User {
       imageUrlOrg: json['image_url_org'],
       bannerUrl: json['banner_url'],
       bannerUrlOrg: json['banner_url_org'],
+      codigo: json['codigo'],
     );
   }
 }
@@ -265,6 +268,7 @@ class CreatedBy {
   final List<String> tags;
   final String carrera;
   final String filial;
+  final String codigo;
 
   CreatedBy({
     required this.id,
@@ -278,6 +282,7 @@ class CreatedBy {
     required this.tags,
     required this.carrera,
     required this.filial,
+    required this.codigo,
   });
 
   factory CreatedBy.fromJson(Map<String, dynamic> json) {
@@ -293,6 +298,7 @@ class CreatedBy {
       tags: List<String>.from(json['tags']),
       carrera: json['carrera'],
       filial: json['filial'],
+      codigo: json['codigo'],
     );
   }
 }

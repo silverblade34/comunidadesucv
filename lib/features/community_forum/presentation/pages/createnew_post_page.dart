@@ -2,13 +2,13 @@ import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/features/community_forum/controllers/createnew_post_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 
 class CreateNewPostPage extends GetView<CreateNewPostController> {
   const CreateNewPostPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Get.isDarkMode;
     final petPrimary = AppColors.backgroundDark;
     final petSecondary = AppColors.primary;
 
@@ -18,8 +18,8 @@ class CreateNewPostPage extends GetView<CreateNewPostController> {
         title: Text('Crear nuevo tema',
             style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
+          icon: Icon(Ionicons.chevron_back, color: Colors.white),
+          onPressed: () => Get.back(result: true),
         ),
       ),
       body: Padding(
@@ -31,9 +31,7 @@ class CreateNewPostPage extends GetView<CreateNewPostController> {
               decoration: InputDecoration(
                 hintText: 'Título del tema',
                 filled: true,
-                fillColor: isDarkMode
-                    ? AppColors.backgroundDarkLigth
-                    : Colors.grey[100],
+                fillColor: AppColors.backgroundDark,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
@@ -49,9 +47,7 @@ class CreateNewPostPage extends GetView<CreateNewPostController> {
                 decoration: InputDecoration(
                   hintText: 'Comparte tu experiencia, pregunta o consejo...',
                   filled: true,
-                  fillColor: isDarkMode
-                      ? AppColors.backgroundDarkLigth
-                      : Colors.grey[100],
+                  fillColor: AppColors.backgroundDark,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide.none,
@@ -62,6 +58,7 @@ class CreateNewPostPage extends GetView<CreateNewPostController> {
             SizedBox(height: 16),
             Obx(() => controller.isUploading.value
                 ? LinearProgressIndicator(
+                    // ignore: deprecated_member_use
                     backgroundColor: petPrimary.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(petSecondary),
                   )
@@ -69,17 +66,7 @@ class CreateNewPostPage extends GetView<CreateNewPostController> {
             SizedBox(height: 8),
             Row(
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => controller.pickImage(),
-                    icon: Icon(Icons.image, color: petPrimary),
-                    label: Text('Añadir foto'),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: petPrimary),
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
+                SizedBox(),
                 SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(

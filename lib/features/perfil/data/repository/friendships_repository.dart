@@ -1,10 +1,10 @@
-import 'package:comunidadesucv/core/models/user_friendship.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:comunidadesucv/features/perfil/data/provider/friendships_provider.dart';
 
 class FriendshipsRepository {
   FriendshipsProvider friendshipsProvider = FriendshipsProvider();
 
-  Future<List<UserFriendship>> getFriendshipReceived() async {
+  Future<List<UserInfo>> getFriendshipReceived() async {
     final response = await friendshipsProvider.getFriendshipReceived();
 
     if (response.data == null) {
@@ -16,10 +16,10 @@ class FriendshipsRepository {
     }
 
     final List<dynamic> dataList = response.data;
-    return dataList.map((e) => UserFriendship.fromJson(e)).toList();
+    return dataList.map((e) => UserInfo.fromJson(e)).toList();
   }
 
-    Future<List<UserFriendship>> getFriendshipSent() async {
+    Future<List<UserInfo>> getFriendshipSent() async {
     final response = await friendshipsProvider.getFriendshipSent();
 
     if (response.data == null) {
@@ -31,6 +31,6 @@ class FriendshipsRepository {
     }
 
     final List<dynamic> dataList = response.data;
-    return dataList.map((e) => UserFriendship.fromJson(e)).toList();
+    return dataList.map((e) => UserInfo.fromJson(e)).toList();
   }
 }

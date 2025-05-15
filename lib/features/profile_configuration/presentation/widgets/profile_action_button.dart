@@ -21,7 +21,7 @@ class ProfileActionButton extends StatelessWidget {
             child: ElevatedButton(
               onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 9),
                 backgroundColor: HexColor('#635FF6'),
                 // ignore: deprecated_member_use
                 disabledBackgroundColor: HexColor('#635FF6').withOpacity(0.6),

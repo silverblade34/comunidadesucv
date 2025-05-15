@@ -1,10 +1,10 @@
-import 'package:comunidadesucv/core/models/user_friendship.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:comunidadesucv/features/perfil/data/provider/perfil_provider.dart';
 
 class PerfilRepository {
   PerfilProvider perfilProvider = PerfilProvider();
 
-  Future<List<UserFriendship>> getFriendship() async {
+  Future<List<UserInfo>> getFriendship() async {
     final response = await perfilProvider.getFriendship();
 
     if (response.data == null) {
@@ -16,6 +16,6 @@ class PerfilRepository {
     }
 
     final List<dynamic> dataList = response.data;
-    return dataList.map((e) => UserFriendship.fromJson(e)).toList();
+    return dataList.map((e) => UserInfo.fromJson(e)).toList();
   }
 }

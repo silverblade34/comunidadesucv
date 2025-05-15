@@ -13,13 +13,14 @@ class ResponsiveBottomNavigationBar extends StatelessWidget {
     
     final double navigationBarHeight = _calculateNavbarHeight(screenSize);
     final double iconSize = _calculateIconSize(screenSize);
-    final double buttonPadding = navigationBarHeight * 0.15;
+    final double buttonPadding = navigationBarHeight * 0.2;
     
     return Container(
       height: navigationBarHeight,
       decoration: BoxDecoration(
         // ignore: deprecated_member_use
-        color: AppColors.backgroundDark.withOpacity(0.85),
+        color: AppColors.backgroundDarkIntense.withOpacity(0.85),
+        border: Border(top: BorderSide(width: 0.5, color: AppColors.backgroundDark)),
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
@@ -32,33 +33,37 @@ class ResponsiveBottomNavigationBar extends StatelessWidget {
       child: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavButton(
-                context: context,
-                icon: Ionicons.home,
-                isActive: true,
-                padding: buttonPadding,
-                iconSize: iconSize,
-              ),
-              _buildNavButton(
-                context: context,
-                icon: Icons.add_box_outlined,
-                isActive: false,
-                padding: buttonPadding,
-                iconSize: iconSize,
-                onTap: () {},
-              ),
-              _buildNavButton(
-                context: context,
-                icon: Ionicons.person,
-                isActive: false,
-                padding: buttonPadding,
-                iconSize: iconSize,
-                onTap: () => Get.toNamed("/perfil"),
-              ),
-            ],
+          child: Container(
+            padding: EdgeInsets.only(top: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildNavButton(
+                  context: context,
+                  icon: Ionicons.home,
+                  isActive: true,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                ),
+                _buildNavButton(
+                  context: context,
+                  icon: Icons.add_box_outlined,
+                  isActive: false,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                  onTap: () {},
+                ),
+                _buildNavButton(
+                  context: context,
+                  icon: Ionicons.person,
+                  isActive: false,
+                  padding: buttonPadding,
+                  iconSize: iconSize,
+                  onTap: () => Get.toNamed("/perfil"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -66,12 +71,12 @@ class ResponsiveBottomNavigationBar extends StatelessWidget {
   }
   
   double _calculateNavbarHeight(Size screenSize) {
-    final double height = screenSize.height * 0.075;
+    final double height = screenSize.height * 0.05;
     
     if (height < 56) {
-      return 56;
+      return 50;
     } else if (height > 80) {
-      return 80;
+      return 75;
     }
     return height;
   }

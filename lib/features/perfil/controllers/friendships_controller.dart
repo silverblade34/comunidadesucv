@@ -1,4 +1,4 @@
-import 'package:comunidadesucv/core/models/user_friendship.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:comunidadesucv/features/community_detail/data/repository/detail_member_repository.dart';
 import 'package:comunidadesucv/features/perfil/data/repository/friendships_repository.dart';
 import 'package:comunidadesucv/features/perfil/data/repository/perfil_repository.dart';
@@ -9,10 +9,10 @@ class FriendshipsController extends GetxController {
   PerfilRepository perfilRepository = PerfilRepository();
   DetailMemberRepository detailMemberRepository = DetailMemberRepository();
 
-  final RxList<UserFriendship> dataUserFriendship = <UserFriendship>[].obs;
-  final RxList<UserFriendship> dataUserFriendshipReceived =
-      <UserFriendship>[].obs;
-  final RxList<UserFriendship> dataUserFriendshipSent = <UserFriendship>[].obs;
+  final RxList<UserInfo> dataUserFriendship = <UserInfo>[].obs;
+  final RxList<UserInfo> dataUserFriendshipReceived =
+      <UserInfo>[].obs;
+  final RxList<UserInfo> dataUserFriendshipSent = <UserInfo>[].obs;
 
   @override
   void onInit() {

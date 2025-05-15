@@ -156,14 +156,12 @@ class RegisteredPostController extends GetxController {
       if (mediaAttachments.isNotEmpty) {
         try {
           await uploadFilesForPost(publishedPost.id);
-
-          await _showPendingApprovalDialogWithAnimation();
         } catch (fileError) {}
-      } else {
-        await _showPendingApprovalDialogWithAnimation();
-      }
+      } else {}
       bodyController.clear();
       mediaAttachments.clear();
+      await _showPendingApprovalDialogWithAnimation();
+
       Get.back(result: true);
     } catch (e) {
       isPublishing.value = false;

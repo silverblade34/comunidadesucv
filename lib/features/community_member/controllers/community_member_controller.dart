@@ -1,8 +1,8 @@
 import 'package:comunidadesucv/core/enum/friendship_state.dart';
 import 'package:comunidadesucv/core/models/user_detail.dart';
-import 'package:comunidadesucv/core/models/user_friendship.dart';
 
 import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
+import 'package:comunidadesucv/features/communities/data/dto/user_info.dart';
 import 'package:comunidadesucv/features/community_detail/data/repository/detail_member_repository.dart';
 import 'package:comunidadesucv/features/community_detail/data/repository/list_membership_repository.dart';
 import 'package:comunidadesucv/features/perfil/data/repository/friendships_repository.dart';
@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CommunityMemberController extends GetxController {
- int spaceId = Get.arguments;
+  int spaceId = Get.arguments;
   final box = GetStorage();
 
   ListMembershipRepository listMembershipRepository =
@@ -36,6 +36,7 @@ class CommunityMemberController extends GetxController {
   int _page = 1;
   final int _limit = 50;
   final RxBool isLoading = false.obs;
+  final RxBool isInitialLoading = false.obs;
   final RxBool hasMore = true.obs;
 
   final Rx<UserDetail> user = UserDetail.empty().obs;
@@ -47,11 +48,18 @@ class CommunityMemberController extends GetxController {
   }
 
   Future<void> init() async {
-    await _loadUser();
-    await _initFriendshipsData();
-    await _loadMemberships();
+    isInitialLoading.value = true;
+    try {
+      await _loadUser();
+      await _initFriendshipsData();
+      await _loadMemberships();
 
-    _setupListeners();
+      _setupListeners();
+    } catch (e) {
+      isInitialLoading.value = false;
+    } finally {
+      isInitialLoading.value = false;
+    }
   }
 
   void _setupListeners() {
@@ -87,9 +95,9 @@ class CommunityMemberController extends GetxController {
       perfilRepository.getFriendship()
     ]);
 
-    final List<UserFriendship> received = results[0];
-    final List<UserFriendship> sent = results[1];
-    final List<UserFriendship> friends = results[2];
+    final List<UserInfo> received = results[0];
+    final List<UserInfo> sent = results[1];
+    final List<UserInfo> friends = results[2];
 
     for (var user in friends) {
       friendshipStates[user.id] = FriendshipState.FRIEND;
@@ -193,8 +201,6 @@ class CommunityMemberController extends GetxController {
 
   @override
   void onClose() {
-    scrollController.dispose();
-    searchController.dispose();
     super.onClose();
   }
 }

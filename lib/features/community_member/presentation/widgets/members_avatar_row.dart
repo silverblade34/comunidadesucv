@@ -1,11 +1,14 @@
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/core/widgets/avatar_image.dart';
+import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MembersAvatarRow extends StatelessWidget {
-  final List memberships;
+  final List<MembershipInfo> memberships;
   final int totalMembersCount;
   final int spaceId;
   final bool isLoading;
@@ -189,34 +192,12 @@ class MembersAvatarRow extends StatelessWidget {
           border: Border.all(color: Colors.white, width: 1),
         ),
         child: ClipOval(
-          child: Image.network(
-            memberships[index].user.imageUrl,
-            width: 30,
-            height: 30,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Shimmer.fromColors(
-                baseColor: AppColors.shimmerBaseColor,
-                highlightColor: AppColors.shimmerHighlightColor,
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[600],
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: 30,
-              height: 30,
-              color: Colors.grey[850],
-              child: const Icon(Icons.person, color: Colors.white70, size: 18),
-            ),
-          ),
-        ),
+            child: AvatarImage(
+                avatar:
+                    'https://trilce.ucv.edu.pe/Fotos/Mediana/${memberships[index].user.codigo}.jpg',
+                avatarError: memberships[index].user.imageUrl,
+                width: 30,
+                height: 30)),
       ),
     );
   }

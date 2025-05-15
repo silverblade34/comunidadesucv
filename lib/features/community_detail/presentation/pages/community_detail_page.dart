@@ -1,3 +1,4 @@
+import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/config/constants/responsive.dart';
 import 'package:comunidadesucv/features/community_detail/controllers/community_detail_controller.dart';
 import 'package:comunidadesucv/features/community_detail/presentation/widgets/community_detail_title.dart';
@@ -17,6 +18,7 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
@@ -61,40 +63,40 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
   }
 
   Widget _buildCommunityInfo(BuildContext context) {
-    return Obx(
-      () => Padding(
-        padding: EdgeInsets.only(
-          left: ResponsiveSize.getWidth(context, 20),
-          right: ResponsiveSize.getWidth(context, 20),
-          bottom: ResponsiveSize.getHeight(context, 15),
-          top: ResponsiveSize.getHeight(context, 20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CommunityDetailTitle(
-              name: controller.space.value.name,
-              isLoading: controller.isLoading.value,
-            ),
-            MembersAvatarRow(
-              memberships: controller.space.value.lastMemberships,
-              totalMembersCount: controller.space.value.membersCount,
-              spaceId: controller.space.value.id,
-              isLoading: controller.isLoading.value,
-            ),
-            SizedBox(height: ResponsiveSize.getHeight(context, 15)),
-            DescriptionText(
-              description: controller.space.value.description,
-              isLoading: controller.isLoading.value,
-            ),
-            SizedBox(height: ResponsiveSize.getHeight(context, 15)),
-            CommunityRulesWidget(
-              rules: controller.space.value.about,
+    return Padding(
+      padding: EdgeInsets.only(
+        left: ResponsiveSize.getWidth(context, 20),
+        right: ResponsiveSize.getWidth(context, 20),
+        bottom: ResponsiveSize.getHeight(context, 15),
+        top: ResponsiveSize.getHeight(context, 20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CommunityDetailTitle(
+            name: controller.space.name,
+            isLoading: controller.isLoading.value,
+          ),
+          MembersAvatarRow(
+            memberships: controller.space.lastMemberships,
+            totalMembersCount: controller.space.membersCount,
+            spaceId: controller.space.id,
+            isLoading: controller.isLoading.value,
+          ),
+          SizedBox(height: ResponsiveSize.getHeight(context, 15)),
+          DescriptionText(
+            description: controller.space.description,
+            isLoading: controller.isLoading.value,
+          ),
+          SizedBox(height: ResponsiveSize.getHeight(context, 15)),
+          Obx(
+            () => CommunityRulesWidget(
+              rules: controller.space.about,
               isExpanded: controller.isRulesExpanded.value,
               onToggle: controller.toggleRulesExpanded,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -112,7 +114,7 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
               // ignore: deprecated_member_use
               color: Colors.white.withOpacity(0.9),
               fontWeight: FontWeight.bold,
-              fontSize: ResponsiveSize.getFontSize(context, 14),
+              fontSize: ResponsiveSize.getFontSize(context, 15),
             ),
           ),
           SizedBox(height: ResponsiveSize.getHeight(context, 10)),
@@ -133,7 +135,7 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
             if (controller.isButtonMember.value) {
               final result = await Get.toNamed(
                 "/community_feed",
-                arguments: controller.space.value,
+                arguments: controller.space,
               );
 
               if (result == true) {
@@ -156,13 +158,17 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
           label: "Lo que dice la comunidad",
           iconBackgroundColor: Colors.orange,
           onTap: () async {
-            final result = await Get.toNamed(
-              "/community_forum",
-              arguments: controller.space.value,
-            );
+            if (controller.isButtonMember.value) {
+              final result = await Get.toNamed(
+                "/community_forum",
+                arguments: controller.space,
+              );
 
-            if (result == true) {
-              await controller.loadLastPostContainer();
+              if (result == true) {
+                await controller.loadLastPostContainer();
+              }
+            } else {
+              Get.dialog(RestrictedAccessDialog());
             }
           },
         ),
@@ -175,11 +181,11 @@ class CommunityDetailPage extends GetView<CommunityDetailController> {
       top: ResponsiveSize.getHeight(Get.context!, 40),
       left: ResponsiveSize.getWidth(Get.context!, 10),
       child: GestureDetector(
-        onTap: () => Get.back(),
+        onTap: () => Get.back(result: true),
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: const BoxDecoration(
-            color: Color(0xFF9D4EDD),
+            color: AppColors.primary,
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.arrow_back, color: Colors.white),

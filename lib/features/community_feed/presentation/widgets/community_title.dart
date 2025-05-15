@@ -24,12 +24,15 @@ class CommunityTitle extends StatelessWidget {
             onTap: () {
               Get.back(result: true);
             },
-            child: Icon(
-              Ionicons.chevron_back,
-              size: 24,
-              color: AppTheme.isLightTheme
-                  ? HexColor("#120C45")
-                  : HexColor('#FFFFFF'),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0, top: 8, bottom: 8),
+              child: Icon(
+                Ionicons.chevron_back,
+                size: 24,
+                color: AppTheme.isLightTheme
+                    ? HexColor("#120C45")
+                    : HexColor('#FFFFFF'),
+              ),
             ),
           ),
           Text(

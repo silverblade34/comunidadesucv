@@ -1,10 +1,11 @@
 import 'package:comunidadesucv/config/constants/colors.dart';
+import 'package:comunidadesucv/config/constants/fonts.dart';
 import 'package:comunidadesucv/config/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 class PerfilInterests extends StatelessWidget {
-  final List<String> tags;
+  final List<dynamic> tags;
   final String description;
 
   const PerfilInterests({
@@ -29,11 +30,7 @@ class PerfilInterests extends StatelessWidget {
             SizedBox(width: 8),
             Text(
               description,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
+              style: AppFonts.subtitleCommunity,
             ),
           ],
         ),
@@ -46,9 +43,11 @@ class PerfilInterests extends StatelessWidget {
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                     decoration: BoxDecoration(
+                      // ignore: deprecated_member_use
                       color: AppColors.backgroundDarkLigth.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
+                        // ignore: deprecated_member_use
                         color: AppColors.backgroundDarkLigth.withOpacity(0.3),
                         width: 1,
                       ),
@@ -68,8 +67,7 @@ class PerfilInterests extends StatelessWidget {
                 "No se han agregado intereses",
                 style: TextStyle(
                   fontSize: 14,
-                  color: textColor.withOpacity(0.5),
-                  fontStyle: FontStyle.italic,
+                  color: textColor.withOpacity(0.5)
                 ),
               ),
       ],

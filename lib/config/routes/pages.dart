@@ -1,6 +1,8 @@
 import 'package:comunidadesucv/features/communities/bindings/communities_binding.dart';
 import 'package:comunidadesucv/features/communities/presentation/pages/communities_page.dart';
 import 'package:comunidadesucv/features/community_detail/bindings/community_detail_binding.dart';
+import 'package:comunidadesucv/features/community_forum/bindings/question_detail_binding.dart';
+import 'package:comunidadesucv/features/community_forum/presentation/pages/question_detail_page.dart';
 import 'package:comunidadesucv/features/community_member/bindings/detail_member_binding.dart';
 import 'package:comunidadesucv/features/community_detail/presentation/pages/community_detail_page.dart';
 import 'package:comunidadesucv/features/community_member/presentation/pages/detail_member_page.dart';
@@ -80,7 +82,7 @@ abstract class AppPages {
       binding: CommunityForumBinding(),
       page: () => const CommunityForumPage(),
     ),
-      GetPage(
+    GetPage(
       name: Routes.createForum,
       binding: CreateNewPostBinding(),
       page: () => const CreateNewPostPage(),
@@ -90,10 +92,15 @@ abstract class AppPages {
       binding: RegisteredPostBinding(),
       page: () => const RegisteredPostPage(),
     ),
-       GetPage(
+    GetPage(
       name: Routes.friendships,
       binding: FriendshipsBinding(),
       page: () => const FriendshipsPage(),
+    ),
+    GetPage(
+      name: Routes.questionDetail,
+      binding: QuestionDetailBinding(),
+      page: () => const QuestionDetailPage(),
     ),
   ];
 }
