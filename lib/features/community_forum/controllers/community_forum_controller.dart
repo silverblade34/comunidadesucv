@@ -18,17 +18,61 @@ class CommunityForumController extends GetxController {
   var isLoadingMore = false.obs;
   var isLoadingPrevious = false.obs;
   var hasMoreQuestions = true.obs;
-  final int questionsLimit = 50;
+  final int questionsLimit = 20;
+
+  // Variables para la búsqueda
+  final RxString searchQuery = ''.obs;
+  final RxBool isSearchActive = false.obs;
   final RxMap<int, bool> userLikes = <int, bool>{}.obs;
+
+  // Controlador para el scroll
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     _setSpaceIcon();
     loadInitialQuestions();
+
+    // Agrega un listener al scrollController
+    scrollController.addListener(_scrollListener);
+
+    // Agrega un listener al searchQuery para actualizar los resultados cuando cambie
+    debounce(
+      searchQuery,
+      (_) => loadInitialQuestions(),
+      time: Duration(milliseconds: 500),
+    );
+  }
+
+  @override
+  void onClose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _scrollListener() {
+    // Cargar más preguntas cuando se llega al final
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoading.value &&
+        !isLoadingMore.value &&
+        hasMoreQuestions.value) {
+      loadMoreQuestions();
+    }
+
+    // Cargar preguntas anteriores cuando se llega al principio
+    if (scrollController.position.pixels <= 100 &&
+        !isLoading.value &&
+        !isLoadingPrevious.value &&
+        currentPage > 1) {
+      loadPreviousQuestions();
+    }
   }
 
   void _setSpaceIcon() {
+    // Código actual sin cambios
     switch (space.name) {
       case "UCV Connect":
         spaceIcon.value = Icons.link;
@@ -54,6 +98,53 @@ class CommunityForumController extends GetxController {
     }
   }
 
+  // Función para alternar la búsqueda
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+      loadInitialQuestions();
+    }
+  }
+
+  // Función para actualizar la consulta de búsqueda
+  void updateSearchQuery(String query) async {
+    searchQuery.value = query;
+    currentPage = 1;
+    hasMoreQuestions.value = true;
+    isLoading.value = true;
+
+    try {
+      final response = await communityForumRepository.questionsContainerSpace(
+          space.contentContainerId,
+          questionsLimit,
+          currentPage,
+          searchQuery.value);
+
+      if (response.results.isEmpty) {
+        dataQuestion.clear();
+        hasMoreQuestions.value = false;
+      } else {
+        final filteredQuestionArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataQuestion.assignAll(filteredQuestionArchived);
+        hasMoreQuestions.value = response.results.length >= questionsLimit;
+      }
+    } catch (e) {
+      print('Error searching questions: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
+
   Future<void> loadInitialQuestions() async {
     if (isLoading.value) return;
 
@@ -62,7 +153,10 @@ class CommunityForumController extends GetxController {
 
     try {
       final response = await communityForumRepository.questionsContainerSpace(
-          space.contentContainerId, questionsLimit, currentPage);
+          space.contentContainerId,
+          questionsLimit,
+          currentPage,
+          searchQuery.value);
 
       if (response.results.isEmpty) {
         hasMoreQuestions.value = false;
@@ -88,14 +182,20 @@ class CommunityForumController extends GetxController {
 
     try {
       final response = await communityForumRepository.questionsContainerSpace(
-          space.contentContainerId, questionsLimit, nextPage);
+          space.contentContainerId,
+          questionsLimit,
+          nextPage,
+          searchQuery.value);
 
       if (response.results.isEmpty) {
         hasMoreQuestions.value = false;
       } else {
-        dataQuestion.addAll(response.results);
+        final filteredQuestionArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataQuestion.addAll(filteredQuestionArchived);
         hasMoreQuestions.value = response.results.length >= questionsLimit;
-        currentPage = nextPage; // Only update currentPage if successful
+        currentPage = nextPage; // Solo actualiza currentPage si es exitoso
       }
     } catch (e) {
       print('Error loading more questions: ${e.toString()}');
@@ -112,10 +212,16 @@ class CommunityForumController extends GetxController {
 
     try {
       final response = await communityForumRepository.questionsContainerSpace(
-          space.contentContainerId, questionsLimit, previousPage);
+          space.contentContainerId,
+          questionsLimit,
+          previousPage,
+          searchQuery.value);
 
       if (response.results.isNotEmpty) {
-        dataQuestion.insertAll(0, response.results);
+        final filteredQuestionArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataQuestion.insertAll(0, filteredQuestionArchived);
         currentPage = previousPage;
       }
     } catch (e) {
@@ -125,8 +231,14 @@ class CommunityForumController extends GetxController {
     }
   }
 
-  // Helper function to format relative time
+  // Función para refrescar los posts (usado con RefreshIndicator)
+  Future<void> refreshQuestions() async {
+    return loadInitialQuestions();
+  }
+
+  // El resto de tu código...
   String getRelativeTime(DateTime dateTime) {
+    // Código actual sin cambios
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
@@ -146,6 +258,7 @@ class CommunityForumController extends GetxController {
   }
 
   void toggleLikePost(int questionId) async {
+    // Código actual sin cambios
     if (userLikes.containsKey(questionId)) {
       return;
     } else {

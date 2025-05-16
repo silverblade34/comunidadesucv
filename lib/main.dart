@@ -9,8 +9,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-  
+import 'dart:developer' as developer;
+
 void main() async {
+  developer.log('', name: 'I/MESA');
   await GetStorage.init();
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();

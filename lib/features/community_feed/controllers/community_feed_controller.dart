@@ -58,7 +58,6 @@ class CommunityFeedController extends GetxController {
 
   final RxBool isSearchActive = false.obs;
   final RxString searchQuery = ''.obs;
-  final RxList filteredPosts = [].obs;
 
   final ScrollController scrollController = ScrollController();
 
@@ -70,9 +69,6 @@ class CommunityFeedController extends GetxController {
 
     scrollController.addListener(_scrollListener);
     // Initialize search functionality
-    filteredPosts.assignAll(dataPost);
-    ever(dataPost, (_) => updateFilteredPosts());
-    ever(searchQuery, (_) => updateFilteredPosts());
   }
 
   // Carga de los datos del usuario
@@ -89,25 +85,45 @@ class CommunityFeedController extends GetxController {
     isSearchActive.value = !isSearchActive.value;
     if (!isSearchActive.value) {
       searchQuery.value = '';
-      updateFilteredPosts();
     }
   }
 
-  void updateSearchQuery(String query) {
+  void updateSearchQuery(String query) async {
     searchQuery.value = query;
-    updateFilteredPosts();
-  }
 
-  void updateFilteredPosts() {
-    if (searchQuery.value.isEmpty) {
-      filteredPosts.assignAll(dataPost);
-    } else {
-      filteredPosts.assignAll(dataPost
-          .where((post) => post.message
-              .toString()
-              .toLowerCase()
-              .contains(searchQuery.value.toLowerCase()))
-          .toList());
+    currentPage = 1;
+    hasMorePosts.value = true;
+    hasMorePreviousPosts.value = false;
+
+    isLoading.value = true;
+
+    try {
+      final response = await communityDetailRepository.postContainerSpace(
+          space.contentContainerId, postsLimit, currentPage, searchQuery.value);
+
+      if (response.results.isEmpty) {
+        dataPost.clear();
+        hasMorePosts.value = false;
+      } else {
+        final filteredPostsArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataPost.assignAll(filteredPostsArchived);
+
+        hasMorePosts.value = response.results.length >= postsLimit;
+      }
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      isLoading.value = false;
+
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     }
   }
 
@@ -145,7 +161,7 @@ class CommunityFeedController extends GetxController {
 
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.contentContainerId, postsLimit, currentPage);
+          space.contentContainerId, postsLimit, currentPage, searchQuery.value);
 
       if (response.results.isEmpty) {
         hasMorePosts.value = false;
@@ -178,7 +194,10 @@ class CommunityFeedController extends GetxController {
 
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.contentContainerId, postsLimit, previousPage);
+          space.contentContainerId,
+          postsLimit,
+          previousPage,
+          searchQuery.value);
 
       if (response.results.isNotEmpty) {
         final filteredPostsArchived = response.results
@@ -210,7 +229,7 @@ class CommunityFeedController extends GetxController {
 
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.contentContainerId, postsLimit, currentPage);
+          space.contentContainerId, postsLimit, currentPage, searchQuery.value);
 
       if (response.results.isEmpty) {
         hasMorePosts.value = false;

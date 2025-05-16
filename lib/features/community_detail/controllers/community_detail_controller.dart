@@ -92,7 +92,7 @@ class CommunityDetailController extends GetxController {
   Future<void> loadLastPostContainer() async {
     try {
       final response = await communityDetailRepository.postContainerSpace(
-          space.contentContainerId, 20, 1);
+          space.contentContainerId, 20, 1, "");
 
       final filteredPostsArchived = response.results
           .where((item) => item.content.metadata.archived == false)

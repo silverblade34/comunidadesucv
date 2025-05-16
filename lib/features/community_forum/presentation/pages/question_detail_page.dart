@@ -215,9 +215,8 @@ class QuestionDetailPage extends GetView<QuestionDetailController> {
               ListTile(
                 leading: ClipOval(
                   child: AvatarImage(
-                    avatar: answer.createdBy.imageUrl,
-                    avatarError:
-                        'https://trilce.ucv.edu.pe/Fotos/Mediana/${answer.createdBy.codigo}.jpg',
+                    avatar: 'https://trilce.ucv.edu.pe/Fotos/Mediana/${answer.createdBy.codigo}.jpg',
+                    avatarError: answer.createdBy.imageUrl,
                     width: 35,
                     height: 35,
                   ),
@@ -264,7 +263,7 @@ class QuestionDetailPage extends GetView<QuestionDetailController> {
     return Row(
       children: [
         InkWell(
-          onTap: () => controller.voteAnswer(answer.id, 1),
+          onTap: () => controller.voteUpAnswer(answer.id),
           borderRadius: BorderRadius.circular(4),
           child: const Padding(
             padding: EdgeInsets.all(8.0),
@@ -279,7 +278,7 @@ class QuestionDetailPage extends GetView<QuestionDetailController> {
           ),
         ),
         InkWell(
-          onTap: () => controller.voteAnswer(answer.id, -1),
+          onTap: () => controller.voteDownAnswer(answer.id),
           borderRadius: BorderRadius.circular(4),
           child: const Padding(
             padding: EdgeInsets.all(8.0),

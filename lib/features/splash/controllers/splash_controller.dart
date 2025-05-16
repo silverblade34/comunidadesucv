@@ -43,6 +43,9 @@ class SplashController extends GetxController
     name.value = "DANIELA PIERINA";
     lastName.value = "OLIVA CHANTA";
 
+    // Setear informacion del ciclo
+    box.write("ciclo", "9");
+
     // Cargar datos de usuario
     await _loadUser();
   }

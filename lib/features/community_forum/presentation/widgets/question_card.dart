@@ -68,9 +68,9 @@ class QuestionCard extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 17, vertical: 1),
             leading: ClipOval(
               child: AvatarImage(
-                avatar: question.createdBy.imageUrl,
-                avatarError:
+                avatar:
                     'https://trilce.ucv.edu.pe/Fotos/Mediana/${question.createdBy.codigo}.jpg',
+                avatarError: question.createdBy.imageUrl,
                 width: 40,
                 height: 40,
               ),
@@ -88,8 +88,11 @@ class QuestionCard extends StatelessWidget {
               spacing: 16,
               children: [
                 _buildActionIcon(
-                    Icons.thumb_up_outlined, likes.toString(), onLike,
-                    isActive: question.content.userLiked),
+                  Icons.thumb_up_outlined,
+                  likes.toString(),
+                  onLike,
+                  isActive: question.content.userLiked,
+                ),
                 if (statusComment) ...[
                   _buildActionIcon(
                     Icons.comment_outlined,

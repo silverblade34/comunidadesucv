@@ -15,13 +15,13 @@ class CommunityForumProvider {
   }
 
   Future<Response> questionsContainerSpace(
-      int containerId, int limit, int page) async {
+      int containerId, int limit, int page, String search) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
 
       final response = await dioClient.get(
-        '$baseUrl/questions/container/$containerId?page=$page&limit=$limit',
+        '$baseUrl/questions/container/$containerId?page=$page&limit=$limit&search=$search',
       );
 
       return response;
@@ -41,10 +41,56 @@ class CommunityForumProvider {
   Future<Response> getAnswers(int questionId) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
 
       final response = await dioClient.get(
         '$baseUrl/questions/$questionId/answers',
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+          "${e.response?.data}",
+        );
+      } else {
+        throw Exception("Error de conexión al servidor: ${e.message}");
+      }
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
+    }
+  }
+
+  Future<Response> voteUpAnswers(int answerId) async {
+    try {
+      Dio dioClient = Dio();
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
+
+      final response = await dioClient.post(
+        '$baseUrl/questions/answers/$answerId/vote-up',
+      );
+
+      return response;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+          "${e.response?.data}",
+        );
+      } else {
+        throw Exception("Error de conexión al servidor: ${e.message}");
+      }
+    } catch (e) {
+      throw Exception("Error inesperado: $e");
+    }
+  }
+
+  Future<Response> voteDownAnswers(int answerId) async {
+    try {
+      Dio dioClient = Dio();
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
+
+      final response = await dioClient.post(
+        '$baseUrl/questions/answers/$answerId/vote-down',
       );
 
       return response;

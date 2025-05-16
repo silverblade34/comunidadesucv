@@ -13,14 +13,6 @@ class CreateNewPostController extends GetxController {
   final isUploading = false.obs;
   final isPublishing = false.obs;
 
-  Future<void> pickImage() async {
-    // Simulación de selección de imagen
-    isUploading.value = true;
-    await Future.delayed(Duration(seconds: 2));
-    mediaAttachments.add('imagen_mascota.jpg');
-    isUploading.value = false;
-  }
-
   Future<void> simulatePublishPost() async {
     if (bodyController.text.isEmpty) {
       return;
@@ -103,7 +95,7 @@ class CreateNewPostController extends GetxController {
                             AlwaysStoppedAnimation<Color>(Color(0xFF9D4EDD)),
                       ),
                     ),
-                    Icon(Icons.pets, size: 30, color: Color(0xFF9D4EDD)),
+                    Icon(Icons.group, size: 30, color: Color(0xFF9D4EDD)),
                   ],
                 ),
               ),

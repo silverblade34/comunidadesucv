@@ -13,6 +13,7 @@ class ProfileConfigurationController extends GetxController {
   TextEditingController preferenceName = TextEditingController(text: "");
 
   final RxString selectedTag = ''.obs;
+  final RxString ciclo = ''.obs;
 
   final Rx<UserDetail> user = UserDetail.empty().obs;
 
@@ -57,6 +58,7 @@ class ProfileConfigurationController extends GetxController {
     var userData = box.read("user");
     if (userData != null) {
       user.value = userData;
+      ciclo.value = box.read("ciclo");
       preferenceName.text = user.value.profile!.preferredName != null ? "${user.value.profile!.preferredName}": "";
       _updateSelectedTags(user.value.account?.tags ?? []);
     } else {

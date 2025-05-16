@@ -14,6 +14,7 @@ class PerfilController extends GetxController {
 
   final RxList<UserInfo> dataUserFriendship = <UserInfo>[].obs;
   final RxBool isLoading = true.obs;
+  final RxString ciclo = ''.obs;
 
   @override
   void onInit() {
@@ -25,8 +26,8 @@ class PerfilController extends GetxController {
     isLoading.value = true;
     var userData = box.read("user");
     if (userData != null) {
-      user.value = userData;
-
+      ciclo.value = box.read("ciclo");
+      
       final results = await Future.wait([
         splashRepository.getUser(user.value.account!.username),
         perfilRepository.getFriendship(),

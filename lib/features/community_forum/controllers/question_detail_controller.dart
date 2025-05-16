@@ -31,7 +31,7 @@ class QuestionDetailController extends GetxController {
       answers.value = response.answers;
       sortAnswers();
     } catch (e) {
-      Get.snackbar('Error', 'No se pudieron cargar las respuestas');
+      print(e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -63,7 +63,13 @@ class QuestionDetailController extends GetxController {
     try {
       await communityForumRepository.publishAnswerQuestion(
           question.id, answerText);
-      await getAnswers();
+      try {
+        final response = await communityForumRepository.getAnswers(question.id);
+        answers.value = response.answers;
+        sortAnswers();
+      } catch (e) {
+        print(e.toString());
+      }
     } catch (e) {
       CustomAlertDialog.show(
         status: 'warning',
@@ -78,21 +84,36 @@ class QuestionDetailController extends GetxController {
     }
   }
 
-  Future<void> voteAnswer(int answerId, int vote) async {
-    // try {
-    //   await communityForumRepository.voteAnswer(answerId, vote);
+  Future<void> voteUpAnswer(int answerId) async {
+    try {
+      await communityForumRepository.voteUpAnswers(answerId);
 
-    //   // Actualizar el voto en la UI sin tener que recargar todas las respuestas
-    //   final index = answers.indexWhere((answer) => answer.id == answerId);
-    //   if (index != -1) {
-    //     final updatedAnswer = answers[index];
-    //     updatedAnswer.votesSummary += vote;
-    //     answers[index] = updatedAnswer;
-    //     answers.refresh();
-    //   }
-    // } catch (e) {
-    //   Get.snackbar('Error', 'No se pudo registrar el voto');
-    // }
+      final index = answers.indexWhere((answer) => answer.id == answerId);
+      if (index != -1) {
+        final updatedAnswer = answers[index];
+        updatedAnswer.votesSummary += 1;
+        answers[index] = updatedAnswer;
+        answers.refresh();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> voteDownAnswer(int answerId) async {
+    try {
+      await communityForumRepository.voteDownAnswers(answerId);
+
+      final index = answers.indexWhere((answer) => answer.id == answerId);
+      if (index != -1) {
+        final updatedAnswer = answers[index];
+        updatedAnswer.votesSummary -= 1;
+        answers[index] = updatedAnswer;
+        answers.refresh();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> markAsBestAnswer(int answerId) async {

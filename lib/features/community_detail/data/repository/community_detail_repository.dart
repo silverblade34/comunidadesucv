@@ -46,9 +46,9 @@ class CommunityDetailRepository {
   }
 
   Future<ContentSpaceDto> postContainerSpace(
-      int containerId, int limit, int page) async {
+      int containerId, int limit, int page, String search) async {
     final response = await communityDetailProvider.postContainerSpace(
-        containerId, limit, page);
+        containerId, limit, page, search);
 
     if (response.data == null) {
       throw Exception("No se recibieron datos en la respuesta");

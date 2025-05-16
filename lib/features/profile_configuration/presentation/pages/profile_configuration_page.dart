@@ -41,7 +41,7 @@ class ProfileConfigurationPage extends GetView<ProfileConfigurationController> {
                       // Details
                       ProfileDetailsSection(
                         career: controller.user.value.profile?.carrera ?? '',
-                        cycle: '8',
+                        cycle: controller.ciclo.value,
                         preferenceNameController: controller.preferenceName,
                       ),
 

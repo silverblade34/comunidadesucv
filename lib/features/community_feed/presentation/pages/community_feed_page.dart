@@ -39,7 +39,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                   )),
             ),
             SizedBox(
-              height: 15,
+              height: 10,
             ),
             Expanded(
               child: _buildFeedContent(),
@@ -60,7 +60,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.isSearchActive.value && controller.filteredPosts.isEmpty) {
+      if (controller.isSearchActive.value && controller.dataPost.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,7 +77,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         );
       }
 
-      if (controller.filteredPosts.isEmpty) {
+      if (controller.dataPost.isEmpty) {
         return Center(
           child: Text(
             'No hay publicaciones disponibles',
@@ -113,7 +113,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final post = controller.filteredPosts[index];
+                    final post = controller.dataPost[index];
                     final user = post.content.metadata.createdBy;
                     final hasImage = post.content.files.isNotEmpty;
                     final imageId =
@@ -130,7 +130,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                       comments: post.content.comments.total,
                     );
                   },
-                  childCount: controller.filteredPosts.length,
+                  childCount: controller.dataPost.length,
                 ),
               ),
             ),
