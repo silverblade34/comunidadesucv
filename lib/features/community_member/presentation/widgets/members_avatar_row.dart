@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comunidadesucv/config/constants/colors.dart';
 import 'package:comunidadesucv/core/widgets/avatar_image.dart';
 import 'package:comunidadesucv/features/communities/data/dto/membership_info.dart';

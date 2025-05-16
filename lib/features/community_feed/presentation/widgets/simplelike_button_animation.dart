@@ -82,7 +82,7 @@ class _SimpleLikeButtonAnimationState extends State<SimpleLikeButtonAnimation>
             child: Icon(
               widget.isLiked ? Icons.favorite : Icons.favorite_border_outlined,
               color: widget.isLiked ? Colors.red : Colors.pink,
-              size: 28,
+              size: 23,
               key: ValueKey<bool>(widget.isLiked),
             ),
           );

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class CustomAlertDialog {
   /// Muestra un diálogo de alerta personalizado
-  /// 
+  ///
   /// [status]: Estado de la alerta ('success', 'warning', 'error', 'info')
   /// [message]: Mensaje principal que se mostrará
   /// [description]: Descripción adicional opcional
@@ -20,28 +20,37 @@ class CustomAlertDialog {
     late IconData statusIcon;
     late List<Color> gradientColors;
     late Color accentColor;
-    
+
     switch (status.toLowerCase()) {
       case 'success':
         statusIcon = Icons.check_circle;
-        gradientColors = [Color(0xFF43A047), Color(0xFF2E7D32)];
-        accentColor = Color(0xFF66BB6A);
+        gradientColors = [
+          Color(0xFF8FBF99),
+          Color(0xFF6FA87A)
+        ]; // verde pastel oscuro
+        accentColor = Color(0xFF5C9966);
         break;
       case 'warning':
         statusIcon = Icons.warning_amber;
-        gradientColors = [Color(0xFFFFA000), Color(0xFFF57C00)];
-        accentColor = Color(0xFFFFB74D);
+        gradientColors = [
+          Color(0xFFF2C98A),
+          Color(0xFFE5A94D)
+        ]; // ámbar pastel oscuro
+        accentColor = Color(0xFFD18E36);
         break;
       case 'error':
         statusIcon = Icons.error;
-        gradientColors = [Color(0xFFE53935), Color(0xFFC62828)];
-        accentColor = Color(0xFFEF5350);
+        gradientColors = [Color(0xFFF28B82), Color(0xFFE57373)]; // rojo pastel
+        accentColor = Color(0xFFCC5C5C);
         break;
       case 'info':
       default:
         statusIcon = Icons.info;
-        gradientColors = [Color(0xFF7B2CBF), Color(0xFF5A189A)];
-        accentColor = Color(0xFF9D4EDD);
+        gradientColors = [
+          Color(0xFFA79ABF),
+          Color(0xFF8E7BAA)
+        ]; // morado grisáceo pastel
+        accentColor = Color(0xFF7B699A);
         break;
     }
 

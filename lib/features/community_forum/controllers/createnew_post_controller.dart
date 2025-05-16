@@ -23,11 +23,6 @@ class CreateNewPostController extends GetxController {
 
   Future<void> simulatePublishPost() async {
     if (bodyController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Por favor escribe el contenido de tu publicación',
-        snackPosition: SnackPosition.BOTTOM,
-      );
       return;
     }
 
@@ -52,7 +47,7 @@ class CreateNewPostController extends GetxController {
             'No se ha podido registrar su tema, intentelo de nuevo mas tarde por favor',
         buttonText: 'Aceptar',
         onAccept: () {
-          print('Usuario confirmó la acción');
+          Get.back(result: true);
         },
       );
     } finally {

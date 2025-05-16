@@ -86,7 +86,7 @@ class CommunityDetailProvider {
   Future<Response> postContainerSpace(int containerId, int limit, int page) async {
     try {
       Dio dioClient = Dio();
-      dioClient.options.headers["Authorization"] = "Bearer $tokenAdmin";
+      dioClient.options.headers["Authorization"] = "Impersonate $token";
 
       final response = await dioClient.get(
         '$baseUrl/post/container/$containerId?page=$page&limit=$limit',

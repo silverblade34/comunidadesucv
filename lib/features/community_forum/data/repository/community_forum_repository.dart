@@ -1,5 +1,4 @@
 import 'package:comunidadesucv/features/community_forum/data/dto/answers_response_dto.dart';
-import 'package:comunidadesucv/features/community_forum/data/dto/question_response_dto.dart';
 import 'package:comunidadesucv/features/community_forum/data/dto/question_space_dto.dart';
 import 'package:comunidadesucv/features/community_forum/data/provider/community_forum_provider.dart';
 
@@ -21,20 +20,20 @@ class CommunityForumRepository {
     return QuestionSpaceDto.fromJson(response.data);
   }
 
-  Future<QuestionResponseDto> publishQuestion(
+  Future<bool> publishQuestion(
       String title, String message, int postContainerId) async {
     final response = await communityForumProvider.publishQuestion(
         title, message, postContainerId);
 
-    if (response.data == null) {
-      throw Exception("No se recibieron datos en la respuesta");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
     } else if (response.statusCode == 400) {
       throw Exception("Error desconocido");
     } else if (response.statusCode == 404) {
       throw Exception(response.data.toString());
     }
 
-    return QuestionResponseDto.fromJson(response.data);
+    return false;
   }
 
   Future<AnswersResponseDto> getAnswers(int questionId) async {

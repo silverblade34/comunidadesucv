@@ -86,46 +86,71 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
         );
       }
 
-      // Lista con paginación
       return RefreshIndicator(
         onRefresh: controller.refreshPosts,
-        child: ListView.separated(
-          controller: controller.scrollController, // Usar el ScrollController
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          separatorBuilder: (context, index) => const SizedBox(height: 1),
-          // Añadir +1 para mostrar indicador de carga al final si hay más posts
-          itemCount: controller.filteredPosts.length +
-              (controller.isLoadingMore.value ? 1 : 0),
-          itemBuilder: (context, index) {
-            // Si estamos en el último ítem y hay más posts para cargar, mostrar indicador de carga
-            if (index == controller.filteredPosts.length) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Center(
-                  child: controller.isLoadingMore.value
-                      ? const CircularProgressIndicator()
-                      : const SizedBox.shrink(),
+        child: CustomScrollView(
+          controller: controller.scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Obx(() => controller.isLoadingPrevious.value
+                  ? Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink()),
+            ),
+
+            // Lista principal de posts
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final post = controller.filteredPosts[index];
+                    final user = post.content.metadata.createdBy;
+                    final hasImage = post.content.files.isNotEmpty;
+                    final imageId =
+                        hasImage ? post.content.files.first['id'] : null;
+
+                    return _buildPostItem(
+                      context: context,
+                      post: post,
+                      userImageUrl: user.imageUrl,
+                      userName: user.displayName,
+                      imageId: imageId,
+                      message: post.message,
+                      likes: post.content.likes.total,
+                      comments: post.content.comments.total,
+                    );
+                  },
+                  childCount: controller.filteredPosts.length,
                 ),
-              );
-            }
+              ),
+            ),
 
-            // Renderizar post normal
-            final post = controller.filteredPosts[index];
-            final user = post.content.metadata.createdBy;
-            final hasImage = post.content.files.isNotEmpty;
-            final imageId = hasImage ? post.content.files.first['id'] : null;
-
-            return _buildPostItem(
-              context: context,
-              post: post,
-              userImageUrl: user.imageUrl,
-              userName: user.displayName,
-              imageId: imageId,
-              message: post.message,
-              likes: post.content.likes.total,
-              comments: post.content.comments.total,
-            );
-          },
+            // Indicador de carga para más posts (al final)
+            SliverToBoxAdapter(
+              child: Obx(() => controller.isLoadingMore.value
+                  ? Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink()),
+            ),
+          ],
         ),
       );
     });
@@ -177,7 +202,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                       userName,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 2,
@@ -200,7 +225,7 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                   styleSheet: MarkdownStyleSheet(
                     p: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -236,34 +261,40 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                 children: [
                   SimpleLikeButtonAnimation(
                     postId: postId,
-                    isLiked: controller.userLikes[postId] == true,
-                    onToggle: (id) => controller.toggleLikePost(id),
+                    isLiked: controller.userLikes[postId] == true ||
+                        post.content.userLiked,
+                    onToggle: (id) => controller.toggleLikePost(post),
                   ),
                   const SizedBox(width: 5),
                   AnimatedCounter(
                     count: post.content.likes.total,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(width: 20),
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () {
                       _showCommentsModal(context, post);
                     },
-                    child: const Icon(
-                      Icons.chat_bubble_outline,
-                      color: Colors.lightBlue,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    '${post.content.comments.total}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.chat_bubble_outline,
+                          color: Colors.lightBlue,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${post.content.comments.total}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -615,19 +646,6 @@ class CommunityFeedPage extends GetView<CommunityFeedController> {
                       onToggle: (commentItem) {
                         controller.likeComment(commentItem, objectId);
                       },
-                    ),
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () {
-                        // Lógica para responder al comentario
-                      },
-                      child: Text(
-                        'Responder',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
-                      ),
                     ),
                   ],
                 ),

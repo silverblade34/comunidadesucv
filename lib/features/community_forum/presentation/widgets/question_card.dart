@@ -88,10 +88,8 @@ class QuestionCard extends StatelessWidget {
               spacing: 16,
               children: [
                 _buildActionIcon(
-                  Icons.thumb_up_outlined,
-                  likes.toString(),
-                  onLike,
-                ),
+                    Icons.thumb_up_outlined, likes.toString(), onLike,
+                    isActive: question.content.userLiked),
                 if (statusComment) ...[
                   _buildActionIcon(
                     Icons.comment_outlined,
@@ -107,15 +105,27 @@ class QuestionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionIcon(IconData icon, String count, VoidCallback onPressed) {
+  Widget _buildActionIcon(
+    IconData icon,
+    String count,
+    VoidCallback onPressed, {
+    bool isActive = false,
+  }) {
     return GestureDetector(
       onTap: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20, color: Colors.white),
+          Icon(
+            icon,
+            size: 20,
+            color: isActive ? Colors.lightBlue : Colors.white,
+          ),
           const SizedBox(width: 4),
-          Text(count, style: const TextStyle(color: Colors.white)),
+          Text(
+            count,
+            style: const TextStyle(color: Colors.white),
+          ),
         ],
       ),
     );

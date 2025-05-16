@@ -55,6 +55,7 @@ class Content {
   final Likes likes;
   final List<dynamic> topics;
   final List<dynamic> files;
+  final bool userLiked;
 
   Content({
     required this.id,
@@ -63,6 +64,7 @@ class Content {
     required this.likes,
     required this.topics,
     required this.files,
+    required this.userLiked,
   });
 
   factory Content.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class Content {
       likes: Likes.fromJson(json['likes']),
       topics: json['topics'],
       files: json['files'],
+      userLiked: json['user_liked'],
     );
   }
 }

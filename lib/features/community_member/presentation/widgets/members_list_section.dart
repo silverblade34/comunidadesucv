@@ -19,73 +19,66 @@ class MembersListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => CustomScrollView(
+      () => ListView.builder(
         controller: controller.scrollController,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (controller.searchController.text.isEmpty &&
-                      controller.recommendedMemberships.isNotEmpty)
-                    RecommendedMembersSection(
-                      recommendedMemberships: controller.recommendedMemberships,
-                      getFriendshipState: controller.getFriendshipState,
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 25),
-                    child: Text(
-                      controller.searchController.text.isEmpty
-                          ? 'Todos los miembros'
-                          : 'Resultados',
-                      style: AppFonts.subtitleCommunity,
-                    ),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          bottom: MediaQuery.of(context).padding.bottom + 20,
+        ),
+        itemCount: controller.filteredMemberships.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (controller.searchController.text.isEmpty &&
+                    controller.recommendedMemberships.isNotEmpty)
+                  RecommendedMembersSection(
+                    recommendedMemberships: controller.recommendedMemberships,
+                    getFriendshipState: controller.getFriendshipState,
                   ),
-                ],
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              bottom: MediaQuery.of(context).padding.bottom + 20,
-            ),
-            sliver: SliverList.builder(
-              itemCount: controller.filteredMemberships.length + 1,
-              itemBuilder: (context, index) {
-                if (index == controller.filteredMemberships.length) {
-                  return controller.isLoading.value && controller.hasMore.value
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : SizedBox();
-                }
+                Padding(
+                  padding: const EdgeInsets.only(top: 25),
+                  child: Text(
+                    controller.searchController.text.isEmpty
+                        ? 'Todos los miembros'
+                        : 'Resultados',
+                    style: AppFonts.subtitleCommunity,
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            );
+          }
 
-                final membership = controller.filteredMemberships[index];
+          if (index == controller.filteredMemberships.length + 1) {
+            return controller.isLoading.value && controller.hasMore.value
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : SizedBox();
+          }
 
-                return MemberListItem(
-                  controller: controller,
-                  id: membership.user.id,
-                  membership: membership,
-                  name: membership.user.displayName,
-                  details: '${membership.user.carrera}',
-                  avatar:
-                      'https://trilce.ucv.edu.pe/Fotos/Mediana/${membership.user.codigo}.jpg',
-                  avatarError: membership.user.imageUrl,
-                  getDisplayName: controller.getDisplayName,
-                  onIconTap: (id, name, friendshipState) =>
-                      _handleIconTap(context, id, name, friendshipState),
-                );
-              },
-            ),
-          ),
-        ],
+          final membership = controller.filteredMemberships[index - 1];
+
+          return MemberListItem(
+            controller: controller,
+            id: membership.user.id,
+            membership: membership,
+            name: membership.user.displayName,
+            details: '${membership.user.carrera}',
+            avatar:
+                'https://trilce.ucv.edu.pe/Fotos/Mediana/${membership.user.codigo}.jpg',
+            avatarError: membership.user.imageUrl,
+            getDisplayName: controller.getDisplayName,
+            onIconTap: (id, name, friendshipState) =>
+                _handleIconTap(context, id, name, friendshipState),
+          );
+        },
       ),
     );
   }

@@ -18,7 +18,7 @@ class CommunityForumController extends GetxController {
   var isLoadingMore = false.obs;
   var isLoadingPrevious = false.obs;
   var hasMoreQuestions = true.obs;
-  final int questionsLimit = 10;
+  final int questionsLimit = 50;
   final RxMap<int, bool> userLikes = <int, bool>{}.obs;
 
   @override
@@ -67,7 +67,10 @@ class CommunityForumController extends GetxController {
       if (response.results.isEmpty) {
         hasMoreQuestions.value = false;
       } else {
-        dataQuestion.assignAll(response.results);
+        final filteredQuestionArchived = response.results
+            .where((item) => item.content.metadata.archived == false)
+            .toList();
+        dataQuestion.assignAll(filteredQuestionArchived);
         hasMoreQuestions.value = response.results.length >= questionsLimit;
       }
     } catch (e) {

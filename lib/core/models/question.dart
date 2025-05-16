@@ -9,27 +9,27 @@ Question questionFromJson(String str) => Question.fromJson(json.decode(str));
 String questionToJson(Question data) => json.encode(data.toJson());
 
 class Question {
-    int id;
-    String question;
-    String description;
-    AtedBy createdBy;
-    dynamic bestAnswer;
-    List<dynamic> lastAnswers;
-    int answerCount;
-    Content content;
+  int id;
+  String question;
+  String description;
+  AtedBy createdBy;
+  dynamic bestAnswer;
+  List<dynamic> lastAnswers;
+  int answerCount;
+  Content content;
 
-    Question({
-        required this.id,
-        required this.question,
-        required this.description,
-        required this.createdBy,
-        required this.bestAnswer,
-        required this.lastAnswers,
-        required this.answerCount,
-        required this.content,
-    });
+  Question({
+    required this.id,
+    required this.question,
+    required this.description,
+    required this.createdBy,
+    required this.bestAnswer,
+    required this.lastAnswers,
+    required this.answerCount,
+    required this.content,
+  });
 
-    factory Question.fromJson(Map<String, dynamic> json) => Question(
+  factory Question.fromJson(Map<String, dynamic> json) => Question(
         id: json["id"],
         question: json["question"],
         description: json["description"],
@@ -38,9 +38,9 @@ class Question {
         lastAnswers: List<dynamic>.from(json["last_answers"].map((x) => x)),
         answerCount: json["answer_count"],
         content: Content.fromJson(json["content"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "question": question,
         "description": description,
@@ -49,159 +49,164 @@ class Question {
         "last_answers": List<dynamic>.from(lastAnswers.map((x) => x)),
         "answer_count": answerCount,
         "content": content.toJson(),
-    };
+      };
 }
 
 class Content {
-    int id;
-    Metadata metadata;
-    Comments comments;
-    Likes likes;
-    List<dynamic> topics;
-    List<FileElement> files;
+  int id;
+  Metadata metadata;
+  Comments comments;
+  Likes likes;
+  List<dynamic> topics;
+  List<FileElement> files;
+  bool userLiked;
 
-    Content({
-        required this.id,
-        required this.metadata,
-        required this.comments,
-        required this.likes,
-        required this.topics,
-        required this.files,
-    });
+  Content({
+    required this.id,
+    required this.metadata,
+    required this.comments,
+    required this.likes,
+    required this.topics,
+    required this.files,
+    required this.userLiked,
+  });
 
-    factory Content.fromJson(Map<String, dynamic> json) => Content(
+  factory Content.fromJson(Map<String, dynamic> json) => Content(
         id: json["id"],
         metadata: Metadata.fromJson(json["metadata"]),
         comments: Comments.fromJson(json["comments"]),
         likes: Likes.fromJson(json["likes"]),
         topics: List<dynamic>.from(json["topics"].map((x) => x)),
-        files: List<FileElement>.from(json["files"].map((x) => FileElement.fromJson(x))),
-    );
+        files: List<FileElement>.from(
+            json["files"].map((x) => FileElement.fromJson(x))),
+        userLiked: json["user_liked"],
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "metadata": metadata.toJson(),
         "comments": comments.toJson(),
         "likes": likes.toJson(),
         "topics": List<dynamic>.from(topics.map((x) => x)),
         "files": List<dynamic>.from(files.map((x) => x.toJson())),
-    };
+        "user_liked": userLiked,
+      };
 }
 
 class Comments {
-    int total;
-    List<dynamic> latest;
+  int total;
+  List<dynamic> latest;
 
-    Comments({
-        required this.total,
-        required this.latest,
-    });
+  Comments({
+    required this.total,
+    required this.latest,
+  });
 
-    factory Comments.fromJson(Map<String, dynamic> json) => Comments(
+  factory Comments.fromJson(Map<String, dynamic> json) => Comments(
         total: json["total"],
         latest: List<dynamic>.from(json["latest"].map((x) => x)),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "total": total,
         "latest": List<dynamic>.from(latest.map((x) => x)),
-    };
+      };
 }
 
 class FileElement {
-    int id;
-    String guid;
-    String mimeType;
-    String size;
-    String fileName;
-    String url;
+  int id;
+  String guid;
+  String mimeType;
+  String size;
+  String fileName;
+  String url;
 
-    FileElement({
-        required this.id,
-        required this.guid,
-        required this.mimeType,
-        required this.size,
-        required this.fileName,
-        required this.url,
-    });
+  FileElement({
+    required this.id,
+    required this.guid,
+    required this.mimeType,
+    required this.size,
+    required this.fileName,
+    required this.url,
+  });
 
-    factory FileElement.fromJson(Map<String, dynamic> json) => FileElement(
+  factory FileElement.fromJson(Map<String, dynamic> json) => FileElement(
         id: json["id"],
         guid: json["guid"],
         mimeType: json["mime_type"],
         size: json["size"],
         fileName: json["file_name"],
         url: json["url"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "guid": guid,
         "mime_type": mimeType,
         "size": size,
         "file_name": fileName,
         "url": url,
-    };
+      };
 }
 
 class Likes {
-    int total;
+  int total;
 
-    Likes({
-        required this.total,
-    });
+  Likes({
+    required this.total,
+  });
 
-    factory Likes.fromJson(Map<String, dynamic> json) => Likes(
+  factory Likes.fromJson(Map<String, dynamic> json) => Likes(
         total: json["total"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "total": total,
-    };
+      };
 }
 
 class Metadata {
-    int id;
-    String guid;
-    String objectModel;
-    int objectId;
-    int visibility;
-    int state;
-    bool archived;
-    bool hidden;
-    bool pinned;
-    bool lockedComments;
-    AtedBy createdBy;
-    DateTime createdAt;
-    AtedBy updatedBy;
-    DateTime updatedAt;
-    dynamic scheduledAt;
-    String url;
-    int contentcontainerId;
-    String streamChannel;
+  int id;
+  String guid;
+  String objectModel;
+  int objectId;
+  int visibility;
+  int state;
+  bool archived;
+  bool hidden;
+  bool pinned;
+  bool lockedComments;
+  AtedBy createdBy;
+  DateTime createdAt;
+  AtedBy updatedBy;
+  DateTime updatedAt;
+  dynamic scheduledAt;
+  String url;
+  int contentcontainerId;
+  String streamChannel;
 
-    Metadata({
-        required this.id,
-        required this.guid,
-        required this.objectModel,
-        required this.objectId,
-        required this.visibility,
-        required this.state,
-        required this.archived,
-        required this.hidden,
-        required this.pinned,
-        required this.lockedComments,
-        required this.createdBy,
-        required this.createdAt,
-        required this.updatedBy,
-        required this.updatedAt,
-        required this.scheduledAt,
-        required this.url,
-        required this.contentcontainerId,
-        required this.streamChannel,
-    });
+  Metadata({
+    required this.id,
+    required this.guid,
+    required this.objectModel,
+    required this.objectId,
+    required this.visibility,
+    required this.state,
+    required this.archived,
+    required this.hidden,
+    required this.pinned,
+    required this.lockedComments,
+    required this.createdBy,
+    required this.createdAt,
+    required this.updatedBy,
+    required this.updatedAt,
+    required this.scheduledAt,
+    required this.url,
+    required this.contentcontainerId,
+    required this.streamChannel,
+  });
 
-    factory Metadata.fromJson(Map<String, dynamic> json) => Metadata(
+  factory Metadata.fromJson(Map<String, dynamic> json) => Metadata(
         id: json["id"],
         guid: json["guid"],
         objectModel: json["object_model"],
@@ -220,9 +225,9 @@ class Metadata {
         url: json["url"],
         contentcontainerId: json["contentcontainer_id"],
         streamChannel: json["stream_channel"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "guid": guid,
         "object_model": objectModel,
@@ -241,39 +246,39 @@ class Metadata {
         "url": url,
         "contentcontainer_id": contentcontainerId,
         "stream_channel": streamChannel,
-    };
+      };
 }
 
 class AtedBy {
-    int id;
-    String guid;
-    String displayName;
-    String url;
-    String imageUrl;
-    String imageUrlOrg;
-    String bannerUrl;
-    String bannerUrlOrg;
-    List<String> tags;
-    String carrera;
-    String filial;
-    String codigo;
+  int id;
+  String guid;
+  String displayName;
+  String url;
+  String imageUrl;
+  String imageUrlOrg;
+  String bannerUrl;
+  String bannerUrlOrg;
+  List<String> tags;
+  String carrera;
+  String filial;
+  String codigo;
 
-    AtedBy({
-        required this.id,
-        required this.guid,
-        required this.displayName,
-        required this.url,
-        required this.imageUrl,
-        required this.imageUrlOrg,
-        required this.bannerUrl,
-        required this.bannerUrlOrg,
-        required this.tags,
-        required this.carrera,
-        required this.filial,
-        required this.codigo,
-    });
+  AtedBy({
+    required this.id,
+    required this.guid,
+    required this.displayName,
+    required this.url,
+    required this.imageUrl,
+    required this.imageUrlOrg,
+    required this.bannerUrl,
+    required this.bannerUrlOrg,
+    required this.tags,
+    required this.carrera,
+    required this.filial,
+    required this.codigo,
+  });
 
-    factory AtedBy.fromJson(Map<String, dynamic> json) => AtedBy(
+  factory AtedBy.fromJson(Map<String, dynamic> json) => AtedBy(
         id: json["id"],
         guid: json["guid"],
         displayName: json["display_name"],
@@ -286,9 +291,9 @@ class AtedBy {
         carrera: json["carrera"],
         filial: json["filial"],
         codigo: json["codigo"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "guid": guid,
         "display_name": displayName,
@@ -301,5 +306,5 @@ class AtedBy {
         "carrera": carrera,
         "filial": filial,
         "codigo": codigo,
-    };
+      };
 }

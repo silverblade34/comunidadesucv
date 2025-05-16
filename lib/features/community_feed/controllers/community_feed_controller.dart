@@ -328,22 +328,21 @@ class CommunityFeedController extends GetxController {
     }
   }
 
-  // Método para verificar si un comentario tiene sus respuestas expandidas
   bool isCommentExpanded(int commentId) {
     return expandedCommentIds.contains(commentId);
   }
 
-  void toggleLikePost(int postId) async {
-    if (userLikes.containsKey(postId)) {
+  void toggleLikePost(Post post) async {
+    if (userLikes.containsKey(post.id) || post.content.userLiked) {
       return;
     } else {
-      userLikes[postId] = true;
+      userLikes[post.id] = true;
     }
 
-    final postIndex = dataPost.indexWhere((post) => post.id == postId);
+    final postIndex = dataPost.indexWhere((postI) => postI.id == post.id);
 
     if (postIndex != -1) {
-      if (userLikes[postId]!) {
+      if (userLikes[post.id]!) {
         try {
           dataPost[postIndex].content.likes.total++;
           await communityFeedRepository.addLike(
